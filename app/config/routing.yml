@@ -1,0 +1,11 @@
+app:
+    resource: @SiteBundle/Controller/
+    type:     annotation
+
+api:
+    resource: @ApiBundle/Controller/
+    type:     annotation
+    prefix:   /api
+
+logout:
+   path: /logout
