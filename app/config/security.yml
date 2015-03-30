@@ -14,7 +14,7 @@ security:
     providers:
 
         #main:
-        #    entity: { class: SiteBundle:User, property: username }
+        #    entity: { class: AppBundle:User, property: username }
 
         in_memory:
             memory:
@@ -22,6 +22,9 @@ security:
                     user:  { password: userpass, roles: [ 'ROLE_USER' ] }
                     admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
                     api_user: { password: apipass, roles: [ 'ROLE_APIUSER' ] }
+
+        api_key_user_provider:
+                    id: api_key_user_provider
 
     # the main part of the security, where you can set up firewalls
     # for specific sections of your app
@@ -50,10 +53,13 @@ security:
             #http_basic:
             #    realm: "Secured Demo Area"
         engines_api:
-           pattern: ^/api
+           pattern: ^/apis
+           stateless: true
+           #simple_preauth:
+           #   authenticator: apikey_authenticator
            anonymous: ~
            http_basic:
-            realm: "Experiment Engine API"
+              realm: "Experiment Engine API"
 
         secured_area:
             #pattern: ^/secured
@@ -75,4 +81,4 @@ security:
        # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
        - { path: ^/secured, roles: ROLE_ADMIN }
-       - { path: ^/api, roles: ROLE_APIUSER }
+       - { path: ^/apis, roles: ROLE_APIUSER }
