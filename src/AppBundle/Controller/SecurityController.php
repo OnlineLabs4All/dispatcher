@@ -6,8 +6,8 @@
  * Time: 11:51 AM
  */
 
-// src/SiteBundle/Controller/SecurityController.php
-namespace SiteBundle\Controller;
+// src/AppBundle/Controller/SecurityController.php
+namespace AppBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
