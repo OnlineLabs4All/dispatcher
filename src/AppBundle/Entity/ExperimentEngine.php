@@ -6,10 +6,11 @@
  * Time: 3:20 PM
  */
 
-// src/SiteBundle/Entity/ExperimentEngine.php
-namespace SiteBundle\Entity;
+// src/AppBundle/Entity/ExperimentEngine.php
+namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity
@@ -37,7 +38,12 @@ class ExperimentEngine
     /**
      * @ORM\Column(type="string", length=100)
      */
-    protected $eeName;
+    protected $api_key;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $name;
 
     /**
      * @ORM\Column(type="string", length=500)
@@ -56,11 +62,9 @@ class ExperimentEngine
     protected $active;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="datetimetz")
      */
     protected $dateCreated;
-
-
 
 
 
@@ -98,49 +102,72 @@ class ExperimentEngine
     }
 
     /**
-     * Set httpAuthorization
+     * Set httpAuthentication
      *
-     * @param string $httpAuthorization
+     * @param string $httpAuthentication
      * @return ExperimentEngine
      */
-    public function setHttpAuthorization($httpAuthorization)
+    public function setHttpAuthentication($httpAuthentication)
     {
-        $this->httpAuthorization = $httpAuthorization;
+        $this->httpAuthentication = $httpAuthentication;
 
         return $this;
     }
 
     /**
-     * Get httpAuthorization
+     * Get httpAuthentication
      *
      * @return string 
      */
-    public function getHttpAuthorization()
+    public function getHttpAuthentication()
     {
-        return $this->httpAuthorization;
+        return $this->httpAuthentication;
     }
 
     /**
-     * Set eeName
+     * Set api_key
      *
-     * @param string $eeName
+     * @param string $apiKey
      * @return ExperimentEngine
      */
-    public function setEeName($eeName)
+    public function setApiKey($apiKey)
     {
-        $this->eeName = $eeName;
+        $this->api_key = $apiKey;
 
         return $this;
     }
 
     /**
-     * Get eeName
+     * Get api_key
      *
      * @return string 
      */
-    public function getEeName()
+    public function getApiKey()
     {
-        return $this->eeName;
+        return $this->api_key;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return ExperimentEngine
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -167,26 +194,26 @@ class ExperimentEngine
     }
 
     /**
-     * Set owner
+     * Set owner_id
      *
-     * @param string $owner
+     * @param string $ownerId
      * @return ExperimentEngine
      */
-    public function setOwner($owner)
+    public function setOwnerId($ownerId)
     {
-        $this->owner = $owner;
+        $this->owner_id = $ownerId;
 
         return $this;
     }
 
     /**
-     * Get owner
+     * Get owner_id
      *
      * @return string 
      */
-    public function getOwner()
+    public function getOwnerId()
     {
-        return $this->owner;
+        return $this->owner_id;
     }
 
     /**
