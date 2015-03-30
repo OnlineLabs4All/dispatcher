@@ -23,8 +23,8 @@ security:
                     admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
                     api_user: { password: apipass, roles: [ 'ROLE_APIUSER' ] }
 
-        api_key_user_provider:
-                    id: api_key_user_provider
+        #api_key_user_provider:
+        #            id: api_key_user_provider
 
     # the main part of the security, where you can set up firewalls
     # for specific sections of your app
