@@ -49,16 +49,16 @@ class JobRecord
     protected $jobStatus; // (1)QUEUED , (2)IN PROGRESS, (3)COMPLETE, (4)CANCELLED
 
     /**
-     * @ORM\Column(type="datetimetz")
+     * @ORM\Column(type="string", length=35)
      */
     protected $submitTime; //Time when the job was submitted
 
     /**
-     * @ORM\Column(type="datetimetz")
+     * @ORM\Column(type="string", length=35)
      */
     protected $executionTime; //Time when execution starts, or when job is dequeued
     /**
-     * @ORM\Column(type="datetimetz")
+     * @ORM\Column(type="string", length=35)
      */
     protected $endTime; //Time when execution finishes or is cancelled
 
@@ -115,7 +115,8 @@ class JobRecord
     /**
      * @ORM\Column(type="text")
      */
-    protected $opaque; //Optional field, used to transfer additional information if necessary.
+    protected $opaqueData; //Optional field, used to transfer additional information if necessary.
+
 
 
 
@@ -247,7 +248,7 @@ class JobRecord
     /**
      * Set submitTime
      *
-     * @param \DateTime $submitTime
+     * @param string $submitTime
      * @return JobRecord
      */
     public function setSubmitTime($submitTime)
@@ -260,7 +261,7 @@ class JobRecord
     /**
      * Get submitTime
      *
-     * @return \DateTime 
+     * @return string 
      */
     public function getSubmitTime()
     {
@@ -270,7 +271,7 @@ class JobRecord
     /**
      * Set executionTime
      *
-     * @param \DateTime $executionTime
+     * @param string $executionTime
      * @return JobRecord
      */
     public function setExecutionTime($executionTime)
@@ -283,7 +284,7 @@ class JobRecord
     /**
      * Get executionTime
      *
-     * @return \DateTime 
+     * @return string 
      */
     public function getExecutionTime()
     {
@@ -293,7 +294,7 @@ class JobRecord
     /**
      * Set endTime
      *
-     * @param \DateTime $endTime
+     * @param string $endTime
      * @return JobRecord
      */
     public function setEndTime($endTime)
@@ -306,7 +307,7 @@ class JobRecord
     /**
      * Get endTime
      *
-     * @return \DateTime 
+     * @return string 
      */
     public function getEndTime()
     {
@@ -544,25 +545,25 @@ class JobRecord
     }
 
     /**
-     * Set opaque
+     * Set opaqueData
      *
-     * @param string $opaque
+     * @param string $opaqueData
      * @return JobRecord
      */
-    public function setOpaque($opaque)
+    public function setOpaqueData($opaqueData)
     {
-        $this->opaque = $opaque;
+        $this->opaqueData = $opaqueData;
 
         return $this;
     }
 
     /**
-     * Get opaque
+     * Get opaqueData
      *
      * @return string 
      */
-    public function getOpaque()
+    public function getOpaqueData()
     {
-        return $this->opaque;
+        return $this->opaqueData;
     }
 }

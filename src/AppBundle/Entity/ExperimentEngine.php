@@ -46,15 +46,39 @@ class ExperimentEngine
     protected $name;
 
     /**
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $institution;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $address; //address of the institution where the EE is hosted
+
+    /**
+     * @ORM\Column(type="string", length=45)
+     */
+    protected $city; //city of the institution where the EE is hosted
+
+    /**
+     * @ORM\Column(type="string", length=45)
+     */
+    protected $country; //country of the institution where the EE is hosted
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $geolocation; //JSON representation of the experiment engine location
+
+    /**
      * @ORM\Column(type="string", length=500)
      */
     protected $description;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="integer")
      */
     protected $owner_id;
-
 
     /**
      * @ORM\Column(type="boolean")
@@ -62,17 +86,42 @@ class ExperimentEngine
     protected $active;
 
     /**
-     * @ORM\Column(type="datetimetz")
+     * @ORM\Column(type="boolean")
+     */
+    protected $visible_in_catalogue; //if true owners allow it to be visible in the Website's catalogue
+
+    /**
+     * @ORM\Column(type="string", length=35)
      */
     protected $dateCreated;
-
 
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
+
+    public function setAll($data)
+    {
+        $this->labserverId = $data['labserverId'];
+
+        $this->httpAuthentication = 'Basic '.base64_encode($data['username'].':'.$data['password']);
+        $this->api_key = $data['api_key'];
+        $this->name = $data['name'];
+        $this->institution = $data['institution'];
+        $this->address = $data['address'];
+        $this->city = $data['city'];
+        $this->country = $data['country'];
+        $this->geolocation = '';
+        $this->description = $data['description'];
+        $this->owner_id = 1;//change after user database is created
+        $this->active = $data['active'];
+        $this->visible_in_catalogue = $data['visible_in_catalogue'];
+        $this->dateCreated = date('Y-m-d H:i:s');
+
+    }
+
     public function getId()
     {
         return $this->id;
@@ -171,6 +220,121 @@ class ExperimentEngine
     }
 
     /**
+     * Set institution
+     *
+     * @param string $institution
+     * @return ExperimentEngine
+     */
+    public function setInstitution($institution)
+    {
+        $this->institution = $institution;
+
+        return $this;
+    }
+
+    /**
+     * Get institution
+     *
+     * @return string 
+     */
+    public function getInstitution()
+    {
+        return $this->institution;
+    }
+
+    /**
+     * Set address
+     *
+     * @param string $address
+     * @return ExperimentEngine
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * Get address
+     *
+     * @return string 
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * Set city
+     *
+     * @param string $city
+     * @return ExperimentEngine
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return string 
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * Set country
+     *
+     * @param string $country
+     * @return ExperimentEngine
+     */
+    public function setCountry($country)
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+
+    /**
+     * Get country
+     *
+     * @return string 
+     */
+    public function getCountry()
+    {
+        return $this->country;
+    }
+
+    /**
+     * Set geolocation
+     *
+     * @param string $geolocation
+     * @return ExperimentEngine
+     */
+    public function setGeolocation($geolocation)
+    {
+        $this->geolocation = $geolocation;
+
+        return $this;
+    }
+
+    /**
+     * Get geolocation
+     *
+     * @return string 
+     */
+    public function getGeolocation()
+    {
+        return $this->geolocation;
+    }
+
+    /**
      * Set description
      *
      * @param string $description
@@ -196,7 +360,7 @@ class ExperimentEngine
     /**
      * Set owner_id
      *
-     * @param string $ownerId
+     * @param integer $ownerId
      * @return ExperimentEngine
      */
     public function setOwnerId($ownerId)
@@ -209,7 +373,7 @@ class ExperimentEngine
     /**
      * Get owner_id
      *
-     * @return string 
+     * @return integer 
      */
     public function getOwnerId()
     {
@@ -237,6 +401,29 @@ class ExperimentEngine
     public function getActive()
     {
         return $this->active;
+    }
+
+    /**
+     * Set visible_in_catalogue
+     *
+     * @param boolean $visibleInCatalogue
+     * @return ExperimentEngine
+     */
+    public function setVisibleInCatalogue($visibleInCatalogue)
+    {
+        $this->visible_in_catalogue = $visibleInCatalogue;
+
+        return $this;
+    }
+
+    /**
+     * Get visible_in_catalogue
+     *
+     * @return boolean 
+     */
+    public function getVisibleInCatalogue()
+    {
+        return $this->visible_in_catalogue;
     }
 
     /**
