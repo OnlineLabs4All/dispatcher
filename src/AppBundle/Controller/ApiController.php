@@ -14,6 +14,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\ExperimentEngine;
 use \DateTime;
+use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use AppBundle\Model\Subscriber\LabInfo;
+
 
 /**
  * @Route("/apis/engine")
@@ -22,6 +25,7 @@ class ApiController extends Controller
 {
     /**
      * @Route("/", name="apiRoot")
+     *
      */
     public function indexAction()
     {
@@ -29,12 +33,26 @@ class ApiController extends Controller
     }
 
     /**
+     * @ApiDoc(
+     *  resource=true,
+     *  resourceDescription="Operations on Lab Servers",
+     *  description="Returns the current queue length for the subscribed Lab Server",
+     *  output ="AppBundle\Model\LabInfo",
+     *
+     * statusCodes={
+     *         200="Returned when successful",
+     *         401="Unauthorized"},
+     * parameters={
+     *      {"name"="Authorization", "dataType"="integer", "required"=true, "description"="category id"}
+     *  }
+     * )
+     *
      * @Route("/queueLength", name="eeQueueLength")
      * @Method({"GET"})
      */
     public function queueLengthAction()
     {
-        return new Response('Returns the Length of the queue!');
+        return new Response('Returns the Length of the queue! ');
     }
 
     /**
@@ -49,16 +67,48 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route("/labInfo", name="getLabInfo")
+     * @Route("/labInfo", name="lLabInfo")
+     * @Method({"GET"})
+     *
+     * @ApiDoc(
+     *  resource=true,
+     *  resourceDescription="Operations on Lab Servers",
+     *  description="Returns the current information and status of the lab server",
+     *  output ="AppBundle\Model\LabInfo",
+     *
+     *  statusCodes={
+     *         200="Returned when successful",
+     *         401="Unauthorized"},
+     * )
+     *
      */
-    public function labInfo()
+    public function labInfo(Request $request)
     {
-        return new Response('Returns the lab info');
+        $labInfo = new LabInfo();
+        $labInfo->name = 'Lab Server 1';
+        $labInfo->status = '1';
+        $labInfo->owner_institution = '';
+        $labInfo->description = 'This is the lab Info test';
+        $format = $request->get('_format');
+        $response = new response ($labInfo->serialize($format));
+        return $response;
+
     }
 
     /**
      * @Route("/experiment", name="dequeueExperiment")
      * @Method({"GET"})
+     *
+     *  @ApiDoc(
+     *  resource=true,
+     *  resourceDescription="Operations on Lab Servers",
+     *  description="Dequeues one submitted experiment by retrieving the experiment specification",
+     *  output ="AppBundle\Model\LabInfo",
+     *
+     *  statusCodes={
+     *         200="Returned when successful",
+     *         401="Unauthorized"},
+     * )
      */
     public function getExperiment()
     {
@@ -68,6 +118,17 @@ class ApiController extends Controller
     /**
      * @Route("/experiment", name="postExperimentResults")
      * @Method({"POST"})
+     *
+     *  @ApiDoc(
+     *  resource=true,
+     *  resourceDescription="Operations on Lab Servers",
+     *  description="Sends the experiment results to the server",
+     *  output ="AppBundle\Model\LabInfo",
+     *
+     *  statusCodes={
+     *         200="Returned when successful",
+     *         401="Unauthorized"},
+     * )
      */
     public function setExperiment()
     {

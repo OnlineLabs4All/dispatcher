@@ -9,3 +9,7 @@ app:
 
 logout:
    path: /logout
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /apidocs/engine
