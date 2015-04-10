@@ -53,6 +53,16 @@ class ExperimentEngine
     /**
      * @ORM\Column(type="string", length=100)
      */
+    protected $contact_name;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $contact_email;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
     protected $address; //address of the institution where the EE is hosted
 
     /**
@@ -66,7 +76,7 @@ class ExperimentEngine
     protected $country; //country of the institution where the EE is hosted
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $geolocation; //JSON representation of the experiment engine location
 
@@ -110,6 +120,8 @@ class ExperimentEngine
         $this->api_key = $data['api_key'];
         $this->name = $data['name'];
         $this->institution = $data['institution'];
+        $this->contact_name = $data['contact_name'];
+        $this->contact_email = $data['contact_email'];
         $this->address = $data['address'];
         $this->city = $data['city'];
         $this->country = $data['country'];
@@ -447,5 +459,51 @@ class ExperimentEngine
     public function getDateCreated()
     {
         return $this->dateCreated;
+    }
+
+    /**
+     * Set contact_name
+     *
+     * @param string $contactName
+     * @return ExperimentEngine
+     */
+    public function setContactName($contactName)
+    {
+        $this->contact_name = $contactName;
+
+        return $this;
+    }
+
+    /**
+     * Get contact_name
+     *
+     * @return string 
+     */
+    public function getContactName()
+    {
+        return $this->contact_name;
+    }
+
+    /**
+     * Set contact_email
+     *
+     * @param string $contactEmail
+     * @return ExperimentEngine
+     */
+    public function setContactEmail($contactEmail)
+    {
+        $this->contact_email = $contactEmail;
+
+        return $this;
+    }
+
+    /**
+     * Get contact_email
+     *
+     * @return string 
+     */
+    public function getContactEmail()
+    {
+        return $this->contact_email;
     }
 }
