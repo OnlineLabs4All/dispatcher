@@ -277,7 +277,18 @@
                 <a href="{{ path('adminHome') }}"><i class="fa fa-edit fa-fw"></i>Manage RLMSs</a>
             </li>
             <li>
-                <a href="{{ path('labservers') }}"><i class="fa fa-edit fa-fw"></i>Manage Lab Servers</a>
+                <a href="{{ path('labservers') }}"><i class="fa fa-wrench fa-fw"></i>Manage Lab Servers<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a href="{{ path('labservers') }}">Show All Lab Servers</a>
+                    </li>
+                    <ul class="nav nav-second-level">
+                       <li>
+                        <a href="{{ path('add_edit_labserver') }}">Create New</a>
+                       </li>
+                    </ul>
+
+                </ul>
             </li>
              <li>
                 <a href="{{ path('engines') }}"><i class="fa fa-wrench fa-fw"></i>Experiment Engines<span class="fa arrow"></span></a>
