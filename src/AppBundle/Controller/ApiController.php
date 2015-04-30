@@ -90,7 +90,7 @@ class ApiController extends Controller
         $labInfo->owner_institution = '';
         $labInfo->description = 'This is the lab Info test';
         $format = $request->get('_format');
-        $response = new response ($labInfo->serialize($format));
+        $response = new response($labInfo->serialize($format));
         return $response;
 
     }

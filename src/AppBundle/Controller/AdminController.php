@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\User;
 
+
 /**
  * @Route("/secured/admin")
  */
@@ -65,7 +66,8 @@ class AdminController extends Controller
     {
         $repository = $this->getDoctrine()
             ->getRepository('AppBundle:ExperimentEngine');
-        if ($engineId == null){
+        if ($engineId == null)
+        {
             $records = $repository->findAll();
 
             return $this->render('default/engineRecordsTableView.html.twig',
@@ -78,13 +80,12 @@ class AdminController extends Controller
         return $this->render('default/recordView.html.twig',
                              array('viewName'=> 'Subscriber Engine',
                                    'record' => (array)$record));
-        //var_dump($engine);
-
-        //return $this->render('default/expRecordsTableView.html.twig', array( 'jobRecords' => $jobRecords));
     }
 
     /**
+
      * @Route("/labservers/{labserverId}", name="labservers", defaults={"labserverId" = null})
+     * @Method({"GET"})
      */
     public function LabServersAction($labserverId)
     {
@@ -111,7 +112,7 @@ class AdminController extends Controller
 
     /**
      * @Route("/engine", name="add_edit_engine")
-     * * @Method({"GET", "POST"})
+     * @Method({"GET", "POST"})
      */
     public function EngineAction(Request $request)
     {
