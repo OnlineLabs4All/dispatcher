@@ -5,7 +5,7 @@
  * Date: 5/1/15
  * Time: 11:17 AM
  */
-// src/DispatcherBundle/Services/HelloService.php
+// src/DispatcherBundle/Services/BatchedLabServer.php
 namespace DispatcherBundle\Services;
 use Doctrine\ORM\EntityManager;
 
