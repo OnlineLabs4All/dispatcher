@@ -5,11 +5,13 @@ parameters:
 
 services:
 #    service_name:
-#        class: AppBundle\Directory\ClassName
+#        class: DispatcherBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
   #api_key_user_provider:
-  #        class: AppBundle\Security\ApiKeyProvider
+  #        class: DispatcherBundle\Security\ApiKeyProvider
   #apikey_authenticator:
-  #        class:     AppBundle\Security\ApiKeyAuthenticator
+  #        class:     DispatcherBundle\Security\ApiKeyAuthenticator
   #        arguments: ["@api_key_user_provider"]
-
+    BatchedLabServerApi:
+      class:  DispatcherBundle\Services\BatchedLabServer
+      arguments: [@doctrine.orm.entity_manager]
