@@ -6,8 +6,8 @@
  * Time: 3:20 PM
  */
 
-// src/AppBundle/Entity/ExperimentEngine.php
-namespace AppBundle\Entity;
+// src/DispatcherBundle/Entity/ExperimentEngine.php
+namespace DispatcherBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -111,28 +111,6 @@ class ExperimentEngine
      *
      * @return integer
      */
-
-    public function setAll($data)
-    {
-        $this->labserverId = $data['labserverId'];
-
-        $this->httpAuthentication = 'Basic '.base64_encode($data['username'].':'.$data['password']);
-        $this->api_key = $data['api_key'];
-        $this->name = $data['name'];
-        $this->institution = $data['institution'];
-        $this->contact_name = $data['contact_name'];
-        $this->contact_email = $data['contact_email'];
-        $this->address = $data['address'];
-        $this->city = $data['city'];
-        $this->country = $data['country'];
-        $this->geolocation = '';
-        $this->description = $data['description'];
-        $this->owner_id = 1;//change after user database is created
-        $this->active = $data['active'];
-        $this->visible_in_catalogue = $data['visible_in_catalogue'];
-        $this->dateCreated = date('Y-m-d H:i:s');
-
-    }
 
     public function getId()
     {
@@ -505,5 +483,49 @@ class ExperimentEngine
     public function getContactEmail()
     {
         return $this->contact_email;
+    }
+
+    public function setAll($data)
+    {
+        $this->labserverId = $data['labserverId'];
+
+        $this->httpAuthentication = 'Basic '.base64_encode($data['username'].':'.$data['password']);
+        $this->api_key = $data['api_key'];
+        $this->name = $data['name'];
+        $this->institution = $data['institution'];
+        $this->contact_name = $data['contact_name'];
+        $this->contact_email = $data['contact_email'];
+        $this->address = $data['address'];
+        $this->city = $data['city'];
+        $this->country = $data['country'];
+        $this->geolocation = '';
+        $this->description = $data['description'];
+        $this->owner_id = 1;//change after user database is created
+        $this->active = $data['active'];
+        $this->visible_in_catalogue = $data['visible_in_catalogue'];
+        $this->dateCreated = date('Y-m-d H:i:s');
+
+    }
+
+    public function updateAll($data)
+    {
+        $this->labserverId = $data['labserverId'];
+
+        $this->httpAuthentication = $data['basic_auth'];
+        $this->api_key = $data['api_key'];
+        $this->name = $data['name'];
+        $this->institution = $data['institution'];
+        $this->contact_name = $data['contact_name'];
+        $this->contact_email = $data['contact_email'];
+        $this->address = $data['address'];
+        $this->city = $data['city'];
+        $this->country = $data['country'];
+        $this->geolocation = '';
+        $this->description = $data['description'];
+        $this->owner_id = 1;//change after user database is created
+        $this->active = $data['active'];
+        $this->visible_in_catalogue = $data['visible_in_catalogue'];
+        $this->dateCreated = date('Y-m-d H:i:s');
+
     }
 }

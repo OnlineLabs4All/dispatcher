@@ -1,5 +1,5 @@
 app:
-    resource: @AppBundle/Controller/
+    resource: @DispatcherBundle/Controller/
     type:     annotation
 
 #api:
@@ -13,3 +13,4 @@ logout:
 NelmioApiDocBundle:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
     prefix:   /apidocs/engine
+

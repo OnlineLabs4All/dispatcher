@@ -6,8 +6,8 @@
  * Time: 3:42 PM
  */
 
-// src/AppBundle/Entity/User.php
-namespace AppBundle\Entity;
+// src/DispatcherBundle/Entity/User.php
+namespace DispatcherBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  *
  * @ORM\Table(name="site_users")
- * @ORM\Entity(repositoryClass="AppBundle\Entity\User")
+ * @ORM\Entity(repositoryClass="DispatcherBundle\Entity\User")
  */
 class User implements UserInterface, \Serializable
 {

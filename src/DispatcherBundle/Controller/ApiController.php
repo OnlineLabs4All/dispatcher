@@ -5,17 +5,17 @@
  * Date: 3/12/15
  * Time: 2:44 PM
  */
-namespace AppBundle\Controller;
+namespace DispatcherBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Entity\ExperimentEngine;
+use DispatcherBundle\Entity\ExperimentEngine;
 use \DateTime;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-use AppBundle\Model\Subscriber\LabInfo;
+use DispatcherBundle\Model\Subscriber\LabInfo;
 
 
 /**
@@ -37,7 +37,7 @@ class ApiController extends Controller
      *  resource=true,
      *  resourceDescription="Operations on Lab Servers",
      *  description="Returns the current queue length for the subscribed Lab Server",
-     *  output ="AppBundle\Model\LabInfo",
+     *  output ="DispatcherBundle\Model\LabInfo",
      *
      * statusCodes={
      *         200="Returned when successful",
@@ -74,7 +74,7 @@ class ApiController extends Controller
      *  resource=true,
      *  resourceDescription="Operations on Lab Servers",
      *  description="Returns the current information and status of the lab server",
-     *  output ="AppBundle\Model\LabInfo",
+     *  output ="DispatcherBundle\Model\LabInfo",
      *
      *  statusCodes={
      *         200="Returned when successful",
@@ -103,7 +103,7 @@ class ApiController extends Controller
      *  resource=true,
      *  resourceDescription="Operations on Lab Servers",
      *  description="Dequeues one submitted experiment by retrieving the experiment specification",
-     *  output ="AppBundle\Model\LabInfo",
+     *  output ="DispatcherBundle\Model\LabInfo",
      *
      *  statusCodes={
      *         200="Returned when successful",
@@ -123,7 +123,7 @@ class ApiController extends Controller
      *  resource=true,
      *  resourceDescription="Operations on Lab Servers",
      *  description="Sends the experiment results to the server",
-     *  output ="AppBundle\Model\LabInfo",
+     *  output ="DispatcherBundle\Model\LabInfo",
      *
      *  statusCodes={
      *         200="Returned when successful",
@@ -166,7 +166,7 @@ class ApiController extends Controller
     public function show()
     {
         $repository = $this->getDoctrine()
-            ->getRepository('AppBundle:ExperimentEngine');
+            ->getRepository('DispatcherBundle:ExperimentEngine');
         $engine = $repository->findOneBy(array('api_key' => 'fistEngineKey'));
 
         return new Response('Experiment Engine Id:'.$engine->getId());

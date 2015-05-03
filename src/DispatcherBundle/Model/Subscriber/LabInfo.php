@@ -6,7 +6,7 @@
  * Time: 12:36 PM
  */
 
-namespace AppBundle\Model\Subscriber;
+namespace DispatcherBundle\Model\Subscriber;
 
 use SimpleXMLElement;
 

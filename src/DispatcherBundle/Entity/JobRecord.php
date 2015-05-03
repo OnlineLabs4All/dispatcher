@@ -5,8 +5,8 @@
  * Date: 3/29/15
  * Time: 11:12 PM
  */
-// src/AppBundle/Entity/ExperimentEngine.php
-namespace AppBundle\Entity;
+// src/DispatcherBundle/Entity/ExperimentEngine.php
+namespace DispatcherBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

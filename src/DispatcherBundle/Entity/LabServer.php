@@ -6,8 +6,8 @@
  * Time: 3:20 PM
  */
 
-// src/AppBundle/Entity/LabServer.php
-namespace AppBundle\Entity;
+// src/DispatcherBundle/Entity/LabServer.php
+namespace DispatcherBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -90,6 +90,16 @@ class LabServer
      */
     protected $dateCreated;
 
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $passKey;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $labInfo;
+
 
     public function setAll($data)
     {
@@ -105,6 +115,8 @@ class LabServer
         $this->configuration = $data['configuration'];
         $this->public_sub = $data['public_sub'];
         $this->dateCreated = date('Y-m-d H:i:s');
+        $this->passKey = $data['passKey'];
+        $this->labInfo = $data['labInfo'];
 
     }
 
@@ -415,5 +427,51 @@ class LabServer
     public function getContactEmail()
     {
         return $this->contact_email;
+    }
+
+    /**
+     * Set passKey
+     *
+     * @param string $passKey
+     * @return LabServer
+     */
+    public function setPassKey($passKey)
+    {
+        $this->passKey = $passKey;
+
+        return $this;
+    }
+
+    /**
+     * Get passKey
+     *
+     * @return string 
+     */
+    public function getPassKey()
+    {
+        return $this->passKey;
+    }
+
+    /**
+     * Set labInfo
+     *
+     * @param string $labInfo
+     * @return LabServer
+     */
+    public function setLabInfo($labInfo)
+    {
+        $this->labInfo = $labInfo;
+
+        return $this;
+    }
+
+    /**
+     * Get labInfo
+     *
+     * @return string 
+     */
+    public function getLabInfo()
+    {
+        return $this->labInfo;
     }
 }

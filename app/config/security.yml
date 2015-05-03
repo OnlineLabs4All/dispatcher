@@ -14,7 +14,7 @@ security:
     providers:
 
         #main:
-        #    entity: { class: AppBundle:User, property: username }
+        #    entity: { class: DispatcherBundle:User, property: username }
 
         in_memory:
             memory:
@@ -53,7 +53,7 @@ security:
             #http_basic:
             #    realm: "Secured Demo Area"
         engines_api:
-           pattern: ^/apis
+           pattern: ^/apis/engine
            stateless: true
            #simple_preauth:
            #   authenticator: apikey_authenticator
@@ -81,4 +81,4 @@ security:
        # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
        - { path: ^/secured, roles: ROLE_ADMIN }
-       - { path: ^/apis, roles: ROLE_APIUSER }
+       - { path: ^/apis/engine, roles: ROLE_APIUSER }
