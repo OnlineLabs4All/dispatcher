@@ -17,42 +17,33 @@ use DispatcherBundle\Entity\ExperimentEngine;
 use \DateTime;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use DispatcherBundle\Model\Subscriber\LabInfo;
-use SoapServer;
+//use SoapServer;
 
 
 /**
- * @Route("/apis/isa/soap")
+ * @Route("/apis/isa")
  */
 class iLabApiController extends Controller
 {
-
+    //This route accepts POST method and instantiate the SOAP server
     /**
-     * @Route("/wsdl/", name="isa_batched_ls_wsdl")
+     * @Route("/{labServerId}/soap", name="isa_apiRoot")
+     * @Method({"POST"})
      *
      */
-    public function getWsdlAction()
-    {
-        //returns the wsdl
-        //echo "test";
-        $response = $this->render('wsdl/batchedLs.wsdl.twig');
-        $response->headers->set('Content-Type', 'application/xml');
-        return $response;
-    }
-
-    /**
-     * @Route("/", name="isa_apiRoot")
-     *
-     */
-    public function indexAction(Request $request)
+    public function batchedApiAction(Request $request, $labServerId)
     {
         //ini_set("soap.wsdl_cache_enabled", "0");
         //$wsdl_url = "http://".$request->getHttpHost()."/apis/isa/soap/wsdl/";
+        $wsdl_gen = $this->get('wsdlGenerator');
         $wsdl_url = "http://localhost/batchedLabServer.wsdl";
 
         $soapServer = new \SoapServer($wsdl_url);
         //$soapServer->setObject($this->get('BatchedLabServerApi'));
         //var_dump($soapServer);
-        $iLabBatched = $this->get('BatchedLabServerApi');
+        $iLabBatched = $this->get('iLabLabServer');
+        $iLabBatched->setLabServerId($labServerId);
+
         $soapServer->setObject($iLabBatched);
 
         $response = new Response();
@@ -64,30 +55,30 @@ class iLabApiController extends Controller
 
         return $response;
 
-        //$result = $iLabBatched->GetLabInfo();
-        //$result2 = $iLabBatched->GetLabStatus();
-
-        //var_dump($result2);
-
-        //$serviceObj = new BatchedLabServerApi();
-
-
-
-        //return $response;
-
-
-        //$wsdl_url = "http://".$request->getHttpHost()."/wsdl/batchedLabServer.wsdl";
-        //$server = new \SoapServer($wsdl_url);
-        //return new Response($result['GetLabInfoResult']);
-
-        //echo $result['GetLabInfoResult'];
-
-        //$response = $this->render('wsdl/batchedLs.wsdl.twig');
-        //$response->headers->set('Content-Type', 'application/xml');
-        //return $response;
-
     }
 
+    //This route accepts only GET method and returns the WSDL for an specific Lab Server
+    /**
+     * @Route("/{labServerId}/soap/", name="batched_ls_wsdl")
+     * @Method({"GET"})
+     *
+     */
+    public function indexAction(Request $request, $labServerId)
+    {
+
+        $wsdl_gen = $this->get('wsdlGenerator');
+        $wsdl_url = "http://".$request->getHttpHost()."/apis/isa/".$labServerId."/soap";
+        //returns the wsdl
+        //echo "test";
+        $response = $this->render('wsdl/batchedLs.wsdl.twig', array('wsdl_url'=> $wsdl_url));
+        //$response->headers->set('Content-Type', 'application/xml');
+        //return $response;
+        //$response = new Response($wsdl_gen->getBatchedLsWsdl());
+        $response->headers->set('Content-Type', 'application/xml');
+
+        return $response;
+
+    }
 
 
 }

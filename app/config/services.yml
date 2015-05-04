@@ -12,6 +12,9 @@ services:
   #apikey_authenticator:
   #        class:     DispatcherBundle\Security\ApiKeyAuthenticator
   #        arguments: ["@api_key_user_provider"]
-    BatchedLabServerApi:
-      class:  DispatcherBundle\Services\BatchedLabServer
+    iLabLabServer:
+      class:  DispatcherBundle\Services\iLabLabServer
       arguments: [@doctrine.orm.entity_manager]
+
+    wsdlGenerator:
+      class: DispatcherBundle\Services\WsdlGenerator
