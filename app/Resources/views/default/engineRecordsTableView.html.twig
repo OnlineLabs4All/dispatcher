@@ -7,7 +7,7 @@
         <h3 class="page-header">{{ viewName }}</h3>
     </div>
     <p>
-    <a href="{{ path('add_edit_engine') }}" class="btn btn-success">Create new Engine</a>
+    <a href="{{ path('add_engine') }}" class="btn btn-success">Create new Engine</a>
     </p>
 
     <table class="table table-striped table-bordered table-hover" id="dataTable">
@@ -26,7 +26,7 @@
         {%  for record in records %}
 
             <tr class="odd gradeX">
-                <td>{{ record.id }} (<a href="{{ path('engines') }}/{{ record.id }}">view/edit</a>)</td>
+                <td>{{ record.id }} (<a href="{{ path('engine') }}/{{ record.id }}">view/edit</a>)</td>
                 <td>{{ record.labserverId }}</td>
                 <td>{{ record.apiKey }}</td>
                 <td>{{ record.institution }}</td>
