@@ -14,6 +14,7 @@
         <tr>
 
             <th>ID</th>
+            <th>APIs</th>
             <th>Lab Server Name</th>
             <th>Owner Institution</th>
             <th>Active</th>
@@ -25,6 +26,7 @@
 
             <tr class="odd gradeX">
                 <td>{{ record.id }} (<a href="{{ path('labservers') }}/{{ record.id }}">view</a>)</td>
+                <td><a href="{{ path('apis_to_rlms', { 'labServerId' : record.id}) }}">view APIs</a></td>
                 <td>{{ record.name }}</td>
                 <td>{{ record.institution }}</td>
                 <td>{{ record.active }}</td>

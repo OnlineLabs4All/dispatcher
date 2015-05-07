@@ -31,12 +31,10 @@ class iLabApiController extends Controller
      * @Method({"POST"})
      *
      */
-    public function batchedApiAction(Request $request, $labServerId)
+    public function batchedApiAction($labServerId)
     {
         //ini_set("soap.wsdl_cache_enabled", "0");
-        //$wsdl_url = "http://".$request->getHttpHost()."/apis/isa/soap/wsdl/";
-        $wsdl_gen = $this->get('wsdlGenerator');
-        $wsdl_url = "http://localhost/batchedLabServer.wsdl";
+        $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/batchedLabServer.wsdl";
 
         $soapServer = new \SoapServer($wsdl_url);
         //$soapServer->setObject($this->get('BatchedLabServerApi'));
@@ -65,12 +63,11 @@ class iLabApiController extends Controller
      */
     public function indexAction(Request $request, $labServerId)
     {
-
-        $wsdl_gen = $this->get('wsdlGenerator');
-        $wsdl_url = "http://".$request->getHttpHost()."/apis/isa/".$labServerId."/soap";
+        //$wsdl_gen = $this->get('wsdlGenerator');
+        $service_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/soap";
         //returns the wsdl
         //echo "test";
-        $response = $this->render('wsdl/batchedLs.wsdl.twig', array('wsdl_url'=> $wsdl_url));
+        $response = $this->render('wsdl/batchedLs.wsdl.twig', array('service_url'=> $service_url));
         //$response->headers->set('Content-Type', 'application/xml');
         //return $response;
         //$response = new Response($wsdl_gen->getBatchedLsWsdl());
