@@ -8,6 +8,7 @@
 
 namespace DispatcherBundle\Controller;
 
+use Doctrine\DBAL\Platforms\Keywords\ReservedKeywordsValidator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -33,7 +34,7 @@ class iLabApiController extends Controller
      */
     public function batchedApiAction($labServerId)
     {
-        //ini_set("soap.wsdl_cache_enabled", "0");
+        ini_set("soap.wsdl_cache_enabled", "0");
         $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/batchedLabServer.wsdl";
 
         $soapServer = new \SoapServer($wsdl_url);
@@ -74,6 +75,29 @@ class iLabApiController extends Controller
         $response->headers->set('Content-Type', 'application/xml');
 
         return $response;
+
+    }
+
+
+    /**
+     * @Route("/test/{lsId}", name="test_route")
+     *
+     */
+    public function testAction(Request $request, $lsId)
+    {
+        $iLabBatched = $this->get('iLabLabServer');
+        $iLabBatched->setLabServerId($lsId);
+
+        $params = array('experimentID' => 1,
+            'experimentSpecification' => 'exp spec xml',
+            'userGroup' => 'test_group',
+            'priorityHint' => 0);
+
+        $soapresponse = $iLabBatched->Submit($params);
+
+        var_dump($soapresponse);
+
+        return new Response('hi');
 
     }
 

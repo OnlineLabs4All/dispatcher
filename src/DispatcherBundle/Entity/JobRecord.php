@@ -31,7 +31,7 @@ class JobRecord
     /**
      * @ORM\Column(type="string", length=100)
      */
-    protected $providerId;
+    protected $providerId; //ID of the provider RLMS
 
     /**
      * @ORM\Column(type="string", length=100)
@@ -49,26 +49,26 @@ class JobRecord
     protected $jobStatus; // (1)QUEUED , (2)IN PROGRESS, (3)COMPLETE, (4)CANCELLED
 
     /**
-     * @ORM\Column(type="string", length=35)
+     * @ORM\Column(type="string", length=35, nullable=true)
      */
     protected $submitTime; //Time when the job was submitted
 
     /**
-     * @ORM\Column(type="string", length=35)
+     * @ORM\Column(type="string", length=35, nullable=true)
      */
     protected $executionTime; //Time when execution starts, or when job is dequeued
     /**
-     * @ORM\Column(type="string", length=35)
+     * @ORM\Column(type="string", length=35, nullable=true)
      */
     protected $endTime; //Time when execution finishes or is cancelled
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     protected $execElapsed; //Time (sec) that the experiment needed to run
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     protected $jobElapsed;
 
@@ -83,37 +83,37 @@ class JobRecord
     protected $queueAtInsert; //Job position in the queue at insert time
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer",nullable=true)
      */
     protected $processingEngine; //Id of the engine (experiment engine) executing the experiment
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $expSpecification;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $expResults;
 
     /**
-     * @ORM\Column(type="string", length=2000)
+     * @ORM\Column(type="string", length=2000, nullable=true)
      */
     protected $errorReport;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $errorOccurred;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $downloaded;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     protected $opaqueData; //Optional field, used to transfer additional information if necessary.
 

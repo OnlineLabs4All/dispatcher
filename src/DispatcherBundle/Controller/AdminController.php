@@ -246,18 +246,8 @@ class AdminController extends Controller
                                   'guid' => $labServer->getGuid(),
                                   'passkey' => $labServer->getPassKey(),
                                   'info' => 'Implements the iLab Shared Architecture batched lab server API. Use the service endpoint, GUID and passKey to install the Lab Server process agent in your iLab Service Broker',
-                                  'documentation' => 'Not Available'),
-                            array('name' => 'ISA Batched Lab Server API (SOAP)',
-                                  'description' => $wsdl_url,
-                                   'endpoint' => $service_url,
-                                   'guid' => $labServer->getGuid(),
-                                   'passkey' => $labServer->getPassKey(),
-                                   'info' => 'Implements the iLab Shared Architecture batched lab server API. Use the service endpoint, GUID and passKey to install the Lab Server process agent in your iLab Service Broker',
                                   'documentation' => 'Not Available')
-
             )
-
-
         ));
     }
 

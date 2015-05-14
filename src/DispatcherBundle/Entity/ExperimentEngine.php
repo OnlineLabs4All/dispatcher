@@ -525,7 +525,7 @@ class ExperimentEngine
         $this->owner_id = 1;//change after user database is created
         $this->active = $data['active'];
         $this->visible_in_catalogue = $data['visible_in_catalogue'];
-        $this->dateCreated = date('Y-m-d H:i:s');
+        //$this->dateCreated = date('Y-m-d H:i:s');
 
     }
 }
