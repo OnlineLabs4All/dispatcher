@@ -75,7 +75,7 @@ class iLabLabServer
         $jobRecord->setEstExecTime(60); //replace with real estimation
         $jobRecord->setQueueAtInsert(1);//replace with real queue length
         $jobRecord->setExpSpecification($params->experimentSpecification);
-        $jobRecord->setProviderId('testRLMS'); //ID of the RLMS requesting execution
+        $jobRecord->setProviderId($this->rlmsGuid); //ID of the RLMS requesting execution
         $jobRecord->setDownloaded(false);
         $jobRecord->setErrorOccurred(false);
         $jobRecord->setOpaqueData(json_encode(array('userGroup' => $params->userGroup)));
