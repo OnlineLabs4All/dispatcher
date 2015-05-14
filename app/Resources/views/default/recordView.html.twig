@@ -17,8 +17,13 @@
         <tbody>
         {% for key, value in record %}
             <tr class="odd gradeX">
-                <td>{{ key }}</td>
+            {% if key == "expSpecification" %}
+                <td>This is it: {{ key }}</td>
                 <td>{{ value }}</td>
+            {% else %}
+                <td>{{ key }}</td>
+                <td><code>{{ value }}</code></td>
+            {% endif %}
 
             </tr>
         {% endfor %}
