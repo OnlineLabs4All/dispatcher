@@ -52,7 +52,7 @@ class iLabLabServer
 
         $response = array('GetLabStatusResult' => array(
                                                   'online' => $this->labServer->getActive(),
-                                                  'labStatusMessage' => ""));
+                                                  'labStatusMessage' => "1:Powered down"));
         return $response;
     }
 
@@ -85,7 +85,7 @@ class iLabLabServer
 
         //Create experiment submission report
         $response = array('SubmitResult' => array('vReport' => array('accepted' => true,
-                                                                     'warningMessages' => array('string' =>'', 'string' =>''),
+                                                                     'warningMessages' => array('string' =>''),
                                                                      'errorMessage' => '',
                                                                      'estRuntime' => 60),
                                                   'labExperimentID' => $jobRecord->getExpId(),
