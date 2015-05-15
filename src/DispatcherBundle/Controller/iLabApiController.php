@@ -80,24 +80,32 @@ class iLabApiController extends Controller
 
 
     /**
-     * @Route("/test/{lsId}", name="test_route")
+     * @Route("/test/{experimentID}", name="test_route")
      *
      */
-    public function testAction(Request $request, $lsId)
+    public function testAction(Request $request, $experimentID)
     {
-        $iLabBatched = $this->get('iLabLabServer');
-        $iLabBatched->setLabServerId($lsId);
+        $repository = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:JobRecord');
 
-        $params = array('experimentID' => 1,
-            'experimentSpecification' => 'exp spec xml',
-            'userGroup' => 'test_group',
-            'priorityHint' => 0);
+        $jobRecord =  $repository->findOneBy(array('rlmsAssignedId' => $experimentID, 'providerId' => '9954C5B79AEB432A94DE29E6EE44EB69'));
 
-        $soapresponse = $iLabBatched->Submit($params);
 
-        var_dump($soapresponse);
+        $statusCode = $jobRecord->getJobStatus();
+        $effectiveQueueLength = 2;
+        $estWait = 32;
+        $estRuntime = 15;
+        $estRemainingRuntime = 54;
+        $minTimetoLive= 7200;
 
-        return new Response('hi');
+        $response = array('GetExperimentStatusResult' => array(
+            'statusReport' => array('statusCode' =>  $statusCode,
+                'wait' => array('effectiveQueueLength' => $effectiveQueueLength,
+                    'estWait' => $estWait),
+                'estRuntime' => $estRuntime,
+                'estRemainingRuntime' => $estRemainingRuntime),
+            'minTimetoLive' => $minTimetoLive));
+        return new Response($statusCode);
 
     }
 

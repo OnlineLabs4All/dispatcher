@@ -9,6 +9,7 @@
 namespace DispatcherBundle\Services;
 use DispatcherBundle\Entity\JobRecord;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Validator\Constraints\Null;
 
 
 class iLabLabServer
@@ -53,6 +54,7 @@ class iLabLabServer
         $response = array('GetLabStatusResult' => array(
                                                   'online' => $this->labServer->getActive(),
                                                   'labStatusMessage' => "1:Powered down"));
+
         return $response;
     }
 
@@ -88,13 +90,77 @@ class iLabLabServer
                                                                      'warningMessages' => array('string' =>''),
                                                                      'errorMessage' => '',
                                                                      'estRuntime' => 60),
-                                                  'labExperimentID' => $jobRecord->getExpId(),
+                                                  'experimentID' => $jobRecord->getExpId(),
                                                   'minTimeToLive' => 7200,
                                                   'wait' => array('effectiveQueueLength' => 1,
                                                                   'estWait' => 120)));
         return $response;
-
     }
 
+    public function GetExperimentStatus($params){
+
+        $jobRecord = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord')
+            ->findOneBy(array('rlmsAssignedId' => $params->experimentID, 'providerId' => $this->rlmsGuid));
+
+            $statusCode = $jobRecord->getJobStatus();
+            $effectiveQueueLength = 2;
+            $estWait = 32;
+            $estRuntime = 15;
+            $estRemainingRuntime = 54;
+            $minTimetoLive= 7200;
+
+            $response = array('GetExperimentStatusResult' => array(
+                'statusReport' => array('statusCode' =>  $statusCode,
+                                        'wait' => array('effectiveQueueLength' => $effectiveQueueLength,
+                                                        'estWait' => $estWait),
+                                        'estRuntime' => $estRuntime,
+                                        'estRemainingRuntime' => $estRemainingRuntime),
+                'minTimetoLive' => $minTimetoLive));
+            return $response;
+    }
+
+    public function RetrieveResult($params){
+
+        $jobRecord = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord')
+            ->findOneBy(array('rlmsAssignedId' => $params->experimentID, 'providerId' => $this->rlmsGuid));
+
+        $statusCode = $jobRecord->getJobStatus();
+
+        if ($statusCode != 3){
+            $experimentResults = $jobRecord->getExpResults();
+            $xmlResultExtension = Null;
+            $xmlBlobExtension = Null;
+            $warningMessages = Null;
+            $errorMessage = Null;
+            $errorMessage = 'Results not available. Experiment is not completed or has been cancelled.';
+        }
+        else{
+            $opaque = json_decode($jobRecord->getOpaqueData());
+            $experimentResults = $jobRecord->getExpResults();
+            $xmlResultExtension = 'UserGroup='.$opaque['userGroup'].' ,
+                                   SubmitTime='.$jobRecord->getSubmitTime().',
+                                   ExecutionTime='.$jobRecord->getExecutionTime().',
+                                   EndTime='.$jobRecord->getExecutionTime().',
+                                   ElapsedExecutionTime='.$jobRecord->getExecElapsed().',
+                                   ElapsedJobTime='.$jobRecord->getJobElapsed();
+            $xmlBlobExtension = Null;
+            $warningMessages = Null;
+            $errorMessage = Null;
+        }
+
+        $response = array('RetrieveResultResult' => array('statusCode' => $statusCode,
+                                                          'experimentResults' => $experimentResults,
+                                                          'xmlResultExtension' => $xmlResultExtension,
+                                                          'xmlBlobExtension' => $xmlBlobExtension,
+                                                          'warningMessages' => $warningMessages,
+                                                          'errorMessage' => $errorMessage)
+
+                         );
+        return $response;
+    }
 
 }

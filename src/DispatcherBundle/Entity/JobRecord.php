@@ -34,7 +34,7 @@ class JobRecord
     protected $providerId; //ID of the provider RLMS
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="integer")
      */
     protected $rlmsAssignedId;
 
@@ -179,7 +179,7 @@ class JobRecord
     /**
      * Set rlmsAssignedId
      *
-     * @param string $rlmsAssignedId
+     * @param integer $rlmsAssignedId
      * @return JobRecord
      */
     public function setRlmsAssignedId($rlmsAssignedId)
@@ -192,7 +192,7 @@ class JobRecord
     /**
      * Get rlmsAssignedId
      *
-     * @return string 
+     * @return integer
      */
     public function getRlmsAssignedId()
     {

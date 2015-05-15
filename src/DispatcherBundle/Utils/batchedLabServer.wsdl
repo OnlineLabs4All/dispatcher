@@ -162,7 +162,7 @@
             <s:complexType name="SubmissionReport">
                 <s:sequence>
                     <s:element minOccurs="0" maxOccurs="1" name="vReport" type="tns:ValidationReport" />
-                    <s:element minOccurs="1" maxOccurs="1" name="labExperimentID" type="s:int" />
+                    <s:element minOccurs="1" maxOccurs="1" name="experimentID" type="s:int" />
                     <s:element minOccurs="1" maxOccurs="1" name="minTimeToLive" type="s:double" />
                     <s:element minOccurs="0" maxOccurs="1" name="wait" type="tns:WaitEstimate" />
                 </s:sequence>
