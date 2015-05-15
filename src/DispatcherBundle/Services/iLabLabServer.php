@@ -141,8 +141,7 @@ class iLabLabServer
         else{
             $opaque = json_decode($jobRecord->getOpaqueData());
             $experimentResults = $jobRecord->getExpResults();
-            $xmlResultExtension = 'UserGroup='.$opaque['userGroup'].' ,
-                                   SubmitTime='.$jobRecord->getSubmitTime().',
+            $xmlResultExtension = 'SubmitTime='.$jobRecord->getSubmitTime().',
                                    ExecutionTime='.$jobRecord->getExecutionTime().',
                                    EndTime='.$jobRecord->getExecutionTime().',
                                    ElapsedExecutionTime='.$jobRecord->getExecElapsed().',

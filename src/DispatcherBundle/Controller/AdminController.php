@@ -78,11 +78,11 @@ class AdminController extends Controller
         $repository = $this->getDoctrine()
             ->getRepository('DispatcherBundle:ExperimentEngine');
         $engine = $repository->findOneBy(array('id' => $engineId));
-        $em = $this->getDoctrine()->getManager();
         $form = $this->buildEditEngineForm($engine);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
             $data =$form->getData();
             $engine->updateAll($data);
             $em->flush();
@@ -101,11 +101,7 @@ class AdminController extends Controller
      */
     public function NewEngineAction(Request $request)
     {
-
         $form =  $this->createEngineForm();
-        $labServers = $this->getLabServers();
-        //$form = $this->createFormBuilder();
-
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -119,71 +115,56 @@ class AdminController extends Controller
             $em->flush();
             return $this->redirectToRoute('engines');
         }
-
         return $this->render('default/addEditResource.html.twig', array(
             'viewName'=>'Register a new Subscriber Engine',
-            'form' => $form->createView(),
+            'form' => $form->createView()
         ));
     }
-
     /**
-     * @Route("/labservers/{labserverId}", name="labservers", defaults={"labserverId" = null})
+     * @Route("/labservers/{labserverId}", name="labserver")
+     * @Method({"GET", "POST"})
+     */
+    public function LabServerAction(Request $request, $labserverId)
+    {
+       $labServer = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findOneBy(array('id' => $labserverId));
+        $form = $this->buildEditLabServerForm($labServer);
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $data =$form->getData();
+            $labServer->updateAll($data, 1);
+            $em->flush();
+            return $this->redirectToRoute('labservers');
+        }
+
+        return $this->render('default/addEditResource.html.twig', array(
+            'viewName'=>'View/Edit "'.$labServer->getName().'"',
+            'form' => $form->createView()));
+    }
+    /**
+     * @Route("/labservers", name="labservers")
      * @Method({"GET"})
      */
-    public function LabServersAction($labserverId)
+    public function LabServersAction()
     {
-        $repository = $this->getDoctrine()
-            ->getRepository('DispatcherBundle:LabServer');
-        if ($labserverId == null){
-            $records = $repository->findAll();
-
-            return $this->render('default/labServersRecordsTableView.html.twig',
-                                 array( 'viewName'=> 'Registered Lab Servers',
-                                        'records' => (array)$records));
-        }
-        $record = $repository->findOneBy(array('id' => $labserverId));
-
-        //var_dump((array)$record);
-        return $this->render('default/recordView.html.twig',
-                             array('viewName'=> 'Lab Server',
-                                   'record' => (array)$record));
-        //var_dump($engine);
-        //return $this->render('default/expRecordsTableView.html.twig', array( 'jobRecords' => $jobRecords));
+        $repository = $this->getDoctrine()->getRepository('DispatcherBundle:LabServer');
+        $labServers = $repository->findAll();
+        return $this->render('default/labServersRecordsTableView.html.twig',
+            array( 'viewName'=> 'Registered Lab Servers',
+                'records' => (array)$labServers));
     }
 
     /**
      * @Route("/labserver", name="add_edit_labserver")
      * @Method({"GET", "POST"})
      */
-    public function labServerAction(Request $request)
+    public function saveLabServerAction(Request $request)
     {
-        $gen_guid = md5(microtime().rand());
-        $gen_passKey = md5(microtime().rand());
-
-        $form = $this->createFormBuilder()
-            ->add('name', 'text', array('label' => 'Lab Server name', 'required' => true, 'attr'=>array('help'=>'text help')))
-            ->add('description', 'textarea', array('label' => 'Description', 'required' => true))
-            ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'required' => true))
-            ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'required' => true))
-            ->add('institution', 'text', array('label' => 'Institution', 'required' => true))
-            ->add('Guid', 'text', array('label' => 'Guid', 'data'=> $gen_guid, 'required' => true))
-            ->add('passKey', 'text', array('label' => 'Authentication PassKey ', 'data'=> $gen_passKey, 'required' => true))
-            ->add('active', 'choice',
-                  array('label' => 'Active',
-                        'required' => true,
-                        'choices' => array('1'=>'Lab Server is active', '0'=>'Lab Server is NOT active')))
-            ->add('visible_in_catalogue', 'choice',
-                   array('label' => 'Visible in the Catalogue',
-                         'required' => true,
-                         'choices' => array('1'=>'Lab Server is visible', '0'=>'Lab Server is NOT visible')))
-
-            ->add('configuration', 'textarea', array('label' => 'Configuration', 'required' => false))
-            ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true))
-            ->add('public_sub','choice', array('label' => 'Permission for subscribers',
-                'choices' => array('1'=>'Public (anyone can subscribe)', '0'=>'Private (only owner can subscribe)')))
-            ->add('submit','submit', array('label' => 'Add New Lab Server'))
-            ->getForm();
-
+        $form = $this->buildCreateLabServerForm();
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -200,30 +181,18 @@ class AdminController extends Controller
 
         return $this->render('default/addEditResource.html.twig', array(
             'viewName'=>'Register a new Lab Server',
-            'form' => $form->createView(),
-        ));
-
+            'form' => $form->createView()));
     }
-
 
     /**
      * @Route("/createUser", name="createUser")
      */
     public function createUserAction()
     {
-        $user = new User();
-        $user->setUsername('dgzutin2');
-        $user->setPassword('pass');
-        $user->setEmail('dgzutin@gmail.org');
-        $user->setIsActive(true);
+        $user = $this->getUser();
+        var_dump($this->getUser());
 
-        $em = $this->getDoctrine()->getManager();
-
-        $em->persist($user);
-        $em->flush();
-
-        return new Response('User Created!');
-
+        return new Response($user->getUserName());
     }
     /**
      * @Route("/apis/{labServerId}", name="apis_to_rlms")
@@ -261,7 +230,7 @@ class AdminController extends Controller
         if ($repository != null){
 
              foreach ($repository as $labServer){
-                    $labServers[(string)$labServer->getId()] = $labServer->getName().' (ID = '.$labServer->getId().')';
+                    $labServers[(string)$labServer->getId()] = $labServer->getName().' (ID: '.$labServer->getId().')';
                  }
         return $labServers;
         }
@@ -331,9 +300,67 @@ class AdminController extends Controller
                     'data'=> $engine->getActive() ))
                 ->add('visible_in_catalogue', 'checkbox', array('label' => 'Visible in the Catalogue',
                     'required' => false, 'data'=> $engine->getVisibleInCatalogue()))
-                ->add('submit','submit', array('label' => 'Save', 'attr' => array('class'=>'btn btn-success')))
+                ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
                 ->getForm();
         return $form;
+    }
+
+    private function buildCreateLabServerForm(){
+        $gen_guid = md5(microtime().rand());
+        $gen_passKey = md5(microtime().rand());
+        $form = $this->createFormBuilder()
+            ->add('name', 'text', array('label' => 'Lab Server name', 'required' => true, 'attr'=>array('help'=>'text help')))
+            ->add('description', 'textarea', array('label' => 'Description', 'required' => false))
+            ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'required' => true))
+            ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'required' => true))
+            ->add('institution', 'text', array('label' => 'Institution', 'required' => true))
+            ->add('Guid', 'text', array('label' => 'Guid', 'data'=> $gen_guid, 'required' => true))
+            ->add('passKey', 'text', array('label' => 'Authentication PassKey ', 'data'=> $gen_passKey, 'required' => true))
+            ->add('active', 'choice',
+                array('label' => 'Active',
+                    'required' => true,
+                    'choices' => array('1'=>'Lab Server is active', '0'=>'Lab Server is NOT active')))
+            ->add('visible_in_catalogue', 'choice',
+                array('label' => 'Visible in the Catalogue',
+                    'required' => true,
+                    'choices' => array('1'=>'Lab Server is visible', '0'=>'Lab Server is NOT visible')))
+
+            ->add('configuration', 'textarea', array('label' => 'Configuration', 'required' => false))
+            ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true))
+            ->add('public_sub','choice', array('label' => 'Permission for subscribers',
+                'choices' => array('1'=>'Public (anyone can subscribe)', '0'=>'Private (only owner can subscribe)')))
+            ->add('submit','submit', array('label' => 'Add New Lab Server','attr' => array('class'=>'btn btn-success')))
+            ->getForm();
+
+       return $form;
+    }
+
+    private function buildEditLabServerForm($labServer){
+
+        $form = $this->createFormBuilder()
+            ->add('id', 'text', array('label' => 'Lab Server ID', 'required' => true, 'attr' => array('value'=>$labServer->getId(), 'readonly' => true)))
+            ->add('name', 'text', array('label' => 'Lab Server name', 'required' => true, 'attr' => array('value'=>$labServer->getName(), 'readonly' => false)))
+            ->add('description', 'textarea', array('label' => 'Description', 'required' => false, 'data'=> $labServer->getDescription(), 'attr' => array('readonly'=> false)))
+            ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'required' => true, 'attr' => array('value'=>$labServer->getContactName(), 'readonly' => false)))
+            ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'required' => true, 'attr' => array('value'=>$labServer->getContactEmail(), 'readonly' => false)))
+            ->add('institution', 'text', array('label' => 'Institution', 'required' => true,  'attr' => array('value'=>$labServer->getInstitution(), 'readonly' => false)))
+            ->add('Guid', 'text', array('label' => 'Guid', 'required' => true,  'attr' => array('value'=>$labServer->getGuid(), 'readonly' => true)))
+            ->add('passKey', 'text', array('label' => 'Authentication PassKey ', 'required' => true, 'attr' => array('value'=>$labServer->getPasskey(), 'readonly' => true)))
+            ->add('configuration', 'textarea', array('label' => 'Configuration', 'required' => false, 'data'=>$labServer->getConfiguration()))
+            ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true,  'attr' => array('value'=>$labServer->getLabInfo(), 'readonly' => false)))
+            ->add('public_sub','choice', array('label' => 'Permission for subscribers',
+                                               'data' => $labServer->getPublicSub(),
+                'choices' => array('1'=>'Public (anyone can subscribe)', '0'=>'Private (only owner can subscribe)')))
+            ->add('active', 'checkbox', array('label' => 'Active',
+                'required' => false,
+                'data'=> $labServer->getActive() ))
+            ->add('visible_in_catalogue', 'checkbox', array('label' => 'Visible in the Catalogue',
+                  'required' => false, 'data'=> $labServer->getVisibleInCatalogue()))
+            ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+            ->getForm();
+
+        return $form;
+
 
     }
 

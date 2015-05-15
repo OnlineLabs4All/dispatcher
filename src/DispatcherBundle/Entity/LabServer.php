@@ -120,6 +120,22 @@ class LabServer
 
     }
 
+    public function updateAll($data, $ownerId)
+    {
+        $this->name = $data['name'];
+        $this->institution = $data['institution'];
+        $this->contact_name = $data['contact_name'];
+        $this->contact_email = $data['contact_email'];
+        $this->description = $data['description'];
+        $this->owner_id = $ownerId;//change after user database is created
+        $this->active = $data['active'];
+        $this->visible_in_catalogue = $data['visible_in_catalogue'];
+        $this->configuration = $data['configuration'];
+        $this->public_sub = $data['public_sub'];
+        $this->labInfo = $data['labInfo'];
+
+    }
+
     /**
      * Get id
      *

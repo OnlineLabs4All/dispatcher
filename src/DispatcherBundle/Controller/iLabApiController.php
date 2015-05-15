@@ -98,6 +98,10 @@ class iLabApiController extends Controller
         $estRemainingRuntime = 54;
         $minTimetoLive= 7200;
 
+        $opaque = json_decode($jobRecord->getOpaqueData());
+
+
+
         $response = array('GetExperimentStatusResult' => array(
             'statusReport' => array('statusCode' =>  $statusCode,
                 'wait' => array('effectiveQueueLength' => $effectiveQueueLength,
@@ -105,7 +109,8 @@ class iLabApiController extends Controller
                 'estRuntime' => $estRuntime,
                 'estRemainingRuntime' => $estRemainingRuntime),
             'minTimetoLive' => $minTimetoLive));
-        return new Response($statusCode);
+
+        return new Response($opaque->userGroup);
 
     }
 
