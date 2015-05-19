@@ -2,11 +2,12 @@
 
 {% block mainPanel %}
 
-    <div class="col-lg-12">
-        <h3 class="page-header">{{ viewName }}</h3>
-    </div>
 
-        <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+    <br/>
+        <h3 class="page-header">{{ viewName }}</h3>
+
+    <div class="table-responsive">
+        <table class="table table-hover" id="experimentRecord">
         <thead>
         <tr>
             
@@ -15,21 +16,24 @@
             <th>Status</th>
             <th>processing Engine</th>
             <th>Lab Server ID</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
     {%  for record in records %}
 
         <tr class="odd gradeX">
-            <td>{{ record.expID }} (<a href="{{ path('expRecords') }}/{{ record.expID }}">view</a>)</td>
+            <td>{{ record.expID }}</td>
             <td>{{ record.providerId }}</td>
             <td>{{ record.jobStatus }}</td>
             <td class="center">{{ record.processingEngine }}</td>
             <td class="center">{{ record.labServerId }}</td>
+            <td><a href="{{ path('expRecords') }}/{{ record.expID }}">view</a></td>
         </tr>
        {% endfor %}
 
         </tbody>
         </table>
+    </div>
 
 {% endblock %}
