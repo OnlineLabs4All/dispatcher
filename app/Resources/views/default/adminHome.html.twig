@@ -2,83 +2,118 @@
 
 {% block mainPanel %}
 
-<div class="row">
-    <div class="col-lg-12">
-        <h1 class="page-header">Seid gegrüßt Freunde!</h1>
-    </div>
-    <!-- /.col-lg-12 -->
-</div>
+    <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
-    <!-- /.row -->
-    <div class="row">
-        <div class="col-lg-3 col-md-6">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-comments fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">26</div>
-                            <div>Registered Online Labs!</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#">
-                    <div class="panel-footer">
-                        <span class="pull-left">View Details</span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="panel panel-green">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-tasks fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">35</div>
-                            <div>Completed Experiments!</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#">
-                    <div class="panel-footer">
-                        <span class="pull-left">View Details</span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
+    <script>
+        var fhk_villach=new google.maps.LatLng(46.611471, 13.883842);
 
-        <div class="col-lg-3 col-md-6">
-            <div class="panel panel-red">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-support fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">3</div>
-                            <div>Englines Registered!</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#">
-                    <div class="panel-footer">
-                        <span class="pull-left">View Details</span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
+        var marker;
+
+        var locations = [
+            ['Fachhochschule Kärnten', 46.611471, 13.883842, 4],
+            ['HTL Villach', 46.602524, 13.843805, 5],
+            ['HTL Wolfsgerg', 46.830085, 14.851238, 3],
+            ['HTL Mössingerstraße', 46.610345, 14.305124, 2]
+        ];
+
+
+        function initialize()
+        {
+            var mapProp = {
+                center:fhk_villach,
+                zoom:5,
+                mapTypeId:google.maps.MapTypeId.ROADMAP
+            };
+
+            var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+            map.setZoom(11);
+            var infowindow = new google.maps.InfoWindow();
+
+            var marker, i;
+            var markers = new Array();
+
+            for (i = 0; i < locations.length; i++) {
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                    map: map,
+                    animation: google.maps.Animation.DROP
+                });
+
+                markers.push(marker);
+
+                google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                    return function() {
+                        infowindow.setContent(locations[i][0]);
+                        infowindow.open(map, marker);
+                    }
+                })(marker, i));
+            }
+
+            function AutoCenter() {
+                //  Create a new viewpoint bound
+                var bounds = new google.maps.LatLngBounds();
+                //  Go through each...
+                $.each(markers, function (index, marker) {
+                    bounds.extend(marker.position);
+                });
+                //  Fit these bounds to the map
+                map.fitBounds(bounds);
+            }
+            AutoCenter();
+
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+
+<br/>
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-pills">
+        <li class="active"><a href="#welcome" data-toggle="tab">Welcome</a>
+        </li>
+        <li><a href="#getstarted" data-toggle="tab">Get Started</a>
+        </li>
+        <li><a href="#documentation" data-toggle="tab">Documentation</a>
+        </li>
+        <li><a href="#contacts" data-toggle="tab">Contacts</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane fade in active" id="welcome">
+            <br/>
+
+
+            <div class="col-lg-12">
+                <h4>Welcome to the Experiment Dispatcher</h4>
+                <p>
+                    Welcome to the Experiment Dispatcher administration interface. The Experiment Dispatcher is a platform designed to deliver services to online laboratory developers in a <em>"lab infrastructure as a service paradigm"</em>.
+                    It provides APIs to connect with Remote Laboratory Management Systems (RLMS), like the <a target="_blank" href="https://wikis.mit.edu/confluence/display/ILAB2/iLab+Downloads">iLab Shared Architecture</a> and to convey messages to experiment engines.
+                </p>
             </div>
+
+
+        </div>
+        <div class="tab-pane fade" id="getstarted">
+            <h4>Get Started with the Experiment Dispatcher!</h4>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+        <div class="tab-pane fade" id="documentation">
+            <h4>Messages Tab</h4>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+        </div>
+        <div class="tab-pane fade" id="contacts">
+            <h4>Contact</h4>
+
+
         </div>
     </div>
+
+
+
+
+
     <!-- /.row -->
 
 {% endblock %}

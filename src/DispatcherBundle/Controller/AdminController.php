@@ -220,6 +220,14 @@ class AdminController extends Controller
         ));
     }
 
+    /**
+     * @Route("/enginesLocation", name="engines_location")
+     */
+    public function enginesLocationAction()
+    {
+        return $this->render('default/enginesLocation.html.twig');
+    }
+
     //internal controller methods
 
     private function getLabServers()
