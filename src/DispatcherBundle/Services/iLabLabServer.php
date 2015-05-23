@@ -41,7 +41,6 @@ class iLabLabServer
             ->em
             ->getRepository('DispatcherBundle:LabServer')
             ->findOneBy(array('id' => $labServerId));
-
     }
 
     public function GetLabInfo(){
@@ -54,7 +53,6 @@ class iLabLabServer
         $response = array('GetLabStatusResult' => array(
                                                   'online' => $this->labServer->getActive(),
                                                   'labStatusMessage' => "1:Powered down"));
-
         return $response;
     }
 
@@ -68,14 +66,30 @@ class iLabLabServer
 
         $jobRecord = new JobRecord();
 
+        $repository = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord');
+
+        //get the length of the queue considering the job priority
+        $queueLength = $repository->createQueryBuilder('job')
+            ->where('job.jobStatus = :jobStatus')
+            ->andWhere('job.labServerId = :labServerId')
+            ->andWhere('job.priority >= :priority')
+            ->setParameter('jobStatus', 1) //
+            ->setParameter('labServerId',$this->labServer->getId())
+            ->setParameter('priority', $params->priorityHint)
+            ->select('COUNT(job)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
         $jobRecord->setLabServerId($this->labServer->getId());
-        $jobRecord->setProviderId($this->labServer->getId());
+        $jobRecord->setProviderId($this->rlmsGuid);
         $jobRecord->setRlmsAssignedId($params->experimentID);
         $jobRecord->setPriority($params->priorityHint);
         $jobRecord->setJobStatus(1); //Status 1(QUEUED)
         $jobRecord->setSubmitTime(date('Y-m-d H:i:s'));
         $jobRecord->setEstExecTime(60); //replace with real estimation
-        $jobRecord->setQueueAtInsert(1);//replace with real queue length
+        $jobRecord->setQueueAtInsert($queueLength);//replace with real queue length
         $jobRecord->setExpSpecification($params->experimentSpecification);
         $jobRecord->setProviderId($this->rlmsGuid); //ID of the RLMS requesting execution
         $jobRecord->setDownloaded(false);
@@ -86,14 +100,22 @@ class iLabLabServer
         $this->em->flush();
 
         //Create experiment submission report
-        $response = array('SubmitResult' => array('vReport' => array('accepted' => true,
-                                                                     'warningMessages' => array('string' =>''),
-                                                                     'errorMessage' => '',
-                                                                     'estRuntime' => 60),
-                                                  'experimentID' => $jobRecord->getExpId(),
-                                                  'minTimeToLive' => 7200,
-                                                  'wait' => array('effectiveQueueLength' => 1,
-                                                                  'estWait' => 120)));
+        $accepted = true;
+        $warningMessage =  '';
+        $errorMessage = '';
+        $estRuntime = $jobRecord->getEstExecTime();
+        $experimentID = $jobRecord->getExpId();
+        $minTimeToLive = 7200;
+        $estWait = $queueLength * $jobRecord->getEstExecTime();
+
+        $response = array('SubmitResult' => array('vReport' => array('accepted' => $accepted,
+                                                                     'warningMessages' => array('string' => $warningMessage),
+                                                                     'errorMessage' => $errorMessage,
+                                                                     'estRuntime' => $estRuntime),
+                                                  'experimentID' => $experimentID,
+                                                  'minTimeToLive' => $minTimeToLive,
+                                                  'wait' => array('effectiveQueueLength' => $queueLength,
+                                                                  'estWait' => $estWait)));
         return $response;
     }
 
@@ -104,11 +126,29 @@ class iLabLabServer
             ->getRepository('DispatcherBundle:JobRecord')
             ->findOneBy(array('rlmsAssignedId' => $params->experimentID, 'providerId' => $this->rlmsGuid));
 
+        $repository = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord');
+
+        //get the length of the queue considering the job priority
+        $queueLength = $repository->createQueryBuilder('job')
+            ->where('job.jobStatus = :jobStatus')
+            ->andWhere('job.expId < :expId')
+            ->andWhere('job.labServerId = :labServerId')
+            ->andWhere('job.priority >= :priority')
+            ->setParameter('jobStatus', 1)
+            ->setParameter('expId', $jobRecord->getExpId())
+            ->setParameter('labServerId', $this->labServer->getId())
+            ->setParameter('priority', $jobRecord->getPriority())
+            ->select('COUNT(job)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
             $statusCode = $jobRecord->getJobStatus();
-            $effectiveQueueLength = 2;
-            $estWait = 32;
-            $estRuntime = 15;
-            $estRemainingRuntime = 54;
+            $effectiveQueueLength = $queueLength; //get the length of the queue considering the job priority
+            $estRuntime = $jobRecord->getEstExecTime();
+            $estWait = $estRuntime * $queueLength;
+            $estRemainingRuntime =  $jobRecord->getEstExecTime() -  $jobRecord->getExecElapsed();
             $minTimetoLive= 7200;
 
             $response = array('GetExperimentStatusResult' => array(
@@ -139,7 +179,7 @@ class iLabLabServer
             $errorMessage = 'Results not available. Experiment is not completed or has been cancelled.';
         }
         else{
-            $opaque = json_decode($jobRecord->getOpaqueData());
+            //$opaque = json_decode($jobRecord->getOpaqueData());
             $experimentResults = $jobRecord->getExpResults();
             $xmlResultExtension = 'SubmitTime='.$jobRecord->getSubmitTime().',
                                    ExecutionTime='.$jobRecord->getExecutionTime().',
@@ -157,8 +197,71 @@ class iLabLabServer
                                                           'xmlBlobExtension' => $xmlBlobExtension,
                                                           'warningMessages' => $warningMessages,
                                                           'errorMessage' => $errorMessage)
-
                          );
+        return $response;
+    }
+
+    public function GetEffectiveQueueLength($params){
+
+        $repository = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord');
+
+        //get the length of the queue considering the job priority
+        $queueLength = $repository->createQueryBuilder('job')
+            ->where('job.jobStatus = :jobStatus')
+            ->andWhere('job.labServerId = :labServerId')
+            ->andWhere('job.priority >= :priority')
+            ->setParameter('jobStatus', 1)
+            ->setParameter('labServerId', $this->labServer->getId())
+            ->setParameter('priority', $params->priorityHint)
+            ->select('COUNT(job)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $estWait = '';
+
+        $response = array('GetEffectiveQueueLengthResult' => array('effectiveQueueLength' => $queueLength,
+                                                                   'estWait' => $estWait));
+        return $response;
+    }
+
+    public function Cancel($params){
+
+        $jobRecord = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord')
+            ->findOneBy(array('rlmsAssignedId' => $params->experimentID, 'providerId' => $this->rlmsGuid));
+
+        $statusCode = $jobRecord->getJobStatus();
+
+        if ($statusCode != 2){ //what to do if experiment is not being executed (2 = IN PROGRESS)
+            $CancelResult = true;
+            $jobRecord->setJobStatus(4);
+            $this->em->persist($jobRecord);
+            $this->em->flush();
+        }
+        else{//what to do if experiment is running
+            $CancelResult = false;
+        }
+
+        $response = array('CancelResult' => $CancelResult);
+        return $response;
+    }
+
+    public function Validate($params){
+
+
+        //Create experiment submission report
+        $accepted = true;
+        $warningMessage =  '';
+        $errorMessage = '';
+        $estRuntime = 20;
+
+        $response = array('ValidateResult' => array('accepted' => $accepted,
+                                                    'warningMessages' => array('string' => $warningMessage),
+                                                    'errorMessage' => $errorMessage,
+                                                    'estRuntime' => $estRuntime));
         return $response;
     }
 

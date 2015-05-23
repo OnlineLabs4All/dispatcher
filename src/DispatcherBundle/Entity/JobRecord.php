@@ -73,7 +73,7 @@ class JobRecord
     protected $jobElapsed;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     protected $estExecTime; //Estimated time (sec) the experiment will need to run
 

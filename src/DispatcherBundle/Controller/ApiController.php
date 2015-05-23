@@ -160,16 +160,29 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route("/show", name="showEngine")
+     * @Route("/test", name="testAction")
      * @Method({"GET"})
      */
-    public function show()
+    public function test()
     {
         $repository = $this->getDoctrine()
-            ->getRepository('DispatcherBundle:ExperimentEngine');
-        $engine = $repository->findOneBy(array('api_key' => 'fistEngineKey'));
+            ->getRepository('DispatcherBundle:JobRecord');
 
-        return new Response('Experiment Engine Id:'.$engine->getId());
+        $query = $repository->createQueryBuilder('job')
+            ->where('job.expId <= :expId')
+            ->andWhere('job.labServerId = :labServerId')
+            ->andWhere('job.priority >= :priority')
+            ->setParameter('expId', 23)
+            ->setParameter('labServerId', 1)
+            ->setParameter('priority', 0)
+            ->orderBy('job.expId', 'ASC')
+            ->select('COUNT(job)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        //$jobRecords = $query->getResult();
+
+        return new Response('Number of exp: '.$query);
     }
 
 
