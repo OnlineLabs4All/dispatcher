@@ -22,9 +22,8 @@
             <th>APIs</th>
             <th>Lab Server Name</th>
             <th>Owner</th>
-            <th>Active</th>
-            <th>Date Created</th>
-            <th></th>
+            <th>Status</th>
+            <th>View/Edit</th>
         </tr>
         </thead>
         <tbody>
@@ -32,12 +31,28 @@
 
             <tr class="odd gradeX">
                 <td>{{ record.id }}</td>
-                <td><a href="{{ path('apis_to_rlms', { 'labServerId' : record.id}) }}">view APIs</a></td>
+                <td>
+                    <a href="{{ path('apis_to_rlms', { 'labServerId' : record.id}) }}">
+                       <i class="fa fa-gear"> APIs</i>
+                    </a>
+                </td>
                 <td>{{ record.name }}</td>
                 <td>{{ record.institution }}</td>
-                <td>{{ record.active }}</td>
-                <td>{{ record.dateCreated }}</td>
-                <td><a href="{{ path('labservers') }}/{{ record.id }}"><i class="fa fa-edit fa-fw"></i>view/edit</a></td>
+                <td>
+                    {% if record.active == true %}
+                        <span class="label label-success">Active</span>
+                    {% elseif record.active == false %}
+                        <span class="label label-danger">Not Active</span>
+                    {% else %}
+                        {{ record.active }}
+                    {% endif %}
+
+                </td>
+                <td>
+                    <a href="{{ path('labservers') }}/{{ record.id }}">
+                        <i class="fa fa-edit"> view/edit</i>
+                    </a>
+                </td>
             </tr>
         {% endfor %}
 

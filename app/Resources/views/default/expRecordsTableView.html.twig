@@ -12,8 +12,9 @@
         <tr>
             
             <th>ID</th>
-            <th>RLMS ID</th>
             <th>Status</th>
+            <th>RLMS ID</th>
+            <th>RMLS Assigned ID</th>
             <th>processing Engine</th>
             <th>Lab Server ID</th>
             <th></th>
@@ -24,11 +25,29 @@
 
         <tr class="odd gradeX">
             <td>{{ record.expID }}</td>
+            <td>
+                {% if record.jobStatus == 1 %}
+                    <span class="label label-primary">Queued</span>
+                {% elseif record.jobStatus == 2 %}
+                    <span class="label label-warning">In Progress</span>
+                {% elseif record.jobStatus == 3 %}
+                    <span class="label label-success">Completed</span>
+                {% elseif record.jobStatus == 4 %}
+                    <span class="label label-danger">Cancelled</span>
+                {% else %}
+                    {{ record.jobStatus }}
+                {% endif %}
+
+            </td>
             <td>{{ record.providerId }}</td>
-            <td>{{ record.jobStatus }}</td>
+            <td>{{ record.rlmsAssignedId }}</td>
             <td class="center">{{ record.processingEngine }}</td>
             <td class="center">{{ record.labServerId }}</td>
-            <td><a href="{{ path('expRecords') }}/{{ record.expID }}">view</a></td>
+            <td>
+                <a href="{{ path('expRecords') }}/{{ record.expID }}">
+                <i class="fa fa-folder-open"> View</i>
+                </a>
+            </td>
         </tr>
        {% endfor %}
 
