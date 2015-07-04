@@ -13,11 +13,8 @@ use SimpleXMLElement;
 class LabInfo{
 
     public $name;
-
     public $description;
-
     public $owner_institution;
-
     public $status;
 
     public function serialize($format)
