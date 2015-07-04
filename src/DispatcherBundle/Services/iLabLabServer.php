@@ -88,7 +88,7 @@ class iLabLabServer
         $jobRecord->setPriority($params->priorityHint);
         $jobRecord->setJobStatus(1); //Status 1(QUEUED)
         $jobRecord->setSubmitTime(date('Y-m-d H:i:s'));
-        $jobRecord->setEstExecTime(60); //replace with real estimation
+        $jobRecord->setEstExecTime(20); //replace with real estimation
         $jobRecord->setQueueAtInsert($queueLength);//replace with real queue length
         $jobRecord->setExpSpecification($params->experimentSpecification);
         $jobRecord->setProviderId($this->rlmsGuid); //ID of the RLMS requesting execution
@@ -250,7 +250,6 @@ class iLabLabServer
     }
 
     public function Validate($params){
-
 
         //Create experiment submission report
         $accepted = true;

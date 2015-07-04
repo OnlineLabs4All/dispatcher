@@ -42,18 +42,13 @@ class iLabApiController extends Controller
         //var_dump($soapServer);
         $iLabBatched = $this->get('iLabLabServer');
         $iLabBatched->setLabServerId($labServerId);
-
         $soapServer->setObject($iLabBatched);
-
         $response = new Response();
         $response->headers->set('Content-Type','application/soap+xml; charset=utf-8');
         ob_start();
         $soapServer->handle();
-
         $response->setContent(ob_get_clean());
-
         return $response;
-
     }
 
     //This route accepts only GET method and returns the WSDL for an specific Lab Server
@@ -73,9 +68,7 @@ class iLabApiController extends Controller
         //return $response;
         //$response = new Response($wsdl_gen->getBatchedLsWsdl());
         $response->headers->set('Content-Type', 'application/xml');
-
         return $response;
-
     }
 
 
@@ -89,8 +82,6 @@ class iLabApiController extends Controller
             ->getRepository('DispatcherBundle:JobRecord');
 
         $jobRecord =  $repository->findOneBy(array('rlmsAssignedId' => $experimentID, 'providerId' => '9954C5B79AEB432A94DE29E6EE44EB69'));
-
-
         $statusCode = $jobRecord->getJobStatus();
         $effectiveQueueLength = 2;
         $estWait = 32;
