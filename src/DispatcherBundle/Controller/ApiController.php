@@ -16,6 +16,7 @@ use DispatcherBundle\Entity\ExperimentEngine;
 use \DateTime;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use DispatcherBundle\Model\Subscriber\LabInfo;
+use DispatcherBundle\Model\Subscriber\QueueLength;
 
 
 /**
@@ -35,24 +36,39 @@ class ApiController extends Controller
     /**
      * @ApiDoc(
      *  resource=true,
-     *  resourceDescription="Operations on Lab Servers",
-     *  description="Returns the current queue length for the subscribed Lab Server",
+     *  resourceDescription="Returns the job queue length for a registered Experiment Engine.",
+     *  description="Returns the current queue length for a registered Experiment Engine.",
      *  output ="DispatcherBundle\Model\LabInfo",
      *
      * statusCodes={
      *         200="Returned when successful",
      *         401="Unauthorized"},
      * parameters={
-     *      {"name"="Authorization", "dataType"="integer", "required"=true, "description"="category id"}
+     *      {"name"="X-apikey", "dataType"="header", "required"=true, "description"="category id"},
+     *      {"name"="Authorization", "dataType"="header", "required"=true, "description"="Basic Http Authentication. username:password encoded as specified by RFC2045-MIME variant of Base64"},
      *  }
      * )
      *
      * @Route("/queueLength", name="eeQueueLength")
      * @Method({"GET"})
      */
-    public function queueLengthAction()
+    public function queueLengthAction(Request $request)
     {
-        return new Response('Returns the Length of the queue! ');
+        $engineService = $this->get('engineServices');
+        $api_key = $request->headers->get('X-apikey');
+
+        if ($api_key == null){
+            $response = new response;
+            $response->setStatusCode(401);
+            return $response;
+        }
+
+        $format = $request->get('_format');
+
+        $queueLength = $engineService->getQueueLength($api_key);
+        $response = new response($queueLength->serialize($format));
+
+        return $response;
     }
 
     /**
@@ -92,7 +108,6 @@ class ApiController extends Controller
         $format = $request->get('_format');
         $response = new response($labInfo->serialize($format));
         return $response;
-
     }
 
     /**
@@ -133,6 +148,28 @@ class ApiController extends Controller
     public function setExperiment()
     {
         return new Response('Saves experiment results to DB. Accepts only POST method');
+    }
+
+    /**
+     * @Route("/status", name="getStatus")
+     * @Method({"GET"})
+     *
+     *  @ApiDoc(
+     *  resource=true,
+     *  resourceDescription="Operations on Lab Servers",
+     *  description="Checks on the status of the job records and returns the ID of the queued experiment with highest priority ",
+     *
+     *  statusCodes={
+     *         200="Returned when successful",
+     *         401="Unauthorized"},
+     * )
+     */
+    public function getStatus()
+    {
+        $response_array = array('found' => true,
+                                'expId' => 2,
+                                'errorMessage' => '');
+        return new Response('');
     }
 
     /**
