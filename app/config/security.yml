@@ -22,6 +22,7 @@ security:
                     user:  { password: userpass, roles: [ 'ROLE_USER' ] }
                     admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
                     api_user: { password: apipass, roles: [ 'ROLE_APIUSER' ] }
+                    htl: { password: fhiscool, roles: [ 'ROLE_ADMIN', 'ROLE_APIUSER' ]}
 
         #api_key_user_provider:
         #            id: api_key_user_provider
