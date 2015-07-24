@@ -71,7 +71,6 @@ class iLabApiController extends Controller
         return $response;
     }
 
-
     /**
      * @Route("/test/{experimentID}", name="test_route")
      *

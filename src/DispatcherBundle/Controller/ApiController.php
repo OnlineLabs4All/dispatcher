@@ -28,6 +28,7 @@ class ApiController extends Controller
      * @Route("/", name="apiRoot")
      *
      */
+
     public function indexAction()
     {
         return new Response('api root');
@@ -62,52 +63,65 @@ class ApiController extends Controller
             $response->setStatusCode(401);
             return $response;
         }
-
         $format = $request->get('_format');
-
         $queueLength = $engineService->getQueueLength($api_key);
         $response = new response($queueLength->serialize($format));
 
         return $response;
     }
 
-    /**
-     * @Route("/labConfiguration", name="getLabConfiguration")
-     * @Method({"GET"})
-     */
     public function labConfiguration(Request $request)
     {
+        $api_key = $request->headers->get('X-apikey');
 
-        $apikey = $request->headers->get('X-apikey');
-        return new Response('Received key: '.$apikey);
+        if ($api_key == null){
+            $response = new response;
+            $response->setStatusCode(401);
+            return $response;
+        }
+        $engineService = $this->get('engineServices');
+        //getLabConfiguration
+        $labConfiguration = $engineService->getLabConfiguration($api_key);
+
+        return new Response($labConfiguration);
     }
 
     /**
-     * @Route("/labInfo", name="lLabInfo")
-     * @Method({"GET"})
      *
      * @ApiDoc(
      *  resource=true,
      *  resourceDescription="Operations on Lab Servers",
-     *  description="Returns the current information and status of the lab server",
+     *  description="Returns the current information and status of the lab server for which this engine subscribes.",
      *  output ="DispatcherBundle\Model\LabInfo",
      *
      *  statusCodes={
      *         200="Returned when successful",
      *         401="Unauthorized"},
+     * parameters={
+     *      {"name"="X-apikey", "dataType"="header", "required"=true, "description"="Registered API Key"},
+     *      {"name"="Authorization", "dataType"="header", "required"=true, "description"="Basic Http Authentication. username:password encoded as specified by RFC2045-MIME variant of Base64"},
+     *  }
+
      * )
-     *
+     * @Route("/labInfo", name="labInfo")
+     * @Method({"GET"})
      */
+
     public function labInfo(Request $request)
     {
-        $labInfo = new LabInfo();
-        $labInfo->name = 'Lab Server 1';
-        $labInfo->status = '1';
-        $labInfo->owner_institution = '';
-        $labInfo->description = 'This is the lab Info test';
+        $api_key = $request->headers->get('X-apikey');
+
+        if ($api_key == null){
+            $response = new response;
+            $response->setStatusCode(401);
+            return $response;
+        }
+        $engineService = $this->get('engineServices');
+        //getLabConfiguration
+        $labInfo = $engineService->getLabInfo($api_key);
         $format = $request->get('_format');
-        $response = new response($labInfo->serialize($format));
-        return $response;
+
+        return new Response($labInfo->serialize($format));
     }
 
     /**
@@ -221,6 +235,73 @@ class ApiController extends Controller
 
         return new Response('Number of exp: '.$query);
     }
+
+    /**
+     * @Route("/verifyCoupon", name="verifyCoupon")
+     * @Method({"POST"})
+     */
+
+    public function verifyCoupon(Request $request)
+    {
+        $jsonString = $request->getContent();
+
+        $jsonRequest = json_decode($jsonString);
+
+        if ($jsonRequest->couponId == '12345' & $jsonRequest->passkey == '67890')
+        {
+            $jsonResponse = array('valid' => true,
+                'couponId' => $jsonRequest->couponId,
+                'passkey' => $jsonRequest->passkey,
+                'type' => 'EXECUTE EXPERIMENT');
+        }
+        else{
+            $jsonResponse = array('valid' => false,
+                'couponId' => '',
+                'passkey' => '',
+                'type' => 'EXECUTE EXPERIMENT');
+        }
+
+        $response = new Response();
+        $response->setContent(json_encode($jsonResponse));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /**
+     * @Route("/ticket", name="retrieveTicket")
+     * @Method({"POST"})
+     */
+
+    public function retrieveCoupon(Request $request)
+    {
+        $jsonString = $request->getContent();
+
+        $jsonRequest = json_decode($jsonString);
+
+        if ($jsonRequest->couponId == '12345' & $jsonRequest->passkey == '67890')
+        {
+            $jsonResponse = array('success' => true,
+                                  'startExecution' => '2015-07-20T08:11:47.7149599Z',
+                                  'duration' => 3600,
+                                  'userID' => 3,
+                                  'groupID' => 9,
+                                  'groupName' => 'Experiment_Group',
+                                  'sbGuid' => '7954C5B79876532A94DE29E6EE44EB69',
+                                  'experimentID' => 2729,
+                                  'userTZ' => 120);
+        }
+        else{
+            $jsonResponse = array('success' => false,
+                'errorMessage' => 'invalid couponID and/or passkey');
+        }
+
+        $response = new Response();
+        $response->setContent(json_encode($jsonResponse));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+
 
 
 
