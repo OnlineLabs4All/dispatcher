@@ -34,7 +34,6 @@ class EngineServices
             $repository = $this
                ->em
                ->getRepository('DispatcherBundle:JobRecord');
-
            //get the length of the queue
            $queueLength = $repository->createQueryBuilder('job')
                ->where('job.jobStatus = :jobStatus')
@@ -50,16 +49,55 @@ class EngineServices
            $queueLengthResponse->setSuccess(true);
            $queueLengthResponse->setQueueLength($queueLength);
            $queueLengthResponse->setLabServerId($engine->getLabserverId());
-           $queueLengthResponse->setErrorMEssage('');
+           $queueLengthResponse->setErrorMessage('');
         }
         else{
             $queueLengthResponse = new QueueLength();
             $queueLengthResponse->setTimeStamp();
             $queueLengthResponse->setSuccess(false);
-            $queueLengthResponse->setErrorMEssage('No experiment engine found for the provided key.');
+            $queueLengthResponse->setErrorMessage('No experiment engine found for the provided key.');
         }
         return $queueLengthResponse;
     }
 
+    public function getLabInfo($api_key)
+    {
+        $engine = $this
+            ->em
+            ->getRepository('DispatcherBundle:ExperimentEngine')
+            ->findOneBy(array('api_key' => $api_key));
+
+        if ($engine != null){
+
+            $labServer = $this
+                ->em
+                ->getRepository('DispatcherBundle:LabServer')
+                ->findOneBy(array('id' => $engine->getLabServerId()));
+
+            $labInfoResponse = new LabInfo();
+            $labInfoResponse->setTimeStamp();
+            $labInfoResponse->setSuccess(true); //set success to TRUE
+            $labInfoResponse->setName($labServer->getName());
+            $labInfoResponse->setDescription($labServer->getDescription());
+            $labInfoResponse->setOwnerInstitution($labServer->getInstitution());
+            $labInfoResponse->setLabStatus($labServer->getActive());
+            $labInfoResponse->setLabConfiguration($labServer->getConfiguration());
+            $labInfoResponse->setErrorMessage('');
+
+            return $labInfoResponse;
+        }
+        $labInfoResponse = new LabInfo();
+        $labInfoResponse->setTimeStamp();
+        $labInfoResponse->setSuccess(false); //set success to TRUE
+        //$labInfoResponse->setName($labServer->getName());
+        //$labInfoResponse->setDescription($labServer->getDescription());
+        //$labInfoResponse->setOwnerInstitution($labServer->getInstitution());
+        //$labInfoResponse->setLabStatus($labServer->getActive());
+        //$labInfoResponse->setLabConfiguration($labServer->getConfiguration());
+        $labInfoResponse->setErrorMessage('No experiment engine found for the provided key.');
+        return $labInfoResponse;
+
+    }
 
 }
+

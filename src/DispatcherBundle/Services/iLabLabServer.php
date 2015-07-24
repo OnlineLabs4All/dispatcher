@@ -237,7 +237,7 @@ class iLabLabServer
 
         if ($statusCode != 2){ //what to do if experiment is not being executed (2 = IN PROGRESS)
             $CancelResult = true;
-            $jobRecord->setJobStatus(4);
+            $jobRecord->setJobStatus(5);
             $this->em->persist($jobRecord);
             $this->em->flush();
         }
