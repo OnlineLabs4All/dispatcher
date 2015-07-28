@@ -35,21 +35,6 @@ class ApiController extends Controller
     }
 
     /**
-     * @ApiDoc(
-     *  resource=true,
-     *  resourceDescription="Returns the job queue length for a registered Experiment Engine.",
-     *  description="Returns the current queue length for a registered Experiment Engine.",
-     *  output ="DispatcherBundle\Model\LabInfo",
-     *
-     * statusCodes={
-     *         200="Returned when successful",
-     *         401="Unauthorized"},
-     * parameters={
-     *      {"name"="X-apikey", "dataType"="header", "required"=true, "description"="category id"},
-     *      {"name"="Authorization", "dataType"="header", "required"=true, "description"="Basic Http Authentication. username:password encoded as specified by RFC2045-MIME variant of Base64"},
-     *  }
-     * )
-     *
      * @Route("/queueLength", name="eeQueueLength")
      * @Method({"GET"})
      */
@@ -165,25 +150,70 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route("/status", name="getStatus")
+     * @Route("/next", name="getStatus")
      * @Method({"GET"})
      *
      *  @ApiDoc(
      *  resource=true,
      *  resourceDescription="Operations on Lab Servers",
-     *  description="Checks on the status of the job records and returns the ID of the queued experiment with highest priority ",
+     *  description="Checks on the status of the job records and returns the ID of the queued experiment that shall be executed next considering the priority. If found, claims ownership over the found experiment.
+        After ownership is granted, the experiment will not be available for other engines subscribing for the same Lab server",
+     *
+     *
+     *  statusCodes={
+     *         200="Returned when successful",
+     *         401="Unauthorized"},
+     *
+     *
+     * )
+     */
+    public function getStatus(Request $request)
+    {
+        $api_key = $request->headers->get('X-apikey');
+        $test = $request->query->get('test');
+
+        if ($api_key == null){
+            $response = new response;
+            $response->setStatusCode(401);
+            return $response;
+        }
+        $engineService = $this->get('engineServices');
+        //getLabConfiguration
+        $status = $engineService->getStatus($api_key, $test);
+        $format = $request->get('_format');
+
+        return new Response($status->serialize($format));
+    }
+
+    /**
+     * @Route("/status", name="setStatus")
+     * @Method({"POST"})
+     *
+     *  @ApiDoc(
+     *  resource=true,
+     *  resourceDescription="Operations on Lab Servers",
+     *  description="Allows Experiment Engine to release the experiment by revoking its ownership. Only the owner engine can call this service",
      *
      *  statusCodes={
      *         200="Returned when successful",
      *         401="Unauthorized"},
      * )
      */
-    public function getStatus()
+    public function setStatus(Request $request)
     {
-        $response_array = array('found' => true,
-                                'expId' => 2,
-                                'errorMessage' => '');
-        return new Response('');
+        $api_key = $request->headers->get('X-apikey');
+
+        if ($api_key == null){
+            $response = new response;
+            $response->setStatusCode(401);
+            return $response;
+        }
+        $engineService = $this->get('engineServices');
+        //getLabConfiguration
+        $status = $engineService->getStatus($api_key);
+        $format = $request->get('_format');
+
+        return new Response($status->serialize($format));
     }
 
     /**
@@ -237,6 +267,23 @@ class ApiController extends Controller
     }
 
     /**
+     *
+     *
+     * @ApiDoc(
+     *  resource=true,
+     *  resourceDescription="Operations on Lab Servers",
+     *  description="Verifies is a coupon that identifies a ticket is valid and returns true/false.",
+     *  output ="",
+     *
+     *  statusCodes={
+     *         200="Returned when successful",
+     *         401="Unauthorized"},
+     * parameters={
+     *      {"name"="X-apikey", "dataType"="header", "required"=true, "description"="Registered API Key"},
+     *      {"name"="Authorization", "dataType"="header", "required"=true, "description"="Basic Http Authentication. username:password encoded as specified by RFC2045-MIME variant of Base64"},
+     *  }
+
+     * )
      * @Route("/verifyCoupon", name="verifyCoupon")
      * @Method({"POST"})
      */
@@ -268,6 +315,23 @@ class ApiController extends Controller
     }
 
     /**
+     *
+     *
+     * @ApiDoc(
+     *  resource=true,
+     *  resourceDescription="Operations on Lab Servers",
+     *  description="Retrieves a ticket Payload that includes reserved time and information about user.",
+     *  output ="",
+     *
+     *  statusCodes={
+     *         200="Returned when successful",
+     *         401="Unauthorized"},
+     * parameters={
+     *      {"name"="X-apikey", "dataType"="header", "required"=true, "description"="Registered API Key"},
+     *      {"name"="Authorization", "dataType"="header", "required"=true, "description"="Basic Http Authentication. username:password encoded as specified by RFC2045-MIME variant of Base64"},
+     *  }
+
+     * )
      * @Route("/ticket", name="retrieveTicket")
      * @Method({"POST"})
      */

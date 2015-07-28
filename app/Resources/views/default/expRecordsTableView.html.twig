@@ -33,6 +33,8 @@
                 {% elseif record.jobStatus == 3 %}
                     <span class="label label-success">Completed</span>
                 {% elseif record.jobStatus == 4 %}
+                    <span class="label label-danger">Completed with errors</span>
+                {% elseif record.jobStatus == 5 %}
                     <span class="label label-danger">Cancelled</span>
                 {% else %}
                     {{ record.jobStatus }}

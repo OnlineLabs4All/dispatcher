@@ -46,7 +46,7 @@ class JobRecord
     /**
      * @ORM\Column(type="integer")
      */
-    protected $jobStatus; // (1)QUEUED , (2)IN PROGRESS, (3)COMPLETE, (4)CANCELLED
+    protected $jobStatus; // (1)QUEUED , (2)IN PROGRESS, (3)COMPLETE, (4)COMPLETED WITH ERRORS, (5)CANCELLED
 
     /**
      * @ORM\Column(type="string", length=35, nullable=true)
@@ -116,8 +116,6 @@ class JobRecord
      * @ORM\Column(type="text", nullable=true)
      */
     protected $opaqueData; //Optional field, used to transfer additional information if necessary.
-
-
 
 
     /**

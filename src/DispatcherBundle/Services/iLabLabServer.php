@@ -94,6 +94,7 @@ class iLabLabServer
         $jobRecord->setProviderId($this->rlmsGuid); //ID of the RLMS requesting execution
         $jobRecord->setDownloaded(false);
         $jobRecord->setErrorOccurred(false);
+        $jobRecord->setProcessingEngine(-1); //no processing Engine yet assigned (-1)
         $jobRecord->setOpaqueData(json_encode(array('userGroup' => $params->userGroup)));
 
         $this->em->persist($jobRecord);
@@ -212,7 +213,7 @@ class iLabLabServer
             ->where('job.jobStatus = :jobStatus')
             ->andWhere('job.labServerId = :labServerId')
             ->andWhere('job.priority >= :priority')
-            ->setParameter('jobStatus', 1)
+            ->setParameter('jobStatus', 1)//STATUS 1 = QUEUED
             ->setParameter('labServerId', $this->labServer->getId())
             ->setParameter('priority', $params->priorityHint)
             ->select('COUNT(job)')

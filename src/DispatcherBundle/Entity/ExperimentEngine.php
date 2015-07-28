@@ -525,6 +525,5 @@ class ExperimentEngine
         $this->active = $data['active'];
         $this->visible_in_catalogue = $data['visible_in_catalogue'];
         //$this->dateCreated = date('Y-m-d H:i:s');
-
     }
 }

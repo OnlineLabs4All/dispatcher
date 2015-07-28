@@ -47,7 +47,7 @@ class AdminController extends Controller
         $repository = $this->getDoctrine()
             ->getRepository('DispatcherBundle:JobRecord');
         if ($expId == null){
-            $records = $repository->findAll();
+            $records = $repository->findBy(array(/*'labServerId' => array()*/), array('expId'=> 'DESC'));
             //var_dump($records);
             return $this->render('default/expRecordsTableView.html.twig', array('viewName'=> 'Experiment Records', 'records' =>  $records));
         }
