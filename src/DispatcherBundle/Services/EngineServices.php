@@ -112,33 +112,55 @@ class EngineServices
             $repository = $this
                 ->em
                 ->getRepository('DispatcherBundle:JobRecord');
-            //First find the highest priority
-            $highestPriority = $repository->createQueryBuilder('job')
-                ->select('MAX(job.priority)')
-                ->where('job.jobStatus = :jobStatus')
-                ->andWhere('job.labServerId = :labServerId')
-                ->andWhere('job.processingEngine = :notAssigned OR job.processingEngine = :self')
-                ->setParameter('jobStatus', 1)
-                ->setParameter('labServerId',$engine->getLabServerId())
-                ->setParameter('notAssigned', -1)
-                ->setParameter('self', $engine->getId())
-                ->getQuery()
-                ->getSingleScalarResult();
-            //Now find the next experiment to be executed, namely the one with the smaller expId
-            $IdNextExp = $repository->createQueryBuilder('job')
-                ->select('MIN(job.expId)')
-                ->where('job.jobStatus = :jobStatus')
-                ->andWhere('job.labServerId = :labServerId')
-                ->andWhere('job.priority = :priority')
-                ->andWhere('job.processingEngine = :notAssigned OR job.processingEngine = :self')
-                ->setParameter('jobStatus', 1)
-                ->setParameter('labServerId',$engine->getLabServerId())
-                ->setParameter('priority', $highestPriority)
-                ->setParameter('notAssigned', -1)
-                ->setParameter('self', $engine->getId())
-                ->getQuery()
-                ->getSingleScalarResult();
 
+            //Checks if engine owns already an experiment that is NOT executed
+            $IdOfOwnedExp = $repository->createQueryBuilder('job')
+                ->select('job.expId')
+                ->Where('job.processingEngine = :self')
+                ->andWhere('job.jobStatus = :queued OR job.jobStatus = :inProgress')
+                ->setParameter('self', $engine->getId())
+                ->setParameter('queued', 1)
+                ->setParameter('inProgress', 2)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+
+            if ($IdOfOwnedExp == null) //If engine does not own any experiment yet, enters this IF statement to search for next experiment
+            {
+                //First find the highest priority
+                $highestPriority = $repository->createQueryBuilder('job')
+                    ->select('MAX(job.priority)')
+                    ->where('job.jobStatus = :jobStatus')
+                    ->andWhere('job.labServerId = :labServerId')
+                    ->andWhere('job.processingEngine = :notAssigned OR job.processingEngine = :self')
+                    ->setParameter('jobStatus', 1)
+                    ->setParameter('labServerId',$engine->getLabServerId())
+                    ->setParameter('notAssigned', -1)
+                    ->setParameter('self', $engine->getId())
+                    ->getQuery()
+                    ->getSingleScalarResult();
+
+                //Now find the next experiment to be executed, namely the one with the smaller expId
+                $IdNextExp = $repository->createQueryBuilder('job')
+                    ->select('MIN(job.expId)')
+                    ->where('job.jobStatus = :jobStatus')
+                    ->andWhere('job.labServerId = :labServerId')
+                    ->andWhere('job.priority = :priority')
+                    ->andWhere('job.processingEngine = :notAssigned OR job.processingEngine = :self')
+                    ->setParameter('jobStatus', 1)
+                    ->setParameter('labServerId',$engine->getLabServerId())
+                    ->setParameter('priority', $highestPriority)
+                    ->setParameter('notAssigned', -1)
+                    ->setParameter('self', $engine->getId())
+                    ->getQuery()
+                    ->getSingleScalarResult();
+            }
+            else
+            {
+                $IdNextExp = $IdOfOwnedExp['expId'];
+            }
+
+            //Enters this IF statement if a next experiment was found
             if ($IdNextExp != null)
             {
                 $jobRecord = $repository->findOneBy(array('expId' => $IdNextExp));
@@ -150,7 +172,7 @@ class EngineServices
                 $queueStatus = new Status();
                 $queueStatus->setTimeStamp();
                 $queueStatus->setSuccess(true); //set success to TRUE if not in test mode
-                $queueStatus->setExperimentId($IdNextExp);
+                $queueStatus->setExperimentId((int)$IdNextExp);
                 $queueStatus->setMessage('Cool, it seems you have some work to do. This experiment is now yours!');
                 $queueStatus->setError(false);
                 $queueStatus->setErrorMessage('');
