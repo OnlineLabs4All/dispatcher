@@ -150,7 +150,7 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route("/next", name="getStatus")
+     * @Route("/status", name="getStatus")
      * @Method({"GET"})
      *
      *  @ApiDoc(
