@@ -9,11 +9,12 @@ namespace DispatcherBundle\Model\Subscriber;
 
 use SimpleXMLElement;
 
-class Experiment{
+class ExperimentGetResponse{
 
     public $timestamp;
     public $success;
     public $expId;
+    public $jobStatus;
     public $expSpecification;
     public $message;
 
@@ -56,6 +57,16 @@ class Experiment{
         return $this->expSpecification;
     }
 
+    public function setJobStatus($jobStatus)
+    {
+        $this->jobStatus = $jobStatus;
+    }
+
+    public function getJobStatus()
+    {
+        return $this->jobStatus;
+    }
+
     public function setMessage($message)
     {
         $this->message = $message;
@@ -76,6 +87,7 @@ class Experiment{
             $xml->addChild('success', $this->getSuccess());
             $xml->addChild('expId', $this->getExperimentId());
             $xml->addChild('expSpecification', $this->getExpSpecification());
+            $xml->addChild('jobStatus', $this->getJobStatus());
             $xml->addChild('message', $this->getMessage());
 
             return $xml->asXML();
