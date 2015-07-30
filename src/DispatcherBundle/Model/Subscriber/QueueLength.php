@@ -60,7 +60,7 @@ class QueueLength{
 
     public function setTimeStamp(){
 
-        $this->timestamp = date('Y-m-d H:i:s');
+        $this->timestamp = date('Y-m-d\TH:i:sP');
     }
 
     public function getTimeStamp(){
