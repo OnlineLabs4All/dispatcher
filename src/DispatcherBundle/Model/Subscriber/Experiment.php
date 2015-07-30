@@ -15,7 +15,7 @@ class Experiment{
     public $success;
     public $expId;
     public $expSpecification;
-    public $errorMessage;
+    public $message;
 
 
 
@@ -56,14 +56,14 @@ class Experiment{
         return $this->expSpecification;
     }
 
-    public function setErrorMessage($message)
+    public function setMessage($message)
     {
-        $this->errorMessage = $message;
+        $this->message = $message;
     }
 
-    public function getErrorMessage()
+    public function getMessage()
     {
-        return $this->errorMessage;
+        return $this->message;
     }
 
     public function serialize($format)
@@ -76,7 +76,7 @@ class Experiment{
             $xml->addChild('success', $this->getSuccess());
             $xml->addChild('expId', $this->getExperimentId());
             $xml->addChild('expSpecification', $this->getExpSpecification());
-            $xml->addChild('errorMessage', $this->getErrorMessage());
+            $xml->addChild('message', $this->getMessage());
 
             return $xml->asXML();
         }
