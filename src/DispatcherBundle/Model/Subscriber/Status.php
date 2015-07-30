@@ -15,7 +15,6 @@ class Status{
     public $success;
     public $expId;
     public $message;
-   public $errorMessage;
 
     public function getTimeStamp()
     {
@@ -46,16 +45,6 @@ class Status{
         return $this->expId;
     }
 
-    public function setErrorMessage($message)
-    {
-        $this->errorMessage = $message;
-    }
-
-    public function getErrorMessage()
-    {
-        return $this->errorMessage;
-    }
-
     public function setMessage($message)
     {
         $this->message = $message;
@@ -76,9 +65,6 @@ class Status{
             $xml->addChild('success', $this->getSuccess());
             $xml->addChild('expId', $this->getExperimentId());
             $xml->addChild('message', $this->getMessage());
-            $xml->addChild('error', $this->getError());
-            $xml->addChild('errorMessage', $this->getErrorMessage());
-            //array_walk_recursive($response_array, array ($xml, 'addChild'));
             return $xml->asXML();
         }
 
