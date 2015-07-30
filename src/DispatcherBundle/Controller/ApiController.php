@@ -35,6 +35,18 @@ class ApiController extends Controller
     }
 
     /**
+     *
+     * @ApiDoc(
+     *  resource=true,
+     *  resourceDescription="Operations on Lab Servers",
+     *  description="Returns the current information and status of the lab server for which this engine subscribes.",
+     *  output ="DispatcherBundle\Model\LabInfo",
+     *
+     *  statusCodes={
+     *         200="Returned when successful",
+     *         401="Unauthorized"},
+     * )
+     *
      * @Route("/queueLength", name="eeQueueLength")
      * @Method({"GET"})
      */
@@ -88,11 +100,6 @@ class ApiController extends Controller
      *  statusCodes={
      *         200="Returned when successful",
      *         401="Unauthorized"},
-     * parameters={
-     *      {"name"="X-apikey", "dataType"="header", "required"=true, "description"="Registered API Key"},
-     *      {"name"="Authorization", "dataType"="header", "required"=true, "description"="Basic Http Authentication. username:password encoded as specified by RFC2045-MIME variant of Base64"},
-     *  }
-
      * )
      * @Route("/labInfo", name="labInfo")
      * @Method({"GET"})
@@ -157,23 +164,45 @@ class ApiController extends Controller
 
     /**
      * @Route("/experiment", name="postExperimentResults")
-     * @Method({"POST"})
+     * @Method({"PUT"})
      *
      *  @ApiDoc(
      *  resource=true,
      *  resourceDescription="Operations on Lab Servers",
-     *  description="Sends the experiment results to the server",
+     *  description="Sends the experiment results to the server. The request body must contain a collection of JSON encoded name/value pairs as described below.",
+     *
+     *  requirements={
+     *      {
+     *          "name"="success",
+     *          "dataType"="bool",
+     *          "requirement"="mandatory",
+     *          "description"="specifies if experiment was successfully executed "
+     *      },
+     *      {
+     *          "name"="results",
+     *          "dataType"="string",
+     *          "requirement"="mandatory",
+     *          "description"="Lab specific representation of experiment results"
+     *      },
+     *      {
+     *          "name"="errorReport",
+     *          "dataType"="string",
+     *          "requirement"="optional",
+     *          "description"="An optional error message"
+     *      }
+     *  },
      *  output ="DispatcherBundle\Model\LabInfo",
      *
      *  statusCodes={
      *         200="Returned when successful",
-     *         401="Unauthorized"},
+     *         401="Unauthorized",
+     *         415="JSON Request not provided"},
      * )
      */
+
     public function setExperiment(Request $request)
     {
         $api_key = $request->headers->get('X-apikey');
-        $jsonString = $request->getContent();
 
         $engine = $this->getDoctrine()
             ->getRepository('DispatcherBundle:ExperimentEngine')
@@ -184,9 +213,19 @@ class ApiController extends Controller
             $response->setStatusCode(401);
             return $response;
         }
+
+        $jsonString = $request->getContent();
+        $result = json_decode($jsonString);
+
+        if ($result == null)
+        {
+            $response = new response;
+            $response->setStatusCode(415);
+            return $response;
+        }
+
         $engineService = $this->get('engineServices');
-        //getLabConfiguration
-        $experiment = $engineService->setExperiment($engine, $jsonString);
+        $experiment = $engineService->setExperiment($engine, $result);
         $format = $request->get('_format');
 
         return new Response($experiment->serialize($format));
@@ -200,13 +239,12 @@ class ApiController extends Controller
      *  resource=true,
      *  resourceDescription="Operations on Lab Servers",
      *  description="Checks on the status of the job records and returns the ID of the queued experiment that shall be executed next considering the priority. If found, claims ownership over the found experiment.
-        After ownership is granted, the experiment will not be available for other engines subscribing for the same Lab server",
+     *  After ownership is granted, the experiment will not be available for other engines subscribing for the same Lab server",
      *
      *
      *  statusCodes={
      *         200="Returned when successful",
-     *         401="Unauthorized"},
-     *
+     *         401="Unauthorized: Wrong username/password",},
      *
      * )
      */
@@ -232,8 +270,8 @@ class ApiController extends Controller
     }
 
     /**
-     * @Route("/status", name="setStatus")
-     * @Method({"POST"})
+     * @Route("/release", name="setStatus")
+     * @Method({"PUT"})
      *
      *  @ApiDoc(
      *  resource=true,
@@ -245,7 +283,7 @@ class ApiController extends Controller
      *         401="Unauthorized"},
      * )
      */
-    public function setStatus(Request $request)
+    public function releaseExperiment(Request $request)
     {
         $api_key = $request->headers->get('X-apikey');
 
@@ -327,12 +365,9 @@ class ApiController extends Controller
      *
      *  statusCodes={
      *         200="Returned when successful",
-     *         401="Unauthorized"},
-     * parameters={
-     *      {"name"="X-apikey", "dataType"="header", "required"=true, "description"="Registered API Key"},
-     *      {"name"="Authorization", "dataType"="header", "required"=true, "description"="Basic Http Authentication. username:password encoded as specified by RFC2045-MIME variant of Base64"},
-     *  }
-
+     *         401="Unauthorized",
+     *         415="Json not set."},
+     *
      * )
      * @Route("/verifyCoupon", name="verifyCoupon")
      * @Method({"POST"})
@@ -341,8 +376,14 @@ class ApiController extends Controller
     public function verifyCoupon(Request $request)
     {
         $jsonString = $request->getContent();
-
         $jsonRequest = json_decode($jsonString);
+
+        if ($jsonRequest == null)
+        {
+            $response = new response;
+            $response->setStatusCode(415);
+            return $response;
+        }
 
         if ($jsonRequest->couponId == '12345' & $jsonRequest->passkey == '67890')
         {
@@ -392,6 +433,13 @@ class ApiController extends Controller
 
         $jsonRequest = json_decode($jsonString);
 
+        if ($jsonRequest == null)
+        {
+            $response = new response;
+            $response->setStatusCode(415);
+            return $response;
+        }
+
         if ($jsonRequest->couponId == '12345' & $jsonRequest->passkey == '67890')
         {
             $jsonResponse = array('success' => true,
@@ -414,9 +462,5 @@ class ApiController extends Controller
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
-
-
-
-
 
 }
