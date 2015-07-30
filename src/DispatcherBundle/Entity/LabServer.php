@@ -114,7 +114,7 @@ class LabServer
         $this->visible_in_catalogue = $data['visible_in_catalogue'];
         $this->configuration = $data['configuration'];
         $this->public_sub = $data['public_sub'];
-        $this->dateCreated = date('Y-m-d H:i:s');
+        $this->dateCreated = date('Y-m-d\TH:i:sP');
         $this->passKey = $data['passKey'];
         $this->labInfo = $data['labInfo'];
 

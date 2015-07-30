@@ -87,7 +87,7 @@ class iLabLabServer
         $jobRecord->setRlmsAssignedId($params->experimentID);
         $jobRecord->setPriority($params->priorityHint);
         $jobRecord->setJobStatus(1); //Status 1(QUEUED)
-        $jobRecord->setSubmitTime(date('Y-m-d H:i:s'));
+        $jobRecord->setSubmitTime(date('Y-m-d\TH:i:sP'));
         $jobRecord->setEstExecTime(20); //replace with real estimation
         $jobRecord->setQueueAtInsert($queueLength);//replace with real queue length
         $jobRecord->setExpSpecification($params->experimentSpecification);
