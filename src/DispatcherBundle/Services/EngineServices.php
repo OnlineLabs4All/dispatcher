@@ -267,13 +267,23 @@ class EngineServices
             $execElapsed = date_diff($execTime,$endTime );
             $jobElapsed = date_diff($submitTime,$endTime);
 
-
-            $OwnedJob->setJobStatus(3); //set job Status as COMPLETED
-            $OwnedJob->setExecElapsed($execElapsed->format( '%H:%I:%S' ));
-            $OwnedJob->setJobElapsed($jobElapsed->format( '%H:%I:%S' ));
-            $OwnedJob->setExpResults($results->results);
-            $OwnedJob->setErrorOccurred(!($results->success));
-            $OwnedJob->setErrorReport($results->errorReport);
+            if ($results->success == true)
+            {
+                $OwnedJob->setJobStatus(3); //set job Status as COMPLETED
+                $OwnedJob->setExecElapsed($execElapsed->s);
+                $OwnedJob->setJobElapsed($jobElapsed->s);
+                $OwnedJob->setExpResults($results->results);
+                $OwnedJob->setErrorOccurred(false);
+                $OwnedJob->setErrorReport($results->errorReport);
+            }
+            else
+            {
+                $OwnedJob->setJobStatus(4); //set job Status as COMPLETED WITH ERRORS
+                $OwnedJob->setExecElapsed($execElapsed->s);
+                $OwnedJob->setJobElapsed($jobElapsed->s);
+                $OwnedJob->setErrorOccurred(true);
+                $OwnedJob->setErrorReport($results->errorReport);
+            }
 
             $this->em->persist($OwnedJob);
             $this->em->flush();
