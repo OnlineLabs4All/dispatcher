@@ -378,14 +378,14 @@ class ApiController extends Controller
         if ($jsonRequest->couponId == '12345' & $jsonRequest->passkey == '67890')
         {
             $jsonResponse = array('success' => true,
-                                  'startExecution' => '2015-07-20T08:11:47.7149599Z',
-                                  'duration' => 3600,
-                                  'userID' => 3,
-                                  'groupID' => 9,
+                                  'startExecution' => date('Y-m-d\TH:i:sP'),//.substr((string)microtime(), 1, 8),//'2015-07-20T08:11:47.7149599Z',
+                                  'duration' => rand(300, 7200),
+                                  'userID' => rand(1, 100),
+                                  'groupID' => rand(1, 10),
                                   'groupName' => 'Experiment_Group',
                                   'sbGuid' => '7954C5B79876532A94DE29E6EE44EB69',
                                   'experimentID' => 2729,
-                                  'userTZ' => 120);
+                                  'userTZ' => date_default_timezone_get());
         }
         else{
             $jsonResponse = array('success' => false,
