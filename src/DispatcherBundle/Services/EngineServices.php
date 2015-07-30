@@ -163,11 +163,10 @@ class EngineServices
             {
                 $queueStatus = new Status();
                 $queueStatus->setTimeStamp();
-                $queueStatus->setSuccess(true); //set success to TRUE
+                $queueStatus->setSuccess(false); //set success to TRUE
                 $queueStatus->setExperimentId(-1);
                 $queueStatus->setMessage('Relax, the queue is empty. Thanks for asking.');
             }
-
             return $queueStatus;
         }
 
@@ -177,7 +176,6 @@ class EngineServices
         $queueStatus->setExperimentId(-1);
         $queueStatus->setMessage('Error: Experiment not found');
         return $queueStatus;
-
     }
 
     public function getExperiment(ExperimentEngine $engine)
@@ -226,7 +224,6 @@ class EngineServices
         }
 
         return $experiment;
-
     }
 
     /*
@@ -237,10 +234,8 @@ class EngineServices
         }
      *
      */
-
-    public function setExperiment(ExperimentEngine $engine, $requestString)
+    public function setExperiment(ExperimentEngine $engine, $results)
     {
-        $results = json_decode($requestString);
 
         $repository = $this
             ->em
