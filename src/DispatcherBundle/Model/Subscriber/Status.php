@@ -15,8 +15,7 @@ class Status{
     public $success;
     public $expId;
     public $message;
-    public $error; //true or false
-    public $errorMessage;
+   public $errorMessage;
 
     public function getTimeStamp()
     {
@@ -45,15 +44,6 @@ class Status{
     public function getExperimentId()
     {
         return $this->expId;
-    }
-
-    public function setError($error)
-    {
-        $this->error = $error;
-    }
-    public function getError()
-    {
-        return $this->error;
     }
 
     public function setErrorMessage($message)
