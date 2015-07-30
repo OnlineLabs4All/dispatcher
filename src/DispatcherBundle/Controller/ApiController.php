@@ -40,16 +40,19 @@ class ApiController extends Controller
      */
     public function queueLengthAction(Request $request)
     {
-        $engineService = $this->get('engineServices');
         $api_key = $request->headers->get('X-apikey');
+        $engine = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:ExperimentEngine')
+            ->findOneBy(array('api_key' => $api_key));
 
-        if ($api_key == null){
+        if ($engine == NULL ){
             $response = new response;
             $response->setStatusCode(401);
             return $response;
         }
+        $engineService = $this->get('engineServices');
         $format = $request->get('_format');
-        $queueLength = $engineService->getQueueLength($api_key);
+        $queueLength = $engineService->getQueueLength($engine);
         $response = new response($queueLength->serialize($format));
 
         return $response;
@@ -58,15 +61,18 @@ class ApiController extends Controller
     public function labConfiguration(Request $request)
     {
         $api_key = $request->headers->get('X-apikey');
+        $engine = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:ExperimentEngine')
+            ->findOneBy(array('api_key' => $api_key));
 
-        if ($api_key == null){
+        if ($engine == NULL ){
             $response = new response;
             $response->setStatusCode(401);
             return $response;
         }
         $engineService = $this->get('engineServices');
         //getLabConfiguration
-        $labConfiguration = $engineService->getLabConfiguration($api_key);
+        $labConfiguration = $engineService->getLabConfiguration($engine);
 
         return new Response($labConfiguration);
     }
@@ -96,14 +102,18 @@ class ApiController extends Controller
     {
         $api_key = $request->headers->get('X-apikey');
 
-        if ($api_key == null){
+        $engine = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:ExperimentEngine')
+            ->findOneBy(array('api_key' => $api_key));
+
+        if ($engine == NULL ){
             $response = new response;
             $response->setStatusCode(401);
             return $response;
         }
         $engineService = $this->get('engineServices');
         //getLabConfiguration
-        $labInfo = $engineService->getLabInfo($api_key);
+        $labInfo = $engineService->getLabInfo($engine);
         $format = $request->get('_format');
 
         return new Response($labInfo->serialize($format));
@@ -124,9 +134,25 @@ class ApiController extends Controller
      *         401="Unauthorized"},
      * )
      */
-    public function getExperiment()
+    public function getExperiment(Request $request)
     {
-        return new Response('Dequeues an experiment, set status to "In Progress", returns a protocol(?). Accepts only GET method');
+        $api_key = $request->headers->get('X-apikey');
+
+        $engine = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:ExperimentEngine')
+            ->findOneBy(array('api_key' => $api_key));
+
+        if ($engine == NULL ){
+            $response = new response;
+            $response->setStatusCode(401);
+            return $response;
+        }
+        $engineService = $this->get('engineServices');
+        //getLabConfiguration
+        $status = $engineService->getExperiment($engine);
+        $format = $request->get('_format');
+
+        return new Response($status->serialize($format));
     }
 
     /**
@@ -170,16 +196,19 @@ class ApiController extends Controller
     public function getStatus(Request $request)
     {
         $api_key = $request->headers->get('X-apikey');
-        $test = $request->query->get('test');
 
-        if ($api_key == null){
+        $engine = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:ExperimentEngine')
+            ->findOneBy(array('api_key' => $api_key));
+
+        if ($engine == NULL ){
             $response = new response;
             $response->setStatusCode(401);
             return $response;
         }
         $engineService = $this->get('engineServices');
         //getLabConfiguration
-        $status = $engineService->getStatus($api_key, $test);
+        $status = $engineService->getStatus($engine);
         $format = $request->get('_format');
 
         return new Response($status->serialize($format));
@@ -203,14 +232,18 @@ class ApiController extends Controller
     {
         $api_key = $request->headers->get('X-apikey');
 
-        if ($api_key == null){
+        $engine = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:ExperimentEngine')
+            ->findOneBy(array('api_key' => $api_key));
+
+        if ($engine == NULL ){
             $response = new response;
             $response->setStatusCode(401);
             return $response;
         }
         $engineService = $this->get('engineServices');
         //getLabConfiguration
-        $status = $engineService->getStatus($api_key);
+        $status = $engineService->getStatus($engine);
         $format = $request->get('_format');
 
         return new Response($status->serialize($format));
