@@ -7,13 +7,15 @@
  */
 
 namespace DispatcherBundle\Services;
+use DispatcherBundle\Entity\ExperimentEngine;
 use DispatcherBundle\Entity\JobRecord;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints\Null;
 use DispatcherBundle\Model\Subscriber\Status;
 use DispatcherBundle\Model\Subscriber\LabInfo;
 use DispatcherBundle\Model\Subscriber\QueueLength;
-use DispatcherBundle\Model\Subscriber\Experiment;
+use DispatcherBundle\Model\Subscriber\ExperimentGetResponse;
+use DispatcherBundle\Model\Subscriber\ExperimentPostResponse;
 
 
 class EngineServices
@@ -24,7 +26,7 @@ class EngineServices
         $this->em = $em;
     }
 
-    public function getQueueLength($engine)
+    public function getQueueLength(ExperimentEngine $engine)
     {
        if ($engine != null){
 
@@ -57,7 +59,7 @@ class EngineServices
         return $queueLengthResponse;
     }
 
-    public function getLabInfo($engine)
+    public function getLabInfo(ExperimentEngine $engine)
     {
         if ($engine != null){
 
@@ -86,7 +88,7 @@ class EngineServices
 
     }
 
-    public function getStatus($engine)
+    public function getStatus(ExperimentEngine $engine)
     {
         if ($engine != null){
 
@@ -155,7 +157,6 @@ class EngineServices
                 $queueStatus->setSuccess(true); //set success to TRUE if not in test mode
                 $queueStatus->setExperimentId((int)$IdNextExp);
                 $queueStatus->setMessage('Cool, it seems you have some work to do. This experiment is now yours!');
-                $queueStatus->setErrorMessage('');
 
             }
             else
@@ -165,7 +166,6 @@ class EngineServices
                 $queueStatus->setSuccess(true); //set success to TRUE
                 $queueStatus->setExperimentId(-1);
                 $queueStatus->setMessage('Relax, the queue is empty. Thanks for asking.');
-                $queueStatus->setErrorMessage('');
             }
 
             return $queueStatus;
@@ -175,13 +175,12 @@ class EngineServices
         $queueStatus->setTimeStamp();
         $queueStatus->setSuccess(false); //set success to TRUE
         $queueStatus->setExperimentId(-1);
-        $queueStatus->setMessage('Experiment not found');
-        $queueStatus->setErrorMessage('No experiment engine found for the provided key.');
+        $queueStatus->setMessage('Error: Experiment not found');
         return $queueStatus;
 
     }
 
-    public function getExperiment($engine)
+    public function getExperiment(ExperimentEngine $engine)
     {
         $repository = $this
             ->em
@@ -200,25 +199,105 @@ class EngineServices
 
         if ($OwnedJob != null)
         {
-            $experiment = new Experiment();
+            $OwnedJob->setExecutionTime(date('Y-m-d\TH:i:sP'));
+            $OwnedJob->setJobStatus(2); //set job status to IN PROGRESS (2)
+
+            $experiment = new ExperimentGetResponse();
             $experiment->setTimeStamp();
             $experiment->setSuccess(true);
             $experiment->setExperimentId($OwnedJob->getExpId());
             $experiment->setExpSpecification($OwnedJob->getExpSpecification());
-            $experiment->setErrorMessage("");
+            $experiment->setJobStatus($OwnedJob->getJobStatus());
+            $experiment->setMessage("Experiment Specification retrieved.");
+
+            $this->em->persist($OwnedJob);
+            $this->em->flush();
+
         }
         else
         {
-            $experiment = new Experiment();
+            $experiment = new ExperimentGetResponse();
             $experiment->setTimeStamp();
             $experiment->setSuccess(false);
             $experiment->setExperimentId(-1);
             $experiment->setExpSpecification("");
-            $experiment->setErrorMessage("Engine does not own an experiment yet.");
+            $experiment->setJobStatus(-1);
+            $experiment->setMessage("Error: Engine does not own an experiment. Call status to be assigned a job.");
         }
 
         return $experiment;
 
+    }
+
+    /*
+     * {
+        "success":true,
+        "results":"experiment results XML, JSON, etc..",
+        "errorReport": "No error occurred"
+        }
+     *
+     */
+
+    public function setExperiment(ExperimentEngine $engine, $requestString)
+    {
+        $results = json_decode($requestString);
+
+        $repository = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord');
+
+        //Checks if engine owns already an experiment that is NOT executed
+        $OwnedJob = $repository->createQueryBuilder('job')
+            ->select('job')
+            ->Where('job.processingEngine = :self')
+            ->andWhere('job.jobStatus = :inProgress')
+            ->setParameter('self', $engine->getId())
+            ->setParameter('inProgress', 2)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($OwnedJob != NULL)
+        {
+            $OwnedJob->setEndTime(date('Y-m-d\TH:i:sP'));
+
+            $execTime = date_create($OwnedJob->getExecutionTime());
+            $submitTime = date_create($OwnedJob->getSubmitTime());
+            $endTime = date_create($OwnedJob->getEndTime());
+
+            $execElapsed = date_diff($execTime,$endTime );
+            $jobElapsed = date_diff($submitTime,$endTime);
+
+
+            $OwnedJob->setJobStatus(3); //set job Status as COMPLETED
+            $OwnedJob->setExecElapsed($execElapsed->format( '%H:%I:%S' ));
+            $OwnedJob->setJobElapsed($jobElapsed->format( '%H:%I:%S' ));
+            $OwnedJob->setExpResults($results->results);
+            $OwnedJob->setErrorOccurred(!($results->success));
+            $OwnedJob->setErrorReport($results->errorReport);
+
+            $this->em->persist($OwnedJob);
+            $this->em->flush();
+
+            $response = new ExperimentPostResponse();
+            $response->setTimeStamp();
+            $response->setSuccess(true);
+            $response->setExperimentId($OwnedJob->getExpId());
+            $response->setJobStatus($OwnedJob->getJobStatus());
+            $response->setMessage('Record was updated.');
+
+        }
+        else
+        {
+            $response = new ExperimentPostResponse();
+            $response->setTimeStamp();
+            $response->setSuccess(false);
+            $response->setExperimentId(-1);
+            $response->setJobStatus(-1);
+            $response->setMessage('Error: Engine does not own a job or the job status is not set to IN PROGRESS.');
+
+        }
+
+        return $response;
     }
 
 }
