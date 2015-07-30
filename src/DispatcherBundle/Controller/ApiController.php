@@ -239,7 +239,7 @@ class ApiController extends Controller
      *  resource=true,
      *  resourceDescription="Operations on Lab Servers",
      *  description="Checks on the status of the job records and returns the ID of the queued experiment that shall be executed next considering the priority. If found, claims ownership over the found experiment.
-     *  After ownership is granted, the experiment will not be available for other engines subscribing for the same Lab server",
+       After ownership is granted, the experiment will not be available for other engines subscribing for the same Lab server",
      *
      *
      *  statusCodes={
