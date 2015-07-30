@@ -259,14 +259,15 @@ class EngineServices
             $submitTime = date_create($OwnedJob->getSubmitTime());
             $endTime = date_create($OwnedJob->getEndTime());
 
-            $execElapsed = date_diff($execTime,$endTime );
-            $jobElapsed = date_diff($submitTime,$endTime);
+            //Calculate elapsed time for job and execution in seconds
+            $execElapsed = $endTime->getTimestamp() - $execTime->getTimestamp();
+            $jobElapsed = $endTime->getTimestamp() - $submitTime->getTimestamp();
 
             if ($results->success == true)
             {
                 $OwnedJob->setJobStatus(3); //set job Status as COMPLETED
-                $OwnedJob->setExecElapsed($execElapsed->s);
-                $OwnedJob->setJobElapsed($jobElapsed->s);
+                $OwnedJob->setExecElapsed($execElapsed);
+                $OwnedJob->setJobElapsed($jobElapsed);
                 $OwnedJob->setExpResults($results->results);
                 $OwnedJob->setErrorOccurred(false);
                 $OwnedJob->setErrorReport($results->errorReport);
@@ -274,8 +275,8 @@ class EngineServices
             else
             {
                 $OwnedJob->setJobStatus(4); //set job Status as COMPLETED WITH ERRORS
-                $OwnedJob->setExecElapsed($execElapsed->s);
-                $OwnedJob->setJobElapsed($jobElapsed->s);
+                $OwnedJob->setExecElapsed($execElapsed);
+                $OwnedJob->setJobElapsed($jobElapsed);
                 $OwnedJob->setErrorOccurred(true);
                 $OwnedJob->setErrorReport($results->errorReport);
             }
