@@ -190,6 +190,11 @@ class iLabLabServer
             $xmlBlobExtension = Null;
             $warningMessages = Null;
             $errorMessage = Null;
+
+            //set job record as downloaded
+            $jobRecord->setDownloaded(true);
+            $this->em->persist($jobRecord);
+            $this->em->flush();
         }
 
         $response = array('RetrieveResultResult' => array('statusCode' => $statusCode,
@@ -199,6 +204,8 @@ class iLabLabServer
                                                           'warningMessages' => $warningMessages,
                                                           'errorMessage' => $errorMessage)
                          );
+
+
         return $response;
     }
 
