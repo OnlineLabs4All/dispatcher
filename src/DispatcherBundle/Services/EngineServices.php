@@ -8,11 +8,12 @@
 
 namespace DispatcherBundle\Services;
 use DispatcherBundle\Entity\JobRecord;
-use DispatcherBundle\Model\Subscriber\Status;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints\Null;
+use DispatcherBundle\Model\Subscriber\Status;
 use DispatcherBundle\Model\Subscriber\LabInfo;
 use DispatcherBundle\Model\Subscriber\QueueLength;
+use DispatcherBundle\Model\Subscriber\Experiment;
 
 
 class EngineServices
@@ -23,14 +24,9 @@ class EngineServices
         $this->em = $em;
     }
 
-    public function getQueueLength($api_key)
+    public function getQueueLength($engine)
     {
-       $engine = $this
-            ->em
-            ->getRepository('DispatcherBundle:ExperimentEngine')
-            ->findOneBy(array('api_key' => $api_key));
-
-        if ($engine != null){
+       if ($engine != null){
 
             $repository = $this
                ->em
@@ -61,13 +57,8 @@ class EngineServices
         return $queueLengthResponse;
     }
 
-    public function getLabInfo($api_key)
+    public function getLabInfo($engine)
     {
-        $engine = $this
-            ->em
-            ->getRepository('DispatcherBundle:ExperimentEngine')
-            ->findOneBy(array('api_key' => $api_key));
-
         if ($engine != null){
 
             $labServer = $this
@@ -90,23 +81,13 @@ class EngineServices
         $labInfoResponse = new LabInfo();
         $labInfoResponse->setTimeStamp();
         $labInfoResponse->setSuccess(false); //set success to TRUE
-        //$labInfoResponse->setName($labServer->getName());
-        //$labInfoResponse->setDescription($labServer->getDescription());
-        //$labInfoResponse->setOwnerInstitution($labServer->getInstitution());
-        //$labInfoResponse->setLabStatus($labServer->getActive());
-        //$labInfoResponse->setLabConfiguration($labServer->getConfiguration());
         $labInfoResponse->setErrorMessage('No experiment engine found for the provided key.');
         return $labInfoResponse;
 
     }
 
-    public function getStatus($api_key, $test)
+    public function getStatus($engine)
     {
-        $engine = $this
-            ->em
-            ->getRepository('DispatcherBundle:ExperimentEngine')
-            ->findOneBy(array('api_key' => $api_key));
-
         if ($engine != null){
 
             $repository = $this
@@ -174,7 +155,6 @@ class EngineServices
                 $queueStatus->setSuccess(true); //set success to TRUE if not in test mode
                 $queueStatus->setExperimentId((int)$IdNextExp);
                 $queueStatus->setMessage('Cool, it seems you have some work to do. This experiment is now yours!');
-                $queueStatus->setError(false);
                 $queueStatus->setErrorMessage('');
 
             }
@@ -185,7 +165,6 @@ class EngineServices
                 $queueStatus->setSuccess(true); //set success to TRUE
                 $queueStatus->setExperimentId(-1);
                 $queueStatus->setMessage('Relax, the queue is empty. Thanks for asking.');
-                $queueStatus->setError(false);
                 $queueStatus->setErrorMessage('');
             }
 
@@ -197,9 +176,48 @@ class EngineServices
         $queueStatus->setSuccess(false); //set success to TRUE
         $queueStatus->setExperimentId(-1);
         $queueStatus->setMessage('Experiment not found');
-        $queueStatus->setError(true);
         $queueStatus->setErrorMessage('No experiment engine found for the provided key.');
         return $queueStatus;
+
+    }
+
+    public function getExperiment($engine)
+    {
+        $repository = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord');
+
+        //Checks if engine owns already an experiment that is NOT executed
+        $OwnedJob = $repository->createQueryBuilder('job')
+            ->select('job')
+            ->Where('job.processingEngine = :self')
+            ->andWhere('job.jobStatus = :queued OR job.jobStatus = :inProgress')
+            ->setParameter('self', $engine->getId())
+            ->setParameter('queued', 1)
+            ->setParameter('inProgress', 2)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if ($OwnedJob != null)
+        {
+            $experiment = new Experiment();
+            $experiment->setTimeStamp();
+            $experiment->setSuccess(true);
+            $experiment->setExperimentId($OwnedJob->getExpId());
+            $experiment->setExpSpecification($OwnedJob->getExpSpecification());
+            $experiment->setErrorMessage("");
+        }
+        else
+        {
+            $experiment = new Experiment();
+            $experiment->setTimeStamp();
+            $experiment->setSuccess(false);
+            $experiment->setExperimentId(-1);
+            $experiment->setExpSpecification("");
+            $experiment->setErrorMessage("Engine does not own an experiment yet.");
+        }
+
+        return $experiment;
 
     }
 
