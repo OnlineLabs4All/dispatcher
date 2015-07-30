@@ -149,10 +149,10 @@ class ApiController extends Controller
         }
         $engineService = $this->get('engineServices');
         //getLabConfiguration
-        $status = $engineService->getExperiment($engine);
+        $experiment = $engineService->getExperiment($engine);
         $format = $request->get('_format');
 
-        return new Response($status->serialize($format));
+        return new Response($experiment->serialize($format));
     }
 
     /**
@@ -170,9 +170,26 @@ class ApiController extends Controller
      *         401="Unauthorized"},
      * )
      */
-    public function setExperiment()
+    public function setExperiment(Request $request)
     {
-        return new Response('Saves experiment results to DB. Accepts only POST method');
+        $api_key = $request->headers->get('X-apikey');
+        $jsonString = $request->getContent();
+
+        $engine = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:ExperimentEngine')
+            ->findOneBy(array('api_key' => $api_key));
+
+        if ($engine == NULL ){
+            $response = new response;
+            $response->setStatusCode(401);
+            return $response;
+        }
+        $engineService = $this->get('engineServices');
+        //getLabConfiguration
+        $experiment = $engineService->setExperiment($engine, $jsonString);
+        $format = $request->get('_format');
+
+        return new Response($experiment->serialize($format));
     }
 
     /**
