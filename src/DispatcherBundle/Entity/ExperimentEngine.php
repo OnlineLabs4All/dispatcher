@@ -105,6 +105,11 @@ class ExperimentEngine
      */
     protected $dateCreated;
 
+    /**
+     * @ORM\Column(type="string", length=35, nullable=true)
+     */
+    protected $lastContact;
+
 
     /**
      * Get id
@@ -484,6 +489,30 @@ class ExperimentEngine
         return $this->contact_email;
     }
 
+    /**
+     * Set lastContact
+     *
+     * @param string $lastContact
+     * @return ExperimentEngine
+     */
+    public function setLastContact($lastContact)
+    {
+        $this->lastContact = $lastContact;
+
+        return $this;
+    }
+
+    /**
+     * Get lastContact
+     *
+     * @return string
+     */
+    public function getLastContact()
+    {
+        return $this->lastContact;
+    }
+
+
     public function setAll($data)
     {
         $this->labserverId = $data['labserverId'];
@@ -525,4 +554,5 @@ class ExperimentEngine
         $this->active = $data['active'];
         $this->visible_in_catalogue = $data['visible_in_catalogue'];
     }
+
 }
