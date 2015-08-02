@@ -167,6 +167,11 @@ class EngineServices
                 $queueStatus->setExperimentId(-1);
                 $queueStatus->setMessage('Relax, the queue is empty. Thanks for asking.');
             }
+
+            $engine->setLastContact(date('Y-m-d\TH:i:sP')); //Set the time when this service was called for purpose of checking if engine is active
+            $this->em->persist($engine);
+            $this->em->flush();
+
             return $queueStatus;
         }
 
