@@ -22,7 +22,7 @@
             <th>ID</th>
             <th>Lab Server</th>
             <th>Owner Institution</th>
-            <th>City</th>
+            <th>Last Contact</th>
             <th>Status</th>
             <th></th>
         </tr>
@@ -34,7 +34,7 @@
                 <td>{{ record.id }}</td>
                 <td>{{ record.labserverId }}</td>
                 <td>{{ record.institution }}</td>
-                <td>{{ record.city }}</td>
+                <td><div id="lastContact">{{record.lastContact}}</div></td>
                 <td>
                     {% if record.active == true %}
                         <span class="label label-success">Active</span>
@@ -61,11 +61,10 @@
 
 
     <script>
-        $(document).ready(function() {
-            $('#dataTable').DataTable({
-                responsive: true
-            });
-        });
+
+
     </script>
+
+
 
 {% endblock %}
