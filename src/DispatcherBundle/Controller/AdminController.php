@@ -28,6 +28,7 @@ class AdminController extends Controller
      */
     public function indexAction()
     {
+
         return $this->render('default/adminHome.html.twig');
     }
 
@@ -36,7 +37,9 @@ class AdminController extends Controller
      */
     public function adminAction()
     {
-        return $this->render('default/adminHome.html.twig');
+        $userToken= $this->get('security.token_storage')->getToken()->getUser();
+
+        return $this->render('default/adminHome.html.twig', array('userName'=> $userToken->getFirstName()));
     }
 
     /**
@@ -44,16 +47,21 @@ class AdminController extends Controller
      */
     public function expRecordsAction($expId)
     {
-        $repository = $this->getDoctrine()
-            ->getRepository('DispatcherBundle:JobRecord');
-        if ($expId == null){
-            $records = $repository->findBy(array(/*'labServerId' => array()*/), array('expId'=> 'DESC'));
-            //var_dump($records);
-            return $this->render('default/expRecordsTableView.html.twig', array('viewName'=> 'Experiment Records', 'records' =>  $records));
-        }
-        $record = $repository->findOneBy(array('expId' => $expId));
+        if (true == $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+        {
+            $repository = $this->getDoctrine()
+                ->getRepository('DispatcherBundle:JobRecord');
+            if ($expId == null){
+                $records = $repository->findBy(array(/*'labServerId' => array()*/), array('expId'=> 'DESC'));
+                //var_dump($records);
+                return $this->render('default/expRecordsTableView.html.twig', array('viewName'=> 'Experiment Records', 'records' =>  $records));
+            }
+            $record = $repository->findOneBy(array('expId' => $expId));
 
-        return $this->render('default/recordView.html.twig', array('viewName'=> 'Experiment Record','record' => (array)$record));
+            return $this->render('default/recordView.html.twig', array('viewName'=> 'Experiment Record','record' => (array)$record));
+        }
+        return $this->render('default/recordView.html.twig', array('viewName'=> 'Experiment Record','record' => null));
+
     }
 
     /**
@@ -316,6 +324,7 @@ class AdminController extends Controller
     private function buildCreateLabServerForm(){
         $gen_guid = md5(microtime().rand());
         $gen_passKey = md5(microtime().rand());
+        $gen_initPassKey = md5(microtime().rand());
         $form = $this->createFormBuilder()
             ->add('name', 'text', array('label' => 'Lab Server name', 'required' => true, 'attr'=>array('help'=>'text help')))
             ->add('description', 'textarea', array('label' => 'Description', 'required' => false))
@@ -324,14 +333,15 @@ class AdminController extends Controller
             ->add('institution', 'text', array('label' => 'Institution', 'required' => true))
             ->add('Guid', 'text', array('label' => 'Guid', 'data'=> $gen_guid, 'required' => true))
             ->add('passKey', 'text', array('label' => 'Authentication PassKey ', 'data'=> $gen_passKey, 'required' => true))
+            ->add('type', 'choice',
+                array('label' => 'Type',
+                    'required' => true,
+                    'choices' => array('BLS'=>'Batched Lab Server', 'ILS'=>'Interactive Lab Server')))
+            ->add('initialPassKey', 'text', array('label' => 'Initial PassKey ', 'data'=> $gen_initPassKey, 'required' => true))
             ->add('active', 'choice',
                 array('label' => 'Active',
                     'required' => true,
                     'choices' => array('1'=>'Lab Server is active', '0'=>'Lab Server is NOT active')))
-            ->add('visible_in_catalogue', 'choice',
-                array('label' => 'Visible in the Catalogue',
-                    'required' => true,
-                    'choices' => array('1'=>'Lab Server is visible', '0'=>'Lab Server is NOT visible')))
 
             ->add('configuration', 'textarea', array('label' => 'Configuration', 'required' => false))
             ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true))
@@ -354,6 +364,8 @@ class AdminController extends Controller
             ->add('institution', 'text', array('label' => 'Institution', 'required' => true,  'attr' => array('value'=>$labServer->getInstitution(), 'readonly' => false)))
             ->add('Guid', 'text', array('label' => 'Guid', 'required' => true,  'attr' => array('value'=>$labServer->getGuid(), 'readonly' => true)))
             ->add('passKey', 'text', array('label' => 'Authentication PassKey ', 'required' => true, 'attr' => array('value'=>$labServer->getPasskey(), 'readonly' => true)))
+            ->add('type', 'text', array('label' => 'Type ', 'required' => true, 'attr' => array('value'=>$labServer->getType(), 'readonly' => true)))
+            ->add('initialPassKey', 'text', array('label' => 'Initial PassKey ', 'required' => true, 'attr' => array('value'=>$labServer->getInitialPasskey(), 'readonly' => true)))
             ->add('configuration', 'textarea', array('label' => 'Configuration', 'required' => false, 'data'=>$labServer->getConfiguration()))
             ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true,  'attr' => array('value'=>$labServer->getLabInfo(), 'readonly' => false)))
             ->add('public_sub','choice', array('label' => 'Permission for subscribers',
@@ -362,8 +374,6 @@ class AdminController extends Controller
             ->add('active', 'checkbox', array('label' => 'Active',
                 'required' => false,
                 'data'=> $labServer->getActive() ))
-            ->add('visible_in_catalogue', 'checkbox', array('label' => 'Visible in the Catalogue',
-                  'required' => false, 'data'=> $labServer->getVisibleInCatalogue()))
             ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
             ->getForm();
 
