@@ -71,7 +71,7 @@ class LabServer
     protected $active;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     protected $visible_in_catalogue; //if true owners allow it to be visible in the Website's catalogue
 
@@ -91,9 +91,19 @@ class LabServer
     protected $dateCreated;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=64)
      */
     protected $passKey;
+
+    /**
+     * @ORM\Column(type="string", length=64)
+     */
+    protected $initialPassKey;
+
+    /**
+     * @ORM\Column(type="string", length=10)
+     */
+    protected $type;
 
     /**
      * @ORM\Column(type="string", length=100)
@@ -111,12 +121,14 @@ class LabServer
         $this->description = $data['description'];
         $this->owner_id = 1;//change after user database is created
         $this->active = $data['active'];
-        $this->visible_in_catalogue = $data['visible_in_catalogue'];
+        //$this->visible_in_catalogue = $data['visible_in_catalogue'];
         $this->configuration = $data['configuration'];
         $this->public_sub = $data['public_sub'];
         $this->dateCreated = date('Y-m-d\TH:i:sP');
         $this->passKey = $data['passKey'];
+        $this->initialPassKey = $data['initialPassKey'];
         $this->labInfo = $data['labInfo'];
+        $this->type = $data['type'];
 
     }
 
@@ -129,7 +141,7 @@ class LabServer
         $this->description = $data['description'];
         $this->owner_id = $ownerId;//change after user database is created
         $this->active = $data['active'];
-        $this->visible_in_catalogue = $data['visible_in_catalogue'];
+        //$this->visible_in_catalogue = $data['visible_in_catalogue'];
         $this->configuration = $data['configuration'];
         $this->public_sub = $data['public_sub'];
         $this->labInfo = $data['labInfo'];
@@ -489,5 +501,51 @@ class LabServer
     public function getLabInfo()
     {
         return $this->labInfo;
+    }
+
+    /**
+     * Set initialPassKey
+     *
+     * @param string $initialPassKey
+     * @return LabServer
+     */
+    public function setInitialPassKey($initialPassKey)
+    {
+        $this->initialPassKey = $initialPassKey;
+
+        return $this;
+    }
+
+    /**
+     * Get initialPassKey
+     *
+     * @return string 
+     */
+    public function getInitialPassKey()
+    {
+        return $this->initialPassKey;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     * @return LabServer
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string 
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }
