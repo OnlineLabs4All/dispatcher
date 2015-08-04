@@ -13,11 +13,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- *
+ * @ORM\Entity
  * @ORM\Table(name="site_users")
- * @ORM\Entity(repositoryClass="DispatcherBundle\Entity\User")
+ *
  */
-class User implements UserInterface, \Serializable
+class User implements UserInterface
 {
     /**
      * @ORM\Column(type="integer")
@@ -37,21 +37,29 @@ class User implements UserInterface, \Serializable
     private $password;
 
     /**
+     * @ORM\Column(type="string", length=25)
+     */
+    private $firstName;
+
+    /**
+     * @ORM\Column(type="string", length=25)
+     */
+    private $lastName;
+
+    /**
      * @ORM\Column(type="string", length=60, unique=true)
      */
     private $email;
 
     /**
+     * @ORM\Column(type="string", length=25)
+     */
+    private $role;
+
+    /**
      * @ORM\Column(name="is_active", type="boolean")
      */
     private $isActive;
-
-    public function __construct()
-    {
-        $this->isActive = true;
-        // may not be needed, see section on salt below
-        // $this->salt = md5(uniqid(null, true));
-    }
 
     /**
      * @inheritDoc
@@ -84,7 +92,7 @@ class User implements UserInterface, \Serializable
      */
     public function getRoles()
     {
-        return array('ROLE_ADMIN');
+        return array($this->getRole()); //For the moment, user can have only one role
     }
 
     /**
@@ -204,4 +212,73 @@ class User implements UserInterface, \Serializable
         return $this->isActive;
     }
 
+
+    /**
+     * Set role
+     *
+     * @param string $role
+     * @return User
+     */
+    public function setRole($role)
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * Get role
+     *
+     * @return string 
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    /**
+     * Set firstName
+     *
+     * @param string $firstName
+     * @return User
+     */
+    public function setFirstName($firstName)
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    /**
+     * Get firstName
+     *
+     * @return string 
+     */
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+
+    /**
+     * Set lastName
+     *
+     * @param string $lastName
+     * @return User
+     */
+    public function setLastName($lastName)
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    /**
+     * Get lastName
+     *
+     * @return string 
+     */
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
 }
