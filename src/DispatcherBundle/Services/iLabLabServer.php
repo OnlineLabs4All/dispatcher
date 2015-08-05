@@ -8,8 +8,12 @@
 // src/DispatcherBundle/Services/iLabLabServer.php
 namespace DispatcherBundle\Services;
 use DispatcherBundle\Entity\JobRecord;
+use DispatcherBundle\Entity\LabServer;
+use DispatcherBundle\Entity\LsToRlmsMapping;
+use DispatcherBundle\Entity\Rlms;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints\Null;
+use DispatcherBundle\Security\IsaRlmsAuthenticator;
 
 
 class iLabLabServer
@@ -17,23 +21,16 @@ class iLabLabServer
     private $em;
     private $labServer;//object of class LabServer
     private $rlmsGuid;
+    private $brokerAuthenticator;
+    private $serviceUrl;
     //private $labServerId;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, IsaRlmsAuthenticator $brokerAuthenticator)
     {
         $this->em = $em;
+        $this->brokerAuthenticator = $brokerAuthenticator;
     }
 
-    public function AuthHeader($Header)
-    {
-        $this->rlmsGuid =  $Header->identifier;
-        $passkey = $Header->passKey;
-
-
-        //check the database for the SB GUID and PassKey
-        //if (($sbGuid != "9954C5B79AEB432A94DE29E6EE44EB6") && ($passkey != "366497578876928") )
-        //return new \SoapFault("Server", "Wrong SB identifier and/or Passkey" );
-    }
     //This is not a SOAP Method
     public function setLabServerId($labServerId){
         //$this->labServerId = $labServerId;
@@ -42,6 +39,24 @@ class iLabLabServer
             ->getRepository('DispatcherBundle:LabServer')
             ->findOneBy(array('id' => $labServerId));
     }
+
+    public function  setServiceUrl($url)
+    {
+        $this->serviceUrl = $url;
+    }
+
+    public function AuthHeader($Header)
+    {
+
+        $authResponse = $this->brokerAuthenticator->authenticateBatchedMethod($Header->identifier, $Header->passKey, $this->labServer->getId());
+        if ($authResponse['authenticated'] == false)
+        {
+            return new \SoapFault("Server", $authResponse['fault'] );
+        }
+        $this->rlmsGuid = $Header->identifier;
+
+    }
+
 
     public function GetLabInfo(){
         $response = array('GetLabInfoResult' => $this->labServer->getLabInfo());
@@ -272,4 +287,68 @@ class iLabLabServer
         return $response;
     }
 
+// ========================================================================
+//          ISA Generic Process Agent Services
+//=========================================================================
+
+    public function InitAuthHeader($header)
+    {
+        //$initPasskey = $header->initPasskey;
+        $authResponse = $this->brokerAuthenticator->authenticateInstallDomainCredentialsMethod($header->initPasskey, $this->labServer->getId());
+        if ($authResponse['authenticated'] == false)
+        {
+            return new \SoapFault("Server", $authResponse['fault'] );
+        }
+    }
+
+    public function InstallDomainCredentials($params)
+    {
+
+        $broker = $this
+            ->em
+            ->getRepository('DispatcherBundle:Rlms')
+            ->findOneBy(array('Guid' => $params->service->agentGuid, 'owner_id' => $this->labServer->getOwnerId()));
+
+        if ($broker != null)
+        {
+
+            $broker = new Rlms();
+            $broker->setGuid($params->service->agentGuid);
+            $broker->setName($params->service->agentName);
+            $broker->setOwnerId($this->labServer->getOwnerId());
+            $broker->setActive(true);
+            $broker->setDateCreated(date('Y-m-d\TH:i:sP'));
+            $broker->setRlmsType('ISA');
+            $broker->setServiceUrl($params->service->webServiceUrl);
+
+            $brokerSpecificData = array('type' => $params->service->type,
+                'domainGuid' => $params->service->domainGuid,
+                'codeBaseUrl' => $params->service->codeBaseUrl,
+                'inIdentCoupon' => $params->inIdentCoupon,
+                'outIdentCoupon' => $params->outIdentCoupon);
+
+            $broker->setRlmsSpecificData(json_encode($brokerSpecificData));
+
+            $this->em->persist($broker);
+            $this->em->flush();
+
+        }
+        $newLsBrokerMapping = new LsToRlmsMapping();
+        $newLsBrokerMapping->setRlmsId($broker->getId());
+        $newLsBrokerMapping->setLabServerId($this->labServer->getId());
+        $this->em->persist($newLsBrokerMapping);
+        $this->em->flush();
+
+
+        $response = array('InstallDomainCredentialsResult'=>array('agentGuid'=> $this->labServer->getGuid(),
+                                                                  'agentName'=> $this->labServer->getName(),
+                                                                  'type'=> 'ILS',
+                                                                  'domainGuid'=> $this->rlmsGuid,
+                                                                  'codeBaseUrl'=> $this->serviceUrl,
+                                                                  'webServiceUrl'=> $this->serviceUrl));
+        return $response;
+
+    }
+
 }
+
