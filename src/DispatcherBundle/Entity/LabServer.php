@@ -110,6 +110,11 @@ class LabServer
      */
     protected $labInfo;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $rlmsSpecificData; //Optional field, used to stope RLMS specific data
+
 
     public function setAll($data)
     {
@@ -129,7 +134,6 @@ class LabServer
         $this->initialPassKey = $data['initialPassKey'];
         $this->labInfo = $data['labInfo'];
         $this->type = $data['type'];
-
     }
 
     public function updateAll($data, $ownerId)
@@ -547,5 +551,28 @@ class LabServer
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Set rlmsSpecificData
+     *
+     * @param string $rlmsSpecificData
+     * @return LabServer
+     */
+    public function setRlmsSpecificData($rlmsSpecificData)
+    {
+        $this->rlmsSpecificData = $rlmsSpecificData;
+
+        return $this;
+    }
+
+    /**
+     * Get rlmsSpecificData
+     *
+     * @return string 
+     */
+    public function getRlmsSpecificData()
+    {
+        return $this->rlmsSpecificData;
     }
 }
