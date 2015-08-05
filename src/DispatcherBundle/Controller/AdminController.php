@@ -39,7 +39,7 @@ class AdminController extends Controller
     {
         $userToken= $this->get('security.token_storage')->getToken()->getUser();
 
-        return $this->render('default/adminHome.html.twig', array('userName'=> $userToken->getFirstName()));
+        return $this->render('default/adminHome.html.twig', array('userName'=> $userToken->getUsername()));
     }
 
     /**
