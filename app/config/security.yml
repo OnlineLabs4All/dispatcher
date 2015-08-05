@@ -81,8 +81,8 @@ security:
             logout:
                 path: /logout
                 target: /login
-            #provider: site_user_provider
-            provider: in_memory
+            provider: site_user_provider
+            #provider: in_memory
 
 
     # with these settings you can restrict or allow access for different parts
