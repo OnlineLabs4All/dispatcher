@@ -42,7 +42,7 @@ class IsaRlmsAuthenticator{
                 {
                     return array('authenticated' => true, 'fault' => '');
                 }
-                return array('authenticated' => false, 'fault' => 'Broker and Lab Server  were found, but they are not mapped to each other. Contact your server administrator');
+                return array('authenticated' => false, 'fault' => 'Broker and Lab Server  were found, but they are not mapped to each other. Contact your Experiment Dispatcher administrator');
             }
             return array('authenticated' => false, 'fault' => 'Provided Lab Server passkey is incorrect');
         }
@@ -55,7 +55,7 @@ class IsaRlmsAuthenticator{
         $labServer = $this
             ->em
             ->getRepository('DispatcherBundle:LabServer')
-            ->findOneBy(array('initialPassKey' => $initPasskey, 'id' => $labserverId));
+            ->findOneBy(array('initialPassKey' => $initPasskey, 'id' => $labserverId, 'type' => 'ILS'));
 
         if ($labServer != null)
         {
@@ -74,5 +74,38 @@ class IsaRlmsAuthenticator{
 
     }
 
+    //AgentAuthHeader - Authenticate all other methods for interactive services
+    public function authenticateAgent($sbGuid, $labserverId)
+    {
+        $broker = $this
+            ->em
+            ->getRepository('DispatcherBundle:Rlms')
+            ->findOneBy(array('Guid' => $sbGuid));
+
+        if ($broker != null) //if Broker exists, authenticate labServer
+        {
+            $labServer = $this
+                ->em
+                ->getRepository('DispatcherBundle:LabServer')
+                ->findOneBy(array('id' => $labserverId, 'type' => 'ILS'));
+
+            if ($labServer != null)
+            {
+                $mapping = $this
+                    ->em
+                    ->getRepository('DispatcherBundle:LsToRlmsMapping')
+                    ->findOneBy(array('labServerId' => $labServer->getId(), 'rlmsId' => $broker->getId()));
+
+                if ($mapping != null)
+                {
+                    return array('authenticated' => true, 'fault' => '');
+                }
+                return array('authenticated' => false, 'fault' => 'Broker and Lab Server  were found, but they are not mapped to each other. Contact your Experiment Dispatcher administrator');
+            }
+            return array('authenticated' => false, 'fault' => 'Lab server was not found. Contact your Experiment Dispatcher administrator');
+        }
+        return array('authenticated' => false, 'fault' => 'Provided Service Broker GUID is not registered');
+    }
 
 }
+
