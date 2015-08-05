@@ -301,6 +301,15 @@ class iLabLabServer
         }
     }
 
+    public function AgentAuthHeader($header)
+    {
+        $authResponse = $this->brokerAuthenticator->authenticateAgent($header->agentGuid, $this->labServer->getId());
+        if ($authResponse['authenticated'] == false)
+        {
+            return new \SoapFault("Server", $authResponse['fault'] );
+        }
+    }
+
     public function InstallDomainCredentials($params)
     {
         $broker = $this
@@ -311,13 +320,6 @@ class iLabLabServer
         if ($broker != null)
         {
             $broker->setActive(true);
-            $brokerSpecificData = array('type' => $params->service->type,
-                'domainGuid' => $params->service->domainGuid,
-                'codeBaseUrl' => $params->service->codeBaseUrl,
-                'inIdentCoupon' => $params->inIdentCoupon,
-                'outIdentCoupon' => $params->outIdentCoupon);
-            $broker->setRlmsSpecificData(json_encode($brokerSpecificData));
-
         }
         else
         {
@@ -330,14 +332,6 @@ class iLabLabServer
             $broker->setRlmsType('ISA');
             $broker->setServiceUrl($params->service->webServiceUrl);
 
-            $brokerSpecificData = array('type' => $params->service->type,
-                'domainGuid' => $params->service->domainGuid,
-                'codeBaseUrl' => $params->service->codeBaseUrl,
-                'inIdentCoupon' => $params->inIdentCoupon,
-                'outIdentCoupon' => $params->outIdentCoupon);
-
-            $broker->setRlmsSpecificData(json_encode($brokerSpecificData));
-
         }
         //Persist Broker to the database
         $this->em->persist($broker);
@@ -349,6 +343,19 @@ class iLabLabServer
         $this->em->persist($newLsBrokerMapping);
         $this->em->flush();
 
+        //Save RLMS specific date into the database of the Lab Server
+        $rlmsSpecificData = array('type' => $params->service->type,
+            'domainGuid' => $params->service->domainGuid,
+            'codeBaseUrl' => $params->service->codeBaseUrl,
+            'inIdentCoupon' => $params->inIdentCoupon,
+            'outIdentCoupon' => $params->outIdentCoupon);
+
+        $this->labServer->setRlmsSpecificData(json_encode($rlmsSpecificData));
+        //persist the date to lab server db
+        $this->em->persist($this->labServer);
+        $this->em->flush();
+
+
         //assemble response of SOAP method
         $response = array('InstallDomainCredentialsResult'=>array('agentGuid'=> $this->labServer->getGuid(),
                                                                   'agentName'=> $this->labServer->getName(),
@@ -357,8 +364,53 @@ class iLabLabServer
                                                                   'codeBaseUrl'=> $this->serviceUrl,
                                                                   'webServiceUrl'=> $this->serviceUrl));
         return $response;
+    }
 
+    public function Register($param)
+    {
+
+
+        $this->labServer->setConfiguration(json_encode($param));
+        //persist the date to lab server db
+        $this->em->persist($this->labServer);
+        $this->em->flush();
+
+        $response = array();
     }
 
 }
-
+/*
+ * <?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Header>
+    <AgentAuthHeader xmlns="http://ilab.mit.edu/iLabs/type">
+      <agentGuid>string</agentGuid>
+    </AgentAuthHeader>
+  </soap:Header>
+  <soap:Body>
+    <Register xmlns="http://ilab.mit.edu/iLabs/Services">
+      <registerGuid>string</registerGuid>
+      <info>
+        <ServiceDescription>
+          <serviceProviderInfo xmlns="http://ilab.mit.edu/iLabs/type">string</serviceProviderInfo>
+          <coupon xmlns="http://ilab.mit.edu/iLabs/type">
+            <couponId>long</couponId>
+            <issuerGuid>string</issuerGuid>
+            <passkey>string</passkey>
+          </coupon>
+          <consumerInfo xmlns="http://ilab.mit.edu/iLabs/type">string</consumerInfo>
+        </ServiceDescription>
+        <ServiceDescription>
+          <serviceProviderInfo xmlns="http://ilab.mit.edu/iLabs/type">string</serviceProviderInfo>
+          <coupon xmlns="http://ilab.mit.edu/iLabs/type">
+            <couponId>long</couponId>
+            <issuerGuid>string</issuerGuid>
+            <passkey>string</passkey>
+          </coupon>
+          <consumerInfo xmlns="http://ilab.mit.edu/iLabs/type">string</consumerInfo>
+        </ServiceDescription>
+      </info>
+    </Register>
+  </soap:Body>
+</soap:Envelope>
+ */
