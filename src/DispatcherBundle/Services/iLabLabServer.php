@@ -303,7 +303,6 @@ class iLabLabServer
 
     public function InstallDomainCredentials($params)
     {
-
         $broker = $this
             ->em
             ->getRepository('DispatcherBundle:Rlms')
@@ -311,7 +310,17 @@ class iLabLabServer
 
         if ($broker != null)
         {
+            $broker->setActive(true);
+            $brokerSpecificData = array('type' => $params->service->type,
+                'domainGuid' => $params->service->domainGuid,
+                'codeBaseUrl' => $params->service->codeBaseUrl,
+                'inIdentCoupon' => $params->inIdentCoupon,
+                'outIdentCoupon' => $params->outIdentCoupon);
+            $broker->setRlmsSpecificData(json_encode($brokerSpecificData));
 
+        }
+        else
+        {
             $broker = new Rlms();
             $broker->setGuid($params->service->agentGuid);
             $broker->setName($params->service->agentName);
@@ -329,20 +338,21 @@ class iLabLabServer
 
             $broker->setRlmsSpecificData(json_encode($brokerSpecificData));
 
-            $this->em->persist($broker);
-            $this->em->flush();
-
         }
+        //Persist Broker to the database
+        $this->em->persist($broker);
+        $this->em->flush();
+        //Set mapping info between service broker and lab server
         $newLsBrokerMapping = new LsToRlmsMapping();
         $newLsBrokerMapping->setRlmsId($broker->getId());
         $newLsBrokerMapping->setLabServerId($this->labServer->getId());
         $this->em->persist($newLsBrokerMapping);
         $this->em->flush();
 
-
+        //assemble response of SOAP method
         $response = array('InstallDomainCredentialsResult'=>array('agentGuid'=> $this->labServer->getGuid(),
                                                                   'agentName'=> $this->labServer->getName(),
-                                                                  'type'=> 'ILS',
+                                                                  'type'=> 'LAB SERVER',
                                                                   'domainGuid'=> $this->rlmsGuid,
                                                                   'codeBaseUrl'=> $this->serviceUrl,
                                                                   'webServiceUrl'=> $this->serviceUrl));
