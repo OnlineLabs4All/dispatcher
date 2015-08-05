@@ -40,12 +40,12 @@ class Rlms
     protected $institution;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $contact_name;
 
     /**
-     * @ORM\Column(type="string", length=35)
+     * @ORM\Column(type="string", length=35, nullable=true)
      */
     protected $contact_email;
 
@@ -89,6 +89,11 @@ class Rlms
      * @ORM\Column(type="string", length=100)
      */
     protected $serviceUrl;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    protected $rlmsSpecificData; //Optional field, used to transfer additional information if necessary.
 
     /**
      * Get id
@@ -397,5 +402,28 @@ class Rlms
     public function getServiceUrl()
     {
         return $this->serviceUrl;
+    }
+
+    /**
+     * Set rlmsSpecificData
+     *
+     * @param string $rlmsSpecificData
+     * @return Rlms
+     */
+    public function setRlmsSpecificData($rlmsSpecificData)
+    {
+        $this->rlmsSpecificData = $rlmsSpecificData;
+
+        return $this;
+    }
+
+    /**
+     * Get rlmsSpecificData
+     *
+     * @return string 
+     */
+    public function getRlmsSpecificData()
+    {
+        return $this->rlmsSpecificData;
     }
 }
