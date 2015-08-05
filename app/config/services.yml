@@ -12,9 +12,14 @@ services:
   #apikey_authenticator:
   #        class:     DispatcherBundle\Security\ApiKeyAuthenticator
   #        arguments: ["@api_key_user_provider"]
+
+    isaRlmsAuthenticator:
+      class: DispatcherBundle\Security\IsaRlmsAuthenticator
+      arguments: [@doctrine.orm.entity_manager]
+
     iLabLabServer:
       class:  DispatcherBundle\Services\iLabLabServer
-      arguments: [@doctrine.orm.entity_manager]
+      arguments: [@doctrine.orm.entity_manager, @isaRlmsAuthenticator]
 
     engineServices:
           class:  DispatcherBundle\Services\EngineServices
@@ -22,3 +27,7 @@ services:
 
     wsdlGenerator:
       class: DispatcherBundle\Services\WsdlGenerator
+
+    siteUserProvider:
+      class: DispatcherBundle\Security\SiteUserProvider
+      arguments: [@doctrine.orm.entity_manager]
