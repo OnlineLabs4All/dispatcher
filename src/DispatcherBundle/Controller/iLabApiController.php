@@ -26,7 +26,7 @@ use DispatcherBundle\Model\Subscriber\LabInfo;
  */
 class iLabApiController extends Controller
 {
-    //This route accepts POST method and instantiate the SOAP server
+    //This route accepts POST method and instantiate the SOAP server for BATCHED LABS
     /**
      * @Route("/{labServerId}/soap", name="isa_apiRoot")
      * @Method({"POST"})
@@ -43,6 +43,32 @@ class iLabApiController extends Controller
         $iLabBatched = $this->get('iLabLabServer');
         $iLabBatched->setLabServerId($labServerId);
         $soapServer->setObject($iLabBatched);
+        $response = new Response();
+        $response->headers->set('Content-Type','application/soap+xml; charset=utf-8');
+        ob_start();
+        $soapServer->handle();
+        $response->setContent(ob_get_clean());
+        return $response;
+    }
+
+    //This route accepts POST method and instantiate the SOAP server
+    /**
+     * @Route("/{labServerId}/ils/soap", name="isa_apiRoot_ils")
+     * @Method({"POST"})
+     *
+     */
+    public function interactiveApiAction(Request $request, $labServerId)
+    {
+        ini_set("soap.wsdl_cache_enabled", "0");
+        $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/interactiveLabServer.wsdl";
+
+        $soapServer = new \SoapServer($wsdl_url, array('soap_version' => SOAP_1_2));
+        //$soapServer->setObject($this->get('BatchedLabServerApi'));
+        //var_dump($soapServer);
+        $iLabLabServer = $this->get('iLabLabServer');
+        $iLabLabServer->setLabServerId($labServerId);
+        $iLabLabServer->setServiceUrl($service_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/ils/soap");
+        $soapServer->setObject($iLabLabServer);
         $response = new Response();
         $response->headers->set('Content-Type','application/soap+xml; charset=utf-8');
         ob_start();
@@ -101,8 +127,6 @@ class iLabApiController extends Controller
             'minTimetoLive' => $minTimetoLive));
 
         return new Response($opaque->userGroup);
-
     }
-
 
 }
