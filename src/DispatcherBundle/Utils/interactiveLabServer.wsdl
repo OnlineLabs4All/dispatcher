@@ -1,0 +1,573 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://ilab.mit.edu/iLabs/Services" xmlns:s1="http://ilab.mit.edu/iLabs/type" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://ilab.mit.edu/iLabs/Services" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">The ProcessAgent Interface is implemented by all iLab interactive services and is responsible for managing the credentials used for authentication and authorization between services. See Ticketing API for details.</wsdl:documentation>
+    <wsdl:types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ilab.mit.edu/iLabs/Services">
+            <s:import namespace="http://ilab.mit.edu/iLabs/type" />
+            <s:element name="GetServiceTime">
+                <s:complexType />
+            </s:element>
+            <s:element name="GetServiceTimeResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="GetServiceTimeResult" type="s:dateTime" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="GetStatus">
+                <s:complexType />
+            </s:element>
+            <s:element name="GetStatusResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" ref="s1:GetStatusResult" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="StatusNotification">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" ref="s1:report" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="StatusNotificationResponse">
+                <s:complexType />
+            </s:element>
+            <s:element name="InstallDomainCredentials">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" ref="s1:service" />
+                        <s:element minOccurs="1" maxOccurs="1" ref="s1:inIdentCoupon" />
+                        <s:element minOccurs="1" maxOccurs="1" ref="s1:outIdentCoupon" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="InstallDomainCredentialsResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" ref="s1:InstallDomainCredentialsResult" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="ModifyDomainCredentials">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="originalGuid" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" ref="s1:agent" />
+                        <s:element minOccurs="0" maxOccurs="1" name="extra" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" ref="s1:inCoupon" />
+                        <s:element minOccurs="1" maxOccurs="1" ref="s1:outCoupon" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="ModifyDomainCredentialsResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="ModifyDomainCredentialsResult" type="s:int" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="RemoveDomainCredentials">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="domainGuid" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="serviceGuid" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="RemoveDomainCredentialsResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="RemoveDomainCredentialsResult" type="s:int" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="ModifyProcessAgent">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="originalGuid" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" ref="s1:agent" />
+                        <s:element minOccurs="0" maxOccurs="1" name="extra" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="ModifyProcessAgentResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="ModifyProcessAgentResult" type="s:int" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="RetireProcessAgent">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="domainGuid" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="serviceGuid" type="s:string" />
+                        <s:element minOccurs="1" maxOccurs="1" name="state" type="s:boolean" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="RetireProcessAgentResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="RetireProcessAgentResult" type="s:int" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="CancelTicket">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" ref="s1:coupon" />
+                        <s:element minOccurs="0" maxOccurs="1" name="type" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="redeemer" type="s:string" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="CancelTicketResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="1" maxOccurs="1" name="CancelTicketResult" type="s:boolean" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="Register">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element minOccurs="0" maxOccurs="1" name="registerGuid" type="s:string" />
+                        <s:element minOccurs="0" maxOccurs="1" name="info" type="tns:ArrayOfServiceDescription" />
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="ArrayOfServiceDescription">
+                <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="unbounded" name="ServiceDescription" nillable="true" type="s1:ServiceDescription" />
+                </s:sequence>
+            </s:complexType>
+            <s:element name="RegisterResponse">
+                <s:complexType />
+            </s:element>
+        </s:schema>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://ilab.mit.edu/iLabs/type">
+            <s:element name="GetStatusResult" nillable="true" type="s1:StatusReport" />
+            <s:complexType name="StatusReport">
+                <s:sequence>
+                    <s:element minOccurs="1" maxOccurs="1" name="online" type="s:boolean" />
+                    <s:element minOccurs="0" maxOccurs="1" name="serviceGuid" type="s:string" />
+                    <s:element minOccurs="0" maxOccurs="1" name="payload" type="s:string" />
+                </s:sequence>
+            </s:complexType>
+            <s:element name="report" nillable="true" type="s1:StatusNotificationReport" />
+            <s:complexType name="StatusNotificationReport">
+                <s:sequence>
+                    <s:element minOccurs="1" maxOccurs="1" name="alertCode" type="s:int" />
+                    <s:element minOccurs="0" maxOccurs="1" name="serviceGuid" type="s:string" />
+                    <s:element minOccurs="1" maxOccurs="1" name="time" type="s:dateTime" />
+                    <s:element minOccurs="0" maxOccurs="1" name="payload" type="s:string" />
+                </s:sequence>
+            </s:complexType>
+            <s:element name="AgentAuthHeader" type="s1:AgentAuthHeader" />
+            <s:complexType name="AgentAuthHeader">
+                <s:complexContent mixed="false">
+                    <s:extension base="s1:AuthenticationHeader">
+                        <s:sequence>
+                            <s:element minOccurs="0" maxOccurs="1" name="agentGuid" type="s:string" />
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="AuthenticationHeader">
+                <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="coupon" type="s1:Coupon" />
+                </s:sequence>
+                <s:anyAttribute />
+            </s:complexType>
+            <s:complexType name="Coupon">
+                <s:sequence>
+                    <s:element minOccurs="1" maxOccurs="1" name="couponId" type="s:long" />
+                    <s:element minOccurs="0" maxOccurs="1" name="issuerGuid" type="s:string" />
+                    <s:element minOccurs="0" maxOccurs="1" name="passkey" type="s:string" />
+                </s:sequence>
+            </s:complexType>
+            <s:element name="service" nillable="true" type="s1:ProcessAgent" />
+            <s:complexType name="ProcessAgent">
+                <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="agentGuid" type="s:string" />
+                    <s:element minOccurs="0" maxOccurs="1" name="agentName" type="s:string" />
+                    <s:element minOccurs="0" maxOccurs="1" name="type" type="s:string" />
+                    <s:element minOccurs="0" maxOccurs="1" name="domainGuid" type="s:string" />
+                    <s:element minOccurs="0" maxOccurs="1" name="codeBaseUrl" type="s:string" />
+                    <s:element minOccurs="0" maxOccurs="1" name="webServiceUrl" type="s:string" />
+                </s:sequence>
+            </s:complexType>
+            <s:element name="inIdentCoupon" nillable="true" type="s1:Coupon" />
+            <s:element name="outIdentCoupon" nillable="true" type="s1:Coupon" />
+            <s:element name="InstallDomainCredentialsResult" nillable="true" type="s1:ProcessAgent" />
+            <s:element name="InitAuthHeader" type="s1:InitAuthHeader" />
+            <s:complexType name="InitAuthHeader">
+                <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="initPasskey" type="s:string" />
+                </s:sequence>
+                <s:anyAttribute />
+            </s:complexType>
+            <s:element name="agent" nillable="true" type="s1:ProcessAgent" />
+            <s:element name="inCoupon" nillable="true" type="s1:Coupon" />
+            <s:element name="outCoupon" nillable="true" type="s1:Coupon" />
+            <s:element name="coupon" nillable="true" type="s1:Coupon" />
+            <s:complexType name="ServiceDescription">
+                <s:sequence>
+                    <s:element minOccurs="0" maxOccurs="1" name="serviceProviderInfo" type="s:string" />
+                    <s:element minOccurs="0" maxOccurs="1" name="coupon" type="s1:Coupon" />
+                    <s:element minOccurs="0" maxOccurs="1" name="consumerInfo" type="s:string" />
+                </s:sequence>
+            </s:complexType>
+        </s:schema>
+    </wsdl:types>
+    <wsdl:message name="GetServiceTimeSoapIn">
+        <wsdl:part name="parameters" element="tns:GetServiceTime" />
+    </wsdl:message>
+    <wsdl:message name="GetServiceTimeSoapOut">
+        <wsdl:part name="parameters" element="tns:GetServiceTimeResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetStatusSoapIn">
+        <wsdl:part name="parameters" element="tns:GetStatus" />
+    </wsdl:message>
+    <wsdl:message name="GetStatusSoapOut">
+        <wsdl:part name="parameters" element="tns:GetStatusResponse" />
+    </wsdl:message>
+    <wsdl:message name="StatusNotificationSoapIn">
+        <wsdl:part name="parameters" element="tns:StatusNotification" />
+    </wsdl:message>
+    <wsdl:message name="StatusNotificationSoapOut">
+        <wsdl:part name="parameters" element="tns:StatusNotificationResponse" />
+    </wsdl:message>
+    <wsdl:message name="StatusNotificationAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" element="s1:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="InstallDomainCredentialsSoapIn">
+        <wsdl:part name="parameters" element="tns:InstallDomainCredentials" />
+    </wsdl:message>
+    <wsdl:message name="InstallDomainCredentialsSoapOut">
+        <wsdl:part name="parameters" element="tns:InstallDomainCredentialsResponse" />
+    </wsdl:message>
+    <wsdl:message name="InstallDomainCredentialsInitAuthHeader">
+        <wsdl:part name="InitAuthHeader" element="s1:InitAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="ModifyDomainCredentialsSoapIn">
+        <wsdl:part name="parameters" element="tns:ModifyDomainCredentials" />
+    </wsdl:message>
+    <wsdl:message name="ModifyDomainCredentialsSoapOut">
+        <wsdl:part name="parameters" element="tns:ModifyDomainCredentialsResponse" />
+    </wsdl:message>
+    <wsdl:message name="ModifyDomainCredentialsAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" element="s1:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RemoveDomainCredentialsSoapIn">
+        <wsdl:part name="parameters" element="tns:RemoveDomainCredentials" />
+    </wsdl:message>
+    <wsdl:message name="RemoveDomainCredentialsSoapOut">
+        <wsdl:part name="parameters" element="tns:RemoveDomainCredentialsResponse" />
+    </wsdl:message>
+    <wsdl:message name="RemoveDomainCredentialsAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" element="s1:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="ModifyProcessAgentSoapIn">
+        <wsdl:part name="parameters" element="tns:ModifyProcessAgent" />
+    </wsdl:message>
+    <wsdl:message name="ModifyProcessAgentSoapOut">
+        <wsdl:part name="parameters" element="tns:ModifyProcessAgentResponse" />
+    </wsdl:message>
+    <wsdl:message name="ModifyProcessAgentAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" element="s1:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RetireProcessAgentSoapIn">
+        <wsdl:part name="parameters" element="tns:RetireProcessAgent" />
+    </wsdl:message>
+    <wsdl:message name="RetireProcessAgentSoapOut">
+        <wsdl:part name="parameters" element="tns:RetireProcessAgentResponse" />
+    </wsdl:message>
+    <wsdl:message name="RetireProcessAgentAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" element="s1:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="CancelTicketSoapIn">
+        <wsdl:part name="parameters" element="tns:CancelTicket" />
+    </wsdl:message>
+    <wsdl:message name="CancelTicketSoapOut">
+        <wsdl:part name="parameters" element="tns:CancelTicketResponse" />
+    </wsdl:message>
+    <wsdl:message name="CancelTicketAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" element="s1:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RegisterSoapIn">
+        <wsdl:part name="parameters" element="tns:Register" />
+    </wsdl:message>
+    <wsdl:message name="RegisterSoapOut">
+        <wsdl:part name="parameters" element="tns:RegisterResponse" />
+    </wsdl:message>
+    <wsdl:message name="RegisterAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" element="s1:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:portType name="IProcessAgent">
+        <wsdl:operation name="GetServiceTime">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get the services local DateTime. This is not UTC</wsdl:documentation>
+            <wsdl:input message="tns:GetServiceTimeSoapIn" />
+            <wsdl:output message="tns:GetServiceTimeSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetStatus">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get a simple StatusReport from the service.</wsdl:documentation>
+            <wsdl:input message="tns:GetStatusSoapIn" />
+            <wsdl:output message="tns:GetStatusSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="StatusNotification">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Send a status notification to this service, it is up to the implementing service to take action. Currently no action is taken.</wsdl:documentation>
+            <wsdl:input message="tns:StatusNotificationSoapIn" />
+            <wsdl:output message="tns:StatusNotificationSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="InstallDomainCredentials">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Install the Domain credentials on this ProcessAgent. Please note this method depends on a 'bootstrap' ProcessAgent record in the database which must be created via the SelfRegistration page. This may only be called from a ServiceBroker. Also uses the initialPasskey value from Web.config as the header value.&lt;br/&gt;This service's connection and additional information is returned to the ServiceBroker.</wsdl:documentation>
+            <wsdl:input message="tns:InstallDomainCredentialsSoapIn" />
+            <wsdl:output message="tns:InstallDomainCredentialsSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="ModifyDomainCredentials">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Modify the specified services domain credentials on this ProcessAgent. Agent_guid is key to the service to be modified. The agentAuthorizationHeader must use the old values. This will only be called from a ServiceBroker to members of its domain, or to a different domain's ServiceBroker.</wsdl:documentation>
+            <wsdl:input message="tns:ModifyDomainCredentialsSoapIn" />
+            <wsdl:output message="tns:ModifyDomainCredentialsSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RemoveDomainCredentials">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Remove this service from a domain.</wsdl:documentation>
+            <wsdl:input message="tns:RemoveDomainCredentialsSoapIn" />
+            <wsdl:output message="tns:RemoveDomainCredentialsSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="ModifyProcessAgent">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Informs this processAgent that it should modify all references to a specific ProcessAgent. This is used to propagate modifications, between ProcessAgents.</wsdl:documentation>
+            <wsdl:input message="tns:ModifyProcessAgentSoapIn" />
+            <wsdl:output message="tns:ModifyProcessAgentSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RetireProcessAgent">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Informs a ProcessAgent that it should retire/un-retire all references to a specific ProcessAgent. This is used to propagate retire calls, for this release un-retire is not supported.</wsdl:documentation>
+            <wsdl:input message="tns:RetireProcessAgentSoapIn" />
+            <wsdl:output message="tns:RetireProcessAgentSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="CancelTicket">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Cancel the ticket. This call is always from a ServiceBroker, if the receiver is a ServiceBroker but is not the redeemer the header is repackaged and forwarded to the redeemer if known.</wsdl:documentation>
+            <wsdl:input message="tns:CancelTicketSoapIn" />
+            <wsdl:output message="tns:CancelTicketSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="Register">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Register, is used to convey additional information between services. The ServiceBroker implementation is also used in Cross-Domain registration of services and clients</wsdl:documentation>
+            <wsdl:input message="tns:RegisterSoapIn" />
+            <wsdl:output message="tns:RegisterSoapOut" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="IProcessAgent" type="tns:IProcessAgent">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="GetServiceTime">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/GetServiceTime" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetStatus">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/GetStatus" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="StatusNotification">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/StatusNotification" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:StatusNotificationAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="InstallDomainCredentials">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/InstallDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:InstallDomainCredentialsInitAuthHeader" part="InitAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ModifyDomainCredentials">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/ModifyDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:ModifyDomainCredentialsAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RemoveDomainCredentials">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RemoveDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RemoveDomainCredentialsAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ModifyProcessAgent">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/ModifyProcessAgent" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:ModifyProcessAgentAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetireProcessAgent">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetireProcessAgent" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RetireProcessAgentAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CancelTicket">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/CancelTicket" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:CancelTicketAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Register">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/Register" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RegisterAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="IProcessAgent1" type="tns:IProcessAgent">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="GetServiceTime">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/GetServiceTime" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetStatus">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/GetStatus" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="StatusNotification">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/StatusNotification" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:StatusNotificationAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="InstallDomainCredentials">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/InstallDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:InstallDomainCredentialsInitAuthHeader" part="InitAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ModifyDomainCredentials">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/ModifyDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:ModifyDomainCredentialsAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RemoveDomainCredentials">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RemoveDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RemoveDomainCredentialsAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ModifyProcessAgent">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/ModifyProcessAgent" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:ModifyProcessAgentAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetireProcessAgent">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetireProcessAgent" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RetireProcessAgentAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CancelTicket">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/CancelTicket" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:CancelTicketAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Register">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/Register" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RegisterAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ProcessAgentProxy">
+        <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">The ProcessAgent Interface is implemented by all iLab interactive services and is responsible for managing the credentials used for authentication and authorization between services. See Ticketing API for details.</wsdl:documentation>
+        <wsdl:port name="IProcessAgent" binding="tns:IProcessAgent">
+            <soap:address location="http://localhost:8000/apis/isa/soap/" />
+        </wsdl:port>
+        <wsdl:port name="IProcessAgent1" binding="tns:IProcessAgent1">
+            <soap12:address location="http://localhost:8000/apis/isa/soap/" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
