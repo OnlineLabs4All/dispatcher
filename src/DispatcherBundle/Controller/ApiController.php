@@ -17,6 +17,8 @@ use \DateTime;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use DispatcherBundle\Model\Subscriber\LabInfo;
 use DispatcherBundle\Model\Subscriber\QueueLength;
+use SoapClient;
+use SoapHeader;
 
 
 /**
@@ -334,11 +336,34 @@ class ApiController extends Controller
      */
     public function test()
     {
+        //Set SOAP Headers
+        $headerParams = array('coupon' => array('couponId' => '284', //SB IdentOut
+                                                'issuerGuid' => '9954C5B79AEB432A94DE29E6EE44EB69', //SB GUID
+                                                'passkey' => '48A8B16EAF64416ABBA2B2819A74475F'), //SB IdentOut
+                              'agentGuid' => '30FBBE8736C84255B8E2C2B1E7A072F7');
+//Set Body parameters
+        $params =  array('coupon' => array('couponId' => '10314',
+                                           'issuerGuid' => '30FBBE8736C84255B8E2C2B1E7A072F7',
+                                           'passkey' => '719565A5C3394D6A8FF581555BAA5782'),
+                         'type' => 'EXECUTE EXPERIMENT',
+                         'redeemerGuid' => '30FBBE8736C84255B8E2C2B1E7A072F7');
+
+//Create SOAP Client
+
+
+        $client = new SoapClient('http://ilabs.cti.ac.at/iLabServiceBroker/iLabServiceBroker.asmx?wsdl', array('soap_version'   => SOAP_1_2,
+                                                                                                              'trace' => 1));
+        $header = new SOAPHeader('http://ilab.mit.edu/iLabs/type', 'AgentAuthHeader', $headerParams);
+        $client->__setSoapHeaders($header);
+
+        $result = $client->__soapCall('RedeemTicket', array($params));
+
+        return new Response($result);
 
     }
 
     /**
-     *
+     * http://ilab.mit.edu/iLabs/Services/RedeemTicket
      *
      * @ApiDoc(
      *  resource=true,
