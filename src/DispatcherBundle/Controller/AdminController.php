@@ -211,17 +211,30 @@ class AdminController extends Controller
             ->getRepository('DispatcherBundle:LabServer');
 
         $labServer =  $repository->findOneBy(array('id' => $labServerId));
-        $service_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/soap";
-        $wsdl_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/soap";
+
+        if ($labServer->getType() == 'ILS')
+        {
+            $service_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/ils/soap";
+            $wsdl_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/ils/soap";
+
+
+        }
+        else
+        {
+            $service_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/soap";
+            $wsdl_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/soap";
+        }
+
         return $this->render('default/apiEndpoints.html.twig', array(
             'viewName' => 'My APIs',
             'labServerName' => $labServer->getName(),
             'apis' => array(
-                            array('name' => 'ISA Batched Lab Server API (SOAP)',
+                            array('name' => 'ISA Lab Server API Endpoints and credentials to register with Service Broker',
                                   'description' => $wsdl_url,
                                   'endpoint' => $service_url,
                                   'guid' => $labServer->getGuid(),
                                   'passkey' => $labServer->getPassKey(),
+                                  'initialPasskey' => $labServer->getInitialPassKey(),
                                   'info' => 'Implements the iLab Shared Architecture batched lab server API. Use the service endpoint, GUID and passKey to install the Lab Server process agent in your iLab Service Broker',
                                   'documentation' => 'Not Available')
             )

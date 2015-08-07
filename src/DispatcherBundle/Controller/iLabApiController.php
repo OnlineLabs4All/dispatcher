@@ -79,11 +79,31 @@ class iLabApiController extends Controller
 
     //This route accepts only GET method and returns the WSDL for an specific Lab Server
     /**
+     * @Route("/{labServerId}/ils/soap/", name="interactive_ls_wsdl")
+     * @Method({"GET"})
+     *
+     */
+    public function getInteractiveWsdlAction(Request $request, $labServerId)
+    {
+        //$wsdl_gen = $this->get('wsdlGenerator');
+        $service_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/ils/soap";
+        //returns the wsdl
+        //echo "test";
+        $response = $this->render('wsdl/interactiveLs.wsdl.twig', array('service_url'=> $service_url));
+        //$response->headers->set('Content-Type', 'application/xml');
+        //return $response;
+        //$response = new Response($wsdl_gen->getBatchedLsWsdl());
+        $response->headers->set('Content-Type', 'application/xml');
+        return $response;
+    }
+
+    //This route accepts only GET method and returns the WSDL for an specific Lab Server
+    /**
      * @Route("/{labServerId}/soap/", name="batched_ls_wsdl")
      * @Method({"GET"})
      *
      */
-    public function indexAction(Request $request, $labServerId)
+    public function getBatchedWsdlAction(Request $request, $labServerId)
     {
         //$wsdl_gen = $this->get('wsdlGenerator');
         $service_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/soap";
