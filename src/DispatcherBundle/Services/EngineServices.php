@@ -10,20 +10,24 @@ namespace DispatcherBundle\Services;
 use DispatcherBundle\Entity\ExperimentEngine;
 use DispatcherBundle\Entity\JobRecord;
 use Doctrine\ORM\EntityManager;
+use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\Null;
 use DispatcherBundle\Model\Subscriber\Status;
 use DispatcherBundle\Model\Subscriber\LabInfo;
 use DispatcherBundle\Model\Subscriber\QueueLength;
 use DispatcherBundle\Model\Subscriber\ExperimentGetResponse;
 use DispatcherBundle\Model\Subscriber\ExperimentPostResponse;
+use SimpleXMLElement;
+use DOMDocument;
 
 
 class EngineServices
 {
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, SoapclientIsa $soapClientIsa)
     {
         $this->em = $em;
+        $this->soapClientIsa = $soapClientIsa;
     }
 
     public function getQueueLength(ExperimentEngine $engine)
@@ -309,6 +313,114 @@ class EngineServices
         }
 
         return $response;
+    }
+
+    public function retrieveExecuteExperimentTicket(ExperimentEngine $engine, $couponId, $passkey)
+    {
+        $ticketResponsePayload = null;
+        $broker = null;
+        $labServer = null;
+        $mappedSb = null;
+
+        $labServer = $this
+            ->em
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findOneBy(array('id' => $engine->getLabServerId(), 'type' => 'ILS'));
+
+        if ($labServer != null)
+        {
+            $mappedSb = $this
+                ->em
+                ->getRepository('DispatcherBundle:LsToRlmsMapping')
+                ->findOneBy(array('labServerId' => $engine->getLabServerId()));
+            if ($mappedSb != null)
+            {
+                $broker = $this
+                    ->em
+                    ->getRepository('DispatcherBundle:Rlms')
+                    ->findOneBy(array('id' => $mappedSb->getRlmsId()));
+
+                if ($broker != null)
+                {
+                    $ticketResponse = $this->soapClientIsa->redeemTicket($couponId, $passkey, $labServer, $broker, 'EXECUTE EXPERIMENT');
+                }
+            }
+        }
+        if ($ticketResponse != null)
+        {
+
+            $xml = simplexml_load_string($ticketResponse->payload, "SimpleXMLElement", LIBXML_NOCDATA);
+            $json = json_encode($xml);
+            $array = json_decode($json,TRUE);
+
+            $startExec = date_format(date_create($array['startExecution']), 'Y-m-d\TH:i:sP');
+
+            $response = array('success' => true,
+                'isCancelled' => $ticketResponse->isCancelled,
+                'startExecution' => $startExec,
+                'duration' => (int)$array['duration'],
+                'userID' => (int)$array['userID'],
+                'groupID' => (int)$array['groupID'],
+                'sbGuid' => $ticketResponse->issuerGuid,
+                'experimentID' => (int)$array['experimentID'],
+                'userTZ' =>  $array['userTZ']);
+
+            return $response;
+        }
+
+        $response = array('success' => false,
+            'errorMessage' => 'invalid couponID and/or passkey');
+
+        return $response;
+    }
+
+    public function verifyExecuteExperimentCoupon(ExperimentEngine $engine, $couponId, $passkey)
+    {
+        $ticketResponsePayload = null;
+        $broker = null;
+        $labServer = null;
+        $mappedSb = null;
+
+        $labServer = $this
+            ->em
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findOneBy(array('id' => $engine->getLabServerId(), 'type' => 'ILS'));
+
+        if ($labServer != null)
+        {
+            $mappedSb = $this
+                ->em
+                ->getRepository('DispatcherBundle:LsToRlmsMapping')
+                ->findOneBy(array('labServerId' => $engine->getLabServerId()));
+            if ($mappedSb != null)
+            {
+                $broker = $this
+                    ->em
+                    ->getRepository('DispatcherBundle:Rlms')
+                    ->findOneBy(array('id' => $mappedSb->getRlmsId()));
+
+                if ($broker != null)
+                {
+                    $ticketResponse = $this->soapClientIsa->redeemTicket($couponId, $passkey, $labServer, $broker, 'EXECUTE EXPERIMENT');
+                }
+            }
+        }
+        if ($ticketResponse != null)
+        {
+
+            $response = array('valid' => true,
+                'couponId' => (int)$couponId,
+                'passkey' => $passkey,
+                'type' => 'EXECUTE EXPERIMENT');
+
+            return $response;
+        }
+
+        $response = array('success' => false,
+            'errorMessage' => 'invalid couponID and/or passkey');
+
+        return $response;
+
     }
 
 }
