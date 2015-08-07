@@ -366,14 +366,10 @@ class iLabLabServer
         return $response;
     }
 
+    // @TODO - Implement Register method: update service broker DB. etc
     public function Register($param)
     {
 
-
-        $this->labServer->setConfiguration(json_encode($param));
-        //persist the date to lab server db
-        $this->em->persist($this->labServer);
-        $this->em->flush();
 
         $response = array();
     }
