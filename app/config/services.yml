@@ -23,11 +23,15 @@ services:
 
     engineServices:
           class:  DispatcherBundle\Services\EngineServices
-          arguments: [@doctrine.orm.entity_manager]
+          arguments: [@doctrine.orm.entity_manager, @soapClientIsa]
 
     wsdlGenerator:
       class: DispatcherBundle\Services\WsdlGenerator
 
     siteUserProvider:
       class: DispatcherBundle\Security\SiteUserProvider
+      arguments: [@doctrine.orm.entity_manager]
+
+    soapClientIsa:
+      class: DispatcherBundle\Services\SoapClientIsa
       arguments: [@doctrine.orm.entity_manager]
