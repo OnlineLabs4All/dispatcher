@@ -336,29 +336,7 @@ class ApiController extends Controller
      */
     public function test()
     {
-        //Set SOAP Headers
-        $headerParams = array('coupon' => array('couponId' => '284', //SB IdentOut
-                                                'issuerGuid' => '9954C5B79AEB432A94DE29E6EE44EB69', //SB GUID
-                                                'passkey' => '48A8B16EAF64416ABBA2B2819A74475F'), //SB IdentOut
-                              'agentGuid' => '30FBBE8736C84255B8E2C2B1E7A072F7');
-//Set Body parameters
-        $params =  array('coupon' => array('couponId' => '10314',
-                                           'issuerGuid' => '30FBBE8736C84255B8E2C2B1E7A072F7',
-                                           'passkey' => '719565A5C3394D6A8FF581555BAA5782'),
-                         'type' => 'EXECUTE EXPERIMENT',
-                         'redeemerGuid' => '30FBBE8736C84255B8E2C2B1E7A072F7');
 
-//Create SOAP Client
-
-
-        $client = new SoapClient('http://ilabs.cti.ac.at/iLabServiceBroker/iLabServiceBroker.asmx?wsdl', array('soap_version'   => SOAP_1_2,
-                                                                                                              'trace' => 1));
-        $header = new SOAPHeader('http://ilab.mit.edu/iLabs/type', 'AgentAuthHeader', $headerParams);
-        $client->__setSoapHeaders($header);
-
-        $result = $client->__soapCall('RedeemTicket', array($params));
-
-        return new Response($result);
 
     }
 
@@ -383,8 +361,22 @@ class ApiController extends Controller
 
     public function verifyCoupon(Request $request)
     {
+        $api_key = $request->headers->get('X-apikey');
+
+        $engine = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:ExperimentEngine')
+            ->findOneBy(array('api_key' => $api_key));
+
+        if ($engine == NULL ){
+            $response = new response;
+            $response->setStatusCode(401);
+            return $response;
+        }
+
         $jsonString = $request->getContent();
         $jsonRequest = json_decode($jsonString);
+
+        //$payload = $iLabLabServer->redeemTicket($jsonRequest->couponId, $jsonRequest->passkey, $labServer, $broker );
 
         if ($jsonRequest == null)
         {
@@ -393,23 +385,15 @@ class ApiController extends Controller
             return $response;
         }
 
-        if ($jsonRequest->couponId == '12345' & $jsonRequest->passkey == '67890')
-        {
-            $jsonResponse = array('valid' => true,
-                'couponId' => $jsonRequest->couponId,
-                'passkey' => $jsonRequest->passkey,
-                'type' => 'EXECUTE EXPERIMENT');
-        }
-        else{
-            $jsonResponse = array('valid' => false,
-                'couponId' => '',
-                'passkey' => '',
-                'type' => 'EXECUTE EXPERIMENT');
-        }
+        $engineService = $this->get('engineServices');
+        //retrieve Ticket from Broker
+        $ticket = $engineService->verifyExecuteExperimentCoupon($engine, $jsonRequest->couponId, $jsonRequest->passkey);
 
         $response = new Response();
-        $response->setContent(json_encode($jsonResponse));
+        $response->setContent(json_encode($ticket));
         $response->headers->set('Content-Type', 'application/json');
+
+
         return $response;
     }
 
@@ -435,11 +419,24 @@ class ApiController extends Controller
      * @Method({"POST"})
      */
 
-    public function retrieveCoupon(Request $request)
+    public function retrieveTicket(Request $request)
     {
-        $jsonString = $request->getContent();
+        $api_key = $request->headers->get('X-apikey');
 
+        $engine = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:ExperimentEngine')
+            ->findOneBy(array('api_key' => $api_key));
+
+        if ($engine == NULL ){
+            $response = new response;
+            $response->setStatusCode(401);
+            return $response;
+        }
+
+        $jsonString = $request->getContent();
         $jsonRequest = json_decode($jsonString);
+
+        //$payload = $iLabLabServer->redeemTicket($jsonRequest->couponId, $jsonRequest->passkey, $labServer, $broker );
 
         if ($jsonRequest == null)
         {
@@ -448,25 +445,12 @@ class ApiController extends Controller
             return $response;
         }
 
-        if ($jsonRequest->couponId == '12345' & $jsonRequest->passkey == '67890')
-        {
-            $jsonResponse = array('success' => true,
-                                  'startExecution' => date('Y-m-d\TH:i:sP'),//.substr((string)microtime(), 1, 8),//'2015-07-20T08:11:47.7149599Z',
-                                  'duration' => rand(300, 7200),
-                                  'userID' => rand(1, 100),
-                                  'groupID' => rand(1, 10),
-                                  'groupName' => 'Experiment_Group',
-                                  'sbGuid' => '7954C5B79876532A94DE29E6EE44EB69',
-                                  'experimentID' => 2729,
-                                  'userTZ' => date_default_timezone_get());
-        }
-        else{
-            $jsonResponse = array('success' => false,
-                'errorMessage' => 'invalid couponID and/or passkey');
-        }
+        $engineService = $this->get('engineServices');
+        //retrieve Ticket from Broker
+        $ticket = $engineService->retrieveExecuteExperimentTicket($engine, $jsonRequest->couponId, $jsonRequest->passkey);
 
         $response = new Response();
-        $response->setContent(json_encode($jsonResponse));
+        $response->setContent(json_encode($ticket));
         $response->headers->set('Content-Type', 'application/json');
         return $response;
     }
