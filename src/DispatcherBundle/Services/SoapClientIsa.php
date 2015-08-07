@@ -35,7 +35,7 @@ class SoapClientIsa
         $headerParams = array('coupon' => array('couponId' => $sbAuthData->outIdentCoupon->couponId, //SB IdentOut
             'issuerGuid' => $sbAuthData->outIdentCoupon->issuerGuid, //SB GUID
             'passkey' => $sbAuthData->outIdentCoupon->passkey), //SB IdentOut
-            'agentGuid' => '30FBBE8736C84255B8E2C2B1E7A072F7');
+            'agentGuid' => $labServer->getGuid());
 //Set Body parameters
         $params =  array('coupon' => array('couponId' => $couponId,
             'issuerGuid' => $broker->getGuid(),
