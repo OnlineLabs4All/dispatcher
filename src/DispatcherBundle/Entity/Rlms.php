@@ -91,6 +91,11 @@ class Rlms
     protected $serviceUrl;
 
     /**
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $serviceDescriptionUrl;
+
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     protected $rlmsSpecificData; //Optional field, used to transfer additional information if necessary.
@@ -425,5 +430,28 @@ class Rlms
     public function getRlmsSpecificData()
     {
         return $this->rlmsSpecificData;
+    }
+
+    /**
+     * Set serviceDescriptionUrl
+     *
+     * @param string $serviceDescriptionUrl
+     * @return Rlms
+     */
+    public function setServiceDescriptionUrl($serviceDescriptionUrl)
+    {
+        $this->serviceDescriptionUrl = $serviceDescriptionUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get serviceDescriptionUrl
+     *
+     * @return string 
+     */
+    public function getServiceDescriptionUrl()
+    {
+        return $this->serviceDescriptionUrl;
     }
 }
