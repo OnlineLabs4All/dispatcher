@@ -317,7 +317,7 @@ class EngineServices
 
     public function retrieveExecuteExperimentTicket(ExperimentEngine $engine, $couponId, $passkey)
     {
-        $ticketResponsePayload = null;
+        $ticketResponse = null;
         $broker = null;
         $labServer = null;
         $mappedSb = null;
@@ -348,8 +348,8 @@ class EngineServices
         }
         if ($ticketResponse != null)
         {
-            $xml = simplexml_load_string($ticketResponse->payload, "SimpleXMLElement", LIBXML_NOCDATA);
-            $json = json_encode($xml);
+            $xmlPayload = simplexml_load_string($ticketResponse->payload, "SimpleXMLElement", LIBXML_NOCDATA);
+            $json = json_encode($xmlPayload);
             $array = json_decode($json,TRUE);
 
             $startExec = date_create($array['startExecution']);
@@ -377,7 +377,7 @@ class EngineServices
 
     public function verifyExecuteExperimentCoupon(ExperimentEngine $engine, $couponId, $passkey)
     {
-        $ticketResponsePayload = null;
+        $ticketResponse = null;
         $broker = null;
         $labServer = null;
         $mappedSb = null;
@@ -408,17 +408,34 @@ class EngineServices
         }
         if ($ticketResponse != null)
         {
+            $xmlPayload = simplexml_load_string($ticketResponse->payload, "SimpleXMLElement", LIBXML_NOCDATA);
+            $json = json_encode($xmlPayload);
+            $array = json_decode($json,TRUE);
 
-            $response = array('valid' => true,
-                'couponId' => (int)$couponId,
-                'passkey' => $passkey,
-                'type' => 'EXECUTE EXPERIMENT');
+            $startExec = date_create($array['startExecution']);
+            $timeZone = new \DateTimeZone(date_default_timezone_get());
+            $startExec->setTimezone($timeZone);
+
+            $finishExecDate = $startExec->add(new \DateInterval('PT'.$array['duration'].'S'));
+            //$finishExecString = date_format($finishExecDate, 'Y-m-d\TH:i:sP');
+
+            $now = date_create(date('Y-m-d\TH:i:sP'));
+
+            if ($finishExecDate > $now)
+            {
+                $response = array('success' => true,
+                    'errorMessage' => '');
+                return $response;
+            }
+
+            $response = array('success' => false,
+                'errorMessage' => 'Reservation expired. Please reserve another time slot.');
 
             return $response;
         }
 
         $response = array('success' => false,
-            'errorMessage' => 'invalid couponID and/or passkey');
+            'errorMessage' => 'Invalid credentials');
 
         return $response;
 
