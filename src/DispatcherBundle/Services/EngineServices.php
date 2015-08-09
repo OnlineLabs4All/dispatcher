@@ -348,23 +348,24 @@ class EngineServices
         }
         if ($ticketResponse != null)
         {
-
             $xml = simplexml_load_string($ticketResponse->payload, "SimpleXMLElement", LIBXML_NOCDATA);
             $json = json_encode($xml);
             $array = json_decode($json,TRUE);
 
-            $startExec = date_format(date_create($array['startExecution']), 'Y-m-d\TH:i:sP');
+            $startExec = date_create($array['startExecution']);
+            $timeZone = new \DateTimeZone(date_default_timezone_get());
+            $startExec->setTimezone($timeZone);
+            $startExecString = date_format($startExec, 'Y-m-d\TH:i:sP');
 
             $response = array('success' => true,
                 'isCancelled' => $ticketResponse->isCancelled,
-                'startExecution' => $startExec,
+                'startExecution' => $startExecString,
                 'duration' => (int)$array['duration'],
                 'userID' => (int)$array['userID'],
                 'groupID' => (int)$array['groupID'],
                 'sbGuid' => $ticketResponse->issuerGuid,
                 'experimentID' => (int)$array['experimentID'],
-                'userTZ' =>  $array['userTZ']);
-
+                'userTZ' =>  date_default_timezone_get());
             return $response;
         }
 
