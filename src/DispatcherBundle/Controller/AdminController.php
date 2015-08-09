@@ -214,15 +214,13 @@ class AdminController extends Controller
 
         if ($labServer->getType() == 'ILS')
         {
-            $service_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/ils/soap";
-            $wsdl_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/ils/soap";
-
-
+            $service_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/ils/soap";
+            $wsdl_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/ils/soap";
         }
         else
         {
-            $service_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/soap";
-            $wsdl_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/soap";
+            $service_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/soap";
+            $wsdl_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/soap";
         }
 
         return $this->render('default/apiEndpoints.html.twig', array(
@@ -235,7 +233,8 @@ class AdminController extends Controller
                                   'guid' => $labServer->getGuid(),
                                   'passkey' => $labServer->getPassKey(),
                                   'initialPasskey' => $labServer->getInitialPassKey(),
-                                  'info' => 'Implements the iLab Shared Architecture batched lab server API. Use the service endpoint, GUID and passKey to install the Lab Server process agent in your iLab Service Broker',
+                                  'info' => 'Implements the iLab Shared Architecture lab server API. Use the service endpoint, GUID and passKey to install the Lab Server process agent in your iLab Service Broker.
+                                             For interactive lab server, use the Initial Paysskey to install the domain credentials.',
                                   'documentation' => 'Not Available')
             )
         ));
