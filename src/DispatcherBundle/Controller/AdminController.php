@@ -19,7 +19,7 @@ use DispatcherBundle\Entity\User;
 use DispatcherBundle\Form\EngineForm;
 
 /**
- * @Route("/secured/admin")
+ * @Route("/secured")
  */
 class AdminController extends Controller
 {
@@ -306,7 +306,7 @@ class AdminController extends Controller
         return $form;
     }
     //generate form to EDIT a subscriber Engine
-    private function buildEditEngineForm($engine){
+    private function buildEditEngineForm(ExperimentEngine $engine){
 
             $form = $this->createFormBuilder()
 
@@ -365,7 +365,7 @@ class AdminController extends Controller
        return $form;
     }
 
-    private function buildEditLabServerForm($labServer){
+    private function buildEditLabServerForm(LabServer $labServer){
 
         $form = $this->createFormBuilder()
             ->add('id', 'text', array('label' => 'Lab Server ID', 'required' => true, 'attr' => array('value'=>$labServer->getId(), 'readonly' => true)))
@@ -390,9 +390,6 @@ class AdminController extends Controller
             ->getForm();
 
         return $form;
-
-
     }
-
-
 }
+
