@@ -26,7 +26,7 @@ security:
                     user:  { password: userpass, roles: [ 'ROLE_USER' ] }
                     admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
                     api_user: { password: apipass, roles: [ 'ROLE_APIUSER' ] }
-                    htl: { password: fhiscool, roles: [ 'ROLE_ADMIN', 'ROLE_APIUSER' ]}
+                    htl: { password: fhiscool, roles: ['ROLE_APIUSER']}
 
         site_user_provider:
             id: siteUserProvider
@@ -91,5 +91,5 @@ security:
     access_control:
        # - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-       - { path: ^/secured, roles: [ROLE_ADMIN, ROLE_USER] }
+       - { path: ^/secured, roles: [ROLE_ADMIN, ROLE_USER], }
        - { path: ^/apis/engine, roles: ROLE_APIUSER }
