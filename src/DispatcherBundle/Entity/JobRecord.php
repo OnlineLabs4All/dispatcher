@@ -29,6 +29,11 @@ class JobRecord
     protected $labServerId; //New field: specifies the ID of the "virtual" lab server
 
     /**
+     * @ORM\Column(type="integer")
+     */
+    protected $labServerOwnerId; //New field: specifies the ID of the user owner of the LS the request was submitted to
+
+    /**
      * @ORM\Column(type="string", length=100)
      */
     protected $providerId; //ID of the provider RLMS
@@ -563,5 +568,28 @@ class JobRecord
     public function getOpaqueData()
     {
         return $this->opaqueData;
+    }
+
+    /**
+     * Set labServerOwnerId
+     *
+     * @param integer $labServerOwnerId
+     * @return JobRecord
+     */
+    public function setLabServerOwnerId($labServerOwnerId)
+    {
+        $this->labServerOwnerId = $labServerOwnerId;
+
+        return $this;
+    }
+
+    /**
+     * Get labServerOwnerId
+     *
+     * @return integer 
+     */
+    public function getLabServerOwnerId()
+    {
+        return $this->labServerOwnerId;
     }
 }
