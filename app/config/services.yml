@@ -35,3 +35,7 @@ services:
     soapClientIsa:
       class: DispatcherBundle\Services\SoapClientIsa
       arguments: [@doctrine.orm.entity_manager]
+
+    dashboardUiServices:
+      class: DispatcherBundle\Services\DashboardUiServices
+      arguments: [@doctrine.orm.entity_manager]
