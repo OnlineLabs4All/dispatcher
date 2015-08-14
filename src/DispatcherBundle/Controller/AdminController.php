@@ -47,20 +47,18 @@ class AdminController extends Controller
      */
     public function expRecordsAction($expId)
     {
-        if (true == $this->get('security.authorization_checker')->isGranted('ROLE_ADMIN'))
+        $user= $this->get('security.token_storage')->getToken()->getUser();
+        $dashboadServices = $this->get('dashboardUiServices');
+        if ($expId == null)
         {
-            $repository = $this->getDoctrine()
-                ->getRepository('DispatcherBundle:JobRecord');
-            if ($expId == null){
-                $records = $repository->findBy(array(/*'labServerId' => array()*/), array('expId'=> 'DESC'));
-                //var_dump($records);
-                return $this->render('default/expRecordsTableView.html.twig', array('viewName'=> 'Experiment Records', 'records' =>  $records));
-            }
-            $record = $repository->findOneBy(array('expId' => $expId));
-
-            return $this->render('default/recordView.html.twig', array('viewName'=> 'Experiment Record','record' => (array)$record));
+            $jobRecord = $dashboadServices->getJobRecordsTable($user);
+            return $this->render('default/expRecordsTableView.html.twig', array('viewName'=> 'Experiment Records', 'records' =>  $jobRecord));
         }
-        return $this->render('default/recordView.html.twig', array('viewName'=> 'Experiment Record','record' => null));
+
+        $jobRecord = $dashboadServices->getSingleJobRecord($user, $expId);
+            return $this->render('default/recordView.html.twig', array('viewName'=> 'Experiment Record','record' => (array)$jobRecord));
+
+       // return $this->render('default/recordView.html.twig', array('viewName'=> 'Experiment Record','record' => null));
 
     }
 
