@@ -17,7 +17,7 @@ class DashboardUiServices
         $this->em = $em;
 
     }
-
+    //get JodRecords table based on user permissions and identity
     public function getJobRecordsTable(User $user)
     {
         if ($user->getRole() == 'ROLE_ADMIN')
@@ -41,6 +41,7 @@ class DashboardUiServices
         // return $this->render('default/recordView.html.twig', array('viewName'=> 'Experiment Record','record' => null));
     }
 
+    //get JodRecord based on user permissions and identity
     public function getSingleJobRecord(User $user, $expId)
     {
         if ($user->getRole() == 'ROLE_ADMIN')
