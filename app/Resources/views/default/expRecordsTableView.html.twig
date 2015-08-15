@@ -8,12 +8,12 @@
 
     <p class="text-success"> {{ numberOfJobs }} records found</p>
 
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=-1&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-default">All</button></a>
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=1&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-primary">Queued</button></a>
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=3&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-success">Completed</button></a>
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=2&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-warning">In Progress</button></a>
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=5&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Cancelled</button></a>
-   <a href="{{ baseUrl }}{{ path('expRecords') }}?status=4&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Completed with errors</button></a>
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=-1&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-default">All</button></a>
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=1&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-primary">Queued</button></a>
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=3&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-success">Completed</button></a>
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=2&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-warning">In Progress</button></a>
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=5&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Cancelled</button></a>
+   <a href="{{ baseUrl }}{{ path('expRecords') }}?status=4&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Completed with errors</button></a>
 
 
     <div class="table-responsive">
