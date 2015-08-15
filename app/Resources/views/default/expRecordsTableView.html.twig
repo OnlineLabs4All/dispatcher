@@ -6,7 +6,7 @@
     <br/>
     <h3 class="page-header">{{ viewName }} ({{ numberOfJobs }} jobs found)</h3>
 
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=-1"><button type="button" class="btn btn-outline btn-default">All</button></a>
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=-1&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-default">All</button></a>
     <a href="{{ baseUrl }}{{ path('expRecords') }}?status=1&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-primary">Queued</button></a>
     <a href="{{ baseUrl }}{{ path('expRecords') }}?status=3&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-success">Completed</button></a>
     <a href="{{ baseUrl }}{{ path('expRecords') }}?status=2&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-warning">In Progress</button></a>
