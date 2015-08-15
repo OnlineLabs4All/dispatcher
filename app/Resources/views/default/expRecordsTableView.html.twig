@@ -4,7 +4,9 @@
 
 
     <br/>
-    <h3 class="page-header">{{ viewName }} ({{ numberOfJobs }} jobs found)</h3>
+    <h3 class="page-header">{{ viewName }}</h3>
+
+    <p class="text-success"> {{ numberOfJobs }} records found</p>
 
     <a href="{{ baseUrl }}{{ path('expRecords') }}?status=-1&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-default">All</button></a>
     <a href="{{ baseUrl }}{{ path('expRecords') }}?status=1&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-primary">Queued</button></a>
@@ -66,7 +68,7 @@
         <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ previousPage }}&status={{ status }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-default">Previous</button></a>
         {% for page in pages %}
 
-            {% if (page > (currentPage - 4)) and (page < (currentPage + 4))  %}
+            {% if (page > (currentPage - 5)) and (page < (currentPage + 5))  %}
                 {%  if page == currentPage %}
                     <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}"><u>{{ page }}</u></a>
                 {% else %}
@@ -76,6 +78,7 @@
 
         {% endfor %}
         <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ nextPage }}&status={{ status }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-default">Next</button></a>
+        page {{ currentPage }}/{{ numberOfPages }}
     </div>
 
 {% endblock %}
