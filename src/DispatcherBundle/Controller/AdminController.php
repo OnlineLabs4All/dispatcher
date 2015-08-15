@@ -48,7 +48,7 @@ class AdminController extends Controller
     public function expRecordsAction($expId, Request $request)
     {
         $page = $request->query->getInt('page', 1);
-        $length = $request->query->getInt('length', 30);
+        $length = $request->query->getInt('length', 20);
         $status = (int)$request->query->getInt('status', -1);
         $labServerId = (int)$request->query->getInt('labServerId', -1);
 
@@ -75,6 +75,7 @@ class AdminController extends Controller
                                                                                 'length' => $response['length'],
                                                                                 'status' => $status,
                                                                                 'labServerId' => $labServerId,
+                                                                                'pages' => $response['pages'],
                                                                                 'records' =>  $response['jobRecords']));
         }
 

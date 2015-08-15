@@ -58,11 +58,17 @@ class DashboardUiServices
         if ($page > 1){ $previousPage = $page - 1;}
         else {$previousPage = 1;}
 
+        for ($pg=1; $pg <= $numberOfPages; $pg++)
+        {
+            $pages[$pg] = $pg;
+        }
+
             return array('totalNumberOfJobs' => count($jobRecordsCountTotal),
                          'numberOfPages' => $numberOfPages,
                          'length' => count($jobRecords),
                          'nextPage' => $nextPage,
                          'previousPage' => $previousPage,
+                         'pages' => $pages,
                          'jobRecords' => $jobRecords);
     }
 
