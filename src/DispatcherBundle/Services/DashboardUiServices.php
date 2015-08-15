@@ -58,6 +58,7 @@ class DashboardUiServices
         if ($page > 1){ $previousPage = $page - 1;}
         else {$previousPage = 1;}
 
+        $pages = array();
         for ($pg=1; $pg <= $numberOfPages; $pg++)
         {
             $pages[$pg] = $pg;
