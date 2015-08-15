@@ -45,14 +45,37 @@ class AdminController extends Controller
     /**
      * @Route("/expRecords/{expId}", name="expRecords", defaults={"expId" = null})
      */
-    public function expRecordsAction($expId)
+    public function expRecordsAction($expId, Request $request)
     {
+        $page = $request->query->getInt('page', 1);
+        $length = $request->query->getInt('length', 30);
+        $status = (int)$request->query->getInt('status', -1);
+        $labServerId = (int)$request->query->getInt('labServerId', -1);
+
+
         $user= $this->get('security.token_storage')->getToken()->getUser();
         $dashboadServices = $this->get('dashboardUiServices');
+
+        //$paginationInfo = $dashboadServices->getPagination($user, $length, $status, $labServerId);
+
         if ($expId == null)
         {
-            $jobRecord = $dashboadServices->getJobRecordsTable($user);
-            return $this->render('default/expRecordsTableView.html.twig', array('viewName'=> 'Experiment Records', 'records' =>  $jobRecord));
+            $base_url =  $request->getScheme()."://".$request->getHttpHost().$request->getBasePath();
+            $current_url = $request->getUri();
+            //'?page='.$page.'&length='.$length.'&status='.$status.'&labServer='.$labServerId;
+
+            $response = $dashboadServices->getJobRecordsTable($user, $length, $page, $status, $labServerId);
+            return $this->render('default/expRecordsTableView.html.twig', array('viewName'=> 'Experiment Records',
+                                                                                'baseUrl'=> $base_url,
+                                                                                'numberOfJobs' => $response['totalNumberOfJobs'],
+                                                                                'numberOfPages' => $response['numberOfPages'],
+                                                                                'currentPage' => $page,
+                                                                                'nextPage' => $response['nextPage'],
+                                                                                'previousPage' => $response['previousPage'],
+                                                                                'length' => $response['length'],
+                                                                                'status' => $status,
+                                                                                'labServerId' => $labServerId,
+                                                                                'records' =>  $response['jobRecords']));
         }
 
         $jobRecord = $dashboadServices->getSingleJobRecord($user, $expId);

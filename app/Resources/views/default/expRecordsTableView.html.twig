@@ -4,7 +4,15 @@
 
 
     <br/>
-        <h3 class="page-header">{{ viewName }}</h3>
+    <h3 class="page-header">{{ viewName }} ({{ numberOfJobs }} jobs found)</h3>
+
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=-1"><button type="button" class="btn btn-outline btn-default">Show All</button></a>
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=1&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-primary">Queued</button></a>
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=3&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-success">Completed</button></a>
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=2&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-warning">In Progress</button></a>
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=5&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Cancelled</button></a>
+   <a href="{{ baseUrl }}{{ path('expRecords') }}?status=4&page={{ currentPage }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Completed with errors</button></a>
+
 
     <div class="table-responsive">
         <table class="table table-hover" id="experimentRecord">
@@ -55,6 +63,8 @@
 
         </tbody>
         </table>
+        <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ previousPage }}&status={{ status }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-default">Previous</button></a> <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ nextPage }}&status={{ status }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-default">Next</button></a>
+        {{ length }}/{{ numberOfJobs }}
     </div>
 
 {% endblock %}
