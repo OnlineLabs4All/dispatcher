@@ -49,7 +49,7 @@ class AdminController extends Controller
     {
         $page = $request->query->getInt('page', 1);
         $length = $request->query->getInt('length', 20);
-        $status = (int)$request->query->getInt('status', -1);
+        $status = (int)$request->query->getInt('status', 1);
         $labServerId = (int)$request->query->getInt('labServerId', -1);
 
 

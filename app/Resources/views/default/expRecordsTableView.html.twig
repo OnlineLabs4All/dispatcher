@@ -65,11 +65,15 @@
         </table>
         <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ previousPage }}&status={{ status }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-default">Previous</button></a>
         {% for page in pages %}
-            {% if page == currentPage %}
-                <a href={{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}"><u>{{ page }}</u></a>
-            {% else %}
-                <a href={{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}">{{ page }} </a>
+
+            {% if (page > (currentPage - 4)) and (page < (currentPage + 4))  %}
+                {%  if page == currentPage %}
+                    <a href={{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}"><u>{{ page }}</u></a>
+                {% else %}
+                    <a href={{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}">{{ page }} </a>
+                {% endif %}
             {% endif %}
+
         {% endfor %}
         <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ nextPage }}&status={{ status }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-default">Next</button></a>
     </div>
