@@ -98,7 +98,7 @@ class iLabLabServer
             ->getSingleScalarResult();
 
         $jobRecord->setLabServerId($this->labServer->getId());
-        $jobRecord->setLabServerOwnerId($this->labServer->getOwnerI());
+        $jobRecord->setLabServerOwnerId($this->labServer->getOwnerId());
         $jobRecord->setProviderId($this->rlmsGuid);
         $jobRecord->setRlmsAssignedId($params->experimentID);
         $jobRecord->setPriority($params->priorityHint);
