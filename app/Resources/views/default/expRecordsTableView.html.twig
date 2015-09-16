@@ -23,7 +23,7 @@
             
             <th>ID</th>
             <th>Status</th>
-            <th>RLMS ID</th>
+            <th>Submit Time</th>
             <th>RMLS Assigned ID</th>
             <th>processing Engine</th>
             <th>Lab Server ID</th>
@@ -51,7 +51,7 @@
                 {% endif %}
 
             </td>
-            <td>{{ record.providerId }}</td>
+            <td>{{ record.submitTime }}</td>
             <td>{{ record.rlmsAssignedId }}</td>
             <td class="center">{{ record.processingEngine }}</td>
             <td class="center">{{ record.labServerId }}</td>
