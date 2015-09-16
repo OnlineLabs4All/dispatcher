@@ -166,7 +166,7 @@ class ApiController extends Controller
 
     /**
      * @Route("/experiment", name="postExperimentResults")
-     * @Method({"PUT"})
+     * @Method({"PUT", "POST"})
      *
      *  @ApiDoc(
      *  resource=true,
