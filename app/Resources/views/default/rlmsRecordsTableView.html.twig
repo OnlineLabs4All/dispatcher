@@ -1,0 +1,61 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block mainPanel %}
+
+    <div class="col-lg-12">
+        <h3 class="page-header">{{ viewName }}</h3>
+    </div>
+    <p>
+        <a href="{{ path('add_rlms') }}" class="btn btn-success"><i class="fa fa-cloud-upload"></i> Register new RLMS</a>
+    </p>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            Manage your RLMS(s) credentials
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="dataTables-example">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>RLMS</th>
+                        <th>Institution</th>
+                        <th>Status</th>
+                        <th>View/Edit</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {%  for record in records %}
+
+                        <tr class="odd gradeX">
+                            <td>{{ record.id }}</td>
+                            <td>{{ record.name }}</td>
+                            <td>{{ record.rlmsType }}</td>
+                            <td>{{ record.institution }}</td>
+                            <td>
+                                {% if record.active == true %}
+                                    <span class="label label-success">Active</span>
+                                {% elseif record.active == false %}
+                                    <span class="label label-danger">Not Active</span>
+                                {% else %}
+                                    {{ record.active }}
+                                {% endif %}
+
+                            </td>
+                            <td>
+                                <a href="{{ path('edit_rlms') }}/{{ record.id }}">
+                                    <i class="fa fa-edit"> view/edit</i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
