@@ -115,8 +115,18 @@ class LabServer
      */
     protected $rlmsSpecificData; //Optional field, used to stope RLMS specific data
 
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    protected $exp_category;
 
-    public function setAll($data)
+    /**
+     * @ORM\Column(type="string", length=50)
+     */
+    protected $exp_name;
+
+
+    public function setAll($data, $ownerId)
     {
         $this->Guid = $data['Guid'];
         $this->name = $data['name'];
@@ -124,7 +134,7 @@ class LabServer
         $this->contact_name = $data['contact_name'];
         $this->contact_email = $data['contact_email'];
         $this->description = $data['description'];
-        $this->owner_id = 1;//change after user database is created
+        $this->owner_id = $ownerId;
         $this->active = $data['active'];
         //$this->visible_in_catalogue = $data['visible_in_catalogue'];
         $this->configuration = $data['configuration'];
@@ -134,21 +144,24 @@ class LabServer
         $this->initialPassKey = $data['initialPassKey'];
         $this->labInfo = $data['labInfo'];
         $this->type = $data['type'];
+        $this->exp_category = $data['exp_category'];
+        $this->exp_name = $data['exp_name'];
     }
 
-    public function updateAll($data, $ownerId)
+    public function updateAll($data)
     {
         $this->name = $data['name'];
         $this->institution = $data['institution'];
         $this->contact_name = $data['contact_name'];
         $this->contact_email = $data['contact_email'];
         $this->description = $data['description'];
-        $this->owner_id = $ownerId;//change after user database is created
         $this->active = $data['active'];
         //$this->visible_in_catalogue = $data['visible_in_catalogue'];
         $this->configuration = $data['configuration'];
         $this->public_sub = $data['public_sub'];
         $this->labInfo = $data['labInfo'];
+        $this->exp_category = $data['exp_category'];
+        $this->exp_name = $data['exp_name'];
 
     }
 
@@ -574,5 +587,51 @@ class LabServer
     public function getRlmsSpecificData()
     {
         return $this->rlmsSpecificData;
+    }
+
+    /**
+     * Set exp_category
+     *
+     * @param string $expCategory
+     * @return LabServer
+     */
+    public function setExpCategory($expCategory)
+    {
+        $this->exp_category = $expCategory;
+
+        return $this;
+    }
+
+    /**
+     * Get exp_category
+     *
+     * @return string 
+     */
+    public function getExpCategory()
+    {
+        return $this->exp_category;
+    }
+
+    /**
+     * Set exp_name
+     *
+     * @param string $expName
+     * @return LabServer
+     */
+    public function setExpName($expName)
+    {
+        $this->exp_name = $expName;
+
+        return $this;
+    }
+
+    /**
+     * Get exp_name
+     *
+     * @return string 
+     */
+    public function getExpName()
+    {
+        return $this->exp_name;
     }
 }
