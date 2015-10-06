@@ -10,6 +10,7 @@ namespace DispatcherBundle\Controller;
 
 use DispatcherBundle\Entity\ExperimentEngine;
 use DispatcherBundle\Entity\LabServer;
+use DispatcherBundle\Entity\Rlms;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -43,6 +44,87 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/rlms", name="rlms")
+     */
+    public function RlmsCredentialsAction()
+    {
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $dashboadServices = $this->get('dashboardUiServices');
+
+        $rlms_list = $dashboadServices->getRlmsList($user);
+
+
+        return $this->render('default/rlmsRecordsTableView.html.twig',
+            array( 'viewName'=> 'Remote Laboratory Management Systems',
+                'records' => (array)$rlms_list));
+    }
+
+    /**
+     * @Route("/rlms/{rlmsId}", name="edit_rlms", defaults={"rlmsId" = null})
+     */
+    public function EditRlmsAction(Request $request, $rlmsId)
+    {
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $dashboadServices = $this->get('dashboardUiServices');
+
+        $records = $dashboadServices->getRlmsList($user);
+
+
+        $repository = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:Rlms');
+        $rlms = $repository->findOneBy(array('id' => $rlmsId));
+        $form = $this->buildEditRlmsForm($rlms);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $data =$form->getData();
+            $rlms->updateAll($data);
+            $em->flush();
+            return $this->redirectToRoute('rlms');
+        }
+
+        return $this->render('default/addEditRlms.html.twig', array(
+            'viewName'=>'View/Edit RLMS',
+            'form' => $form->createView(),
+        ));
+    }
+
+    //buildAddRlmsForm
+    /**
+     * @Route("/addRlms", name="add_rlms")
+     */
+    public function AddRlmsAction(Request $request)
+    {
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $dashboadServices = $this->get('dashboardUiServices');
+
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $form =  $this->createAddRlmsForm($user->getUsername());
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+
+            $rlms = new Rlms();
+            $data =$form->getData();
+            $rlms->setAll($data, $user->getId());
+
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($rlms);
+            $em->flush();
+            return $this->redirectToRoute('rlms');
+        }
+        return $this->render('default/addEditRlms.html.twig', array(
+            'viewName'=>'Register a new RLMS',
+            'form' => $form->createView()
+        ));
+    }
+
+    /**
      * @Route("/expRecords/{expId}", name="expRecords", defaults={"expId" = null})
      */
     public function expRecordsAction($expId, Request $request)
@@ -62,7 +144,6 @@ class AdminController extends Controller
         {
             $base_url =  $request->getScheme()."://".$request->getHttpHost().$request->getBasePath();
             $current_url = $request->getUri();
-            //'?page='.$page.'&length='.$length.'&status='.$status.'&labServer='.$labServerId;
 
             $response = $dashboadServices->getJobRecordsTable($user, $length, $page, $status, $labServerId);
             return $this->render('default/expRecordsTableView.html.twig', array('viewName'=> 'Experiment Records',
@@ -91,9 +172,12 @@ class AdminController extends Controller
      */
     public function EnginesAction()
     {
-        $repository = $this->getDoctrine()
-            ->getRepository('DispatcherBundle:ExperimentEngine');
-            $records = $repository->findAll();
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $dashboadServices = $this->get('dashboardUiServices');
+
+        $records = $dashboadServices->getEnginesList($user);
+
 
             return $this->render('default/engineRecordsTableView.html.twig',
                 array( 'viewName'=> 'Subscriber Engines',
@@ -131,7 +215,9 @@ class AdminController extends Controller
      */
     public function NewEngineAction(Request $request)
     {
-        $form =  $this->createEngineForm();
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $form =  $this->createEngineForm($user);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
@@ -166,12 +252,12 @@ class AdminController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $data =$form->getData();
-            $labServer->updateAll($data, 1);
+            $labServer->updateAll($data);
             $em->flush();
             return $this->redirectToRoute('labservers');
         }
 
-        return $this->render('default/addEditResource.html.twig', array(
+        return $this->render('default/addEditLabServer.html.twig', array(
             'viewName'=>'View/Edit "'.$labServer->getName().'"',
             'form' => $form->createView()));
     }
@@ -181,8 +267,11 @@ class AdminController extends Controller
      */
     public function LabServersAction()
     {
-        $repository = $this->getDoctrine()->getRepository('DispatcherBundle:LabServer');
-        $labServers = $repository->findAll();
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $dashboadServices = $this->get('dashboardUiServices');
+        $labServers = $dashboadServices->getLabServersList($user);
+
         return $this->render('default/labServersRecordsTableView.html.twig',
             array( 'viewName'=> 'Registered Lab Servers',
                 'records' => (array)$labServers));
@@ -194,6 +283,7 @@ class AdminController extends Controller
      */
     public function saveLabServerAction(Request $request)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
         $form = $this->buildCreateLabServerForm();
         $form->handleRequest($request);
 
@@ -201,7 +291,7 @@ class AdminController extends Controller
 
             $labserver = new LabServer();
             $data =$form->getData();
-            $labserver->setAll($data);
+            $labserver->setAll($data, $user->getId());
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($labserver);
@@ -209,7 +299,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('labservers');
         }
 
-        return $this->render('default/addEditResource.html.twig', array(
+        return $this->render('default/addEditLabServer.html.twig', array(
             'viewName'=>'Register a new Lab Server',
             'form' => $form->createView()));
     }
@@ -272,11 +362,11 @@ class AdminController extends Controller
 
     //internal controller methods
 
-    private function getLabServers()
+    private function getLabServers($user)
     {
-        $repository = $this->getDoctrine()
-            ->getRepository('DispatcherBundle:LabServer')
-            ->findAll();
+        $dashboadServices = $this->get('dashboardUiServices');
+        $repository = $dashboadServices->getLabServersList($user);
+
         if ($repository != null){
 
              foreach ($repository as $labServer){
@@ -291,12 +381,14 @@ class AdminController extends Controller
     }
 
     //generate form for a new subscriber Engine
-    private function createEngineForm(){
+    private function createEngineForm($user){
 
         $key = md5(microtime().rand());
-        $labServers = $this->getLabServers();
+        $labServers = $this->getLabServers($user);
         $form = $this->createFormBuilder()
             ->setAction($this->generateUrl('add_engine'))
+            ->add('labserverId','choice', array('label' => 'Subscribe for Lab Server',
+                'choices' => $labServers))
             ->add('name', 'text', array('label' => 'Engine Name'))
             ->add('description', 'textarea', array('label' => 'Description'))
             ->add('contact_name', 'text', array('label' => 'Contact\'s name'))
@@ -314,8 +406,6 @@ class AdminController extends Controller
                                              'first_options'  => array('label' => 'Password'),
                                              'second_options' => array('label' => 'Repeat Password')))
             ->add('api_key', 'text', array('label' => 'API Key', 'data'=> $key))
-            ->add('labserverId','choice', array('label' => 'Subscribe for Lab Server',
-                'choices' => $labServers))
             ->add('active', 'checkbox', array('label' => 'Active',
                 'required' => false,
                 'data'=> false ))
@@ -332,6 +422,7 @@ class AdminController extends Controller
 
             $form = $this->createFormBuilder()
 
+                ->add('labserverId','text', array('label' => 'Subscribe for Lab Server (ID)', 'attr' => array('value'=>$engine->getLabServerId(), 'readonly' => true)))
                 ->add('id', 'text', array('label' => 'Engine ID', 'attr' => array('value'=>$engine->getId(), 'readonly' => true)))
                 ->add('dateCreated', 'text', array('label' => 'Created', 'attr' => array('value'=>$engine->getDateCreated(), 'readonly' => true)))
                 ->add('name', 'text', array('label' => 'Engine Name', 'attr' => array('value'=>$engine->getName(), 'readonly' => false)))
@@ -344,7 +435,6 @@ class AdminController extends Controller
                 ->add('country', 'country', array('label' => 'Country', 'data'=> $engine->getCountry()))
                 ->add('basic_auth', 'text', array('label' => 'Basic Http Authentication', 'attr' => array('value'=>$engine->getHttpAuthentication(), 'readonly' => true)))
                 ->add('api_key', 'text', array('label' => 'API Key', 'attr' => array('value'=>$engine->getApiKey(), 'readonly' => true)))
-                ->add('labserverId','text', array('label' => 'Subscribe for Lab Server (ID)', 'attr' => array('value'=>$engine->getLabServerId(), 'readonly' => true)))
                 ->add('active', 'checkbox', array('label' => 'Active',
                     'required' => false,
                     'data'=> $engine->getActive() ))
@@ -355,12 +445,80 @@ class AdminController extends Controller
         return $form;
     }
 
+    //generate form to EDIT a RLMS Credentials
+    private function buildEditRlmsForm(Rlms $rlms){
+
+        $form = $this->createFormBuilder()
+            ->add('name', 'text', array('label' => 'Name', 'attr' => array('value'=>$rlms->getName(), 'readonly' => false)))
+            ->add('description', 'textarea', array('label' => 'Description','data'=>$rlms->getDescription()))
+            ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'attr' => array('value'=>$rlms->getContactName(), 'readonly' => false)))
+            ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('value'=>$rlms->getContactEmail(), 'readonly' => false)))
+            ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('value'=>$rlms->getInstitution(), 'readonly' => false)))
+            ->add('Guid', 'text', array('label' => 'GUID', 'required' => false, 'attr' => array('value'=>$rlms->getGuid(), 'readonly' => false)))
+            ->add('rlms_type', 'text', array('label' => 'RLMS Type', 'attr' => array('value'=> $rlms->getRlmsType(), 'readonly' => true)))
+            ->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value'=>$rlms->getPassKeyToRlms(), 'readonly' => true)))
+            ->add('service_url', 'text', array('label' => 'Service URL', 'required' => false, 'attr' => array('value'=>$rlms->getServiceUrl(), 'readonly' => true)))
+            ->add('service_description_url', 'text', array('label' => 'URL of a parsable description of RLMS API (WSDL, Swagger, etc)', 'required' => false, 'attr' => array('value'=>$rlms->getServiceDescriptionUrl(), 'readonly' => true)))
+            ->add('wd_username', 'text', array('label' => 'Username',  'required' => false, 'attr' => array('value'=>$rlms->getUsername(), 'readonly' => true)))
+            ->add('wd_password', 'repeated', array(
+                'type' => 'password',
+                'invalid_message' => 'The password fields must match.',
+                'options' => array('attr' => array('class' => 'password-field')),
+                'required' => false,
+                'first_options'  => array('label' => 'Password'),
+                'second_options' => array('label' => 'Repeat Password'),))
+            ->add('active', 'checkbox', array('label' => 'Active',
+                'required' => false,
+                'data'=> $rlms->getActive() ))
+            ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+            ->getForm();
+        return $form;
+    }
+
+    //generate form to CREATE a RLMS Credentials
+    private function createAddRlmsForm($username){
+
+        $passkey = md5(microtime().rand());
+        $form = $this->createFormBuilder()
+
+            ->add('name', 'text', array('label' => 'Name', 'attr' => array('readonly' => false)))
+            ->add('description', 'textarea', array('label' => 'Description'))
+            ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'attr' => array('readonly' => false)))
+            ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('readonly' => false)))
+            ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('readonly' => false)))
+            ->add('Guid', 'text', array('label' => 'GUID', 'required' => false, 'attr' => array('readonly' => false)))
+            ->add('rlms_type', 'choice',
+                array('label' => 'Choose a supported RLMS',
+                      'required' => true,
+                      'choices' => array('ISA_SOAP'=>'ISA Service Broker (SOAP)',
+                                         'ISA_REST'=>'ISA Service Broker (REST)',
+                                         'WEBLAB_DEUSTO' => 'WebLab Deusto')))
+            ->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value' => $passkey,'readonly' => false)))
+            ->add('service_url', 'text', array('label' => 'Service URL', 'required' => false, 'attr' => array('readonly' => false)))
+            ->add('service_description_url', 'text', array('label' => 'URL of a parsable description of RLMS API (WSDL, Swagger, etc)', 'required' => false, 'attr' => array('readonly' => false)))
+            ->add('wd_username', 'text', array('label' => 'Username',  'required' => false, 'attr' => array('value' => $username,'readonly' => false)))
+            ->add('wd_password', 'repeated', array(
+                'type' => 'password',
+                'invalid_message' => 'The password fields must match.',
+                'options' => array('attr' => array('class' => 'password-field')),
+                'required' => false,
+                'first_options'  => array('label' => 'Password'),
+                'second_options' => array('label' => 'Repeat Password'),))
+            ->add('active', 'checkbox', array('label' => 'Active',
+                'required' => false))
+            ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+            ->getForm();
+        return $form;
+    }
+
     private function buildCreateLabServerForm(){
         $gen_guid = md5(microtime().rand());
         $gen_passKey = md5(microtime().rand());
         $gen_initPassKey = md5(microtime().rand());
         $form = $this->createFormBuilder()
             ->add('name', 'text', array('label' => 'Lab Server name', 'required' => true, 'attr'=>array('help'=>'text help')))
+            ->add('exp_category', 'text', array('label' => 'Experiment category', 'required' => true, 'attr'=>array('help'=>'text help')))
+            ->add('exp_name', 'text', array('label' => 'Experiment name', 'required' => true, 'attr'=>array('help'=>'text help')))
             ->add('description', 'textarea', array('label' => 'Description', 'required' => false))
             ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'required' => true))
             ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'required' => true))
@@ -371,13 +529,13 @@ class AdminController extends Controller
                 array('label' => 'Type',
                     'required' => true,
                     'choices' => array('BLS'=>'Batched Lab Server', 'ILS'=>'Interactive Lab Server')))
-            ->add('initialPassKey', 'text', array('label' => 'Initial PassKey ', 'data'=> $gen_initPassKey, 'required' => true))
+            ->add('initialPassKey', 'text', array('label' => 'Initial PassKey (used once to install domain credentials in a SB)', 'data'=> $gen_initPassKey, 'required' => true))
             ->add('active', 'choice',
                 array('label' => 'Active',
                     'required' => true,
                     'choices' => array('1'=>'Lab Server is active', '0'=>'Lab Server is NOT active')))
 
-            ->add('configuration', 'textarea', array('label' => 'Configuration', 'required' => false))
+            ->add('configuration', 'textarea', array('label' => 'Lab Configuration', 'required' => false))
             ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true))
             ->add('public_sub','choice', array('label' => 'Permission for subscribers',
                 'choices' => array('1'=>'Public (anyone can subscribe)', '0'=>'Private (only owner can subscribe)')))
@@ -390,8 +548,10 @@ class AdminController extends Controller
     private function buildEditLabServerForm(LabServer $labServer){
 
         $form = $this->createFormBuilder()
-            ->add('id', 'text', array('label' => 'Lab Server ID', 'required' => true, 'attr' => array('value'=>$labServer->getId(), 'readonly' => true)))
+
             ->add('name', 'text', array('label' => 'Lab Server name', 'required' => true, 'attr' => array('value'=>$labServer->getName(), 'readonly' => false)))
+            ->add('exp_category', 'text', array('label' => 'Experiment category', 'required' => true, 'attr'=>array('value' => $labServer->getExpCategory(), 'help'=>'text help')))
+            ->add('exp_name', 'text', array('label' => 'Experiment name', 'required' => true, 'attr'=>array('value' => $labServer->getExpName(), 'help'=>'text help')))
             ->add('description', 'textarea', array('label' => 'Description', 'required' => false, 'data'=> $labServer->getDescription(), 'attr' => array('readonly'=> false)))
             ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'required' => true, 'attr' => array('value'=>$labServer->getContactName(), 'readonly' => false)))
             ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'required' => true, 'attr' => array('value'=>$labServer->getContactEmail(), 'readonly' => false)))
@@ -400,7 +560,7 @@ class AdminController extends Controller
             ->add('passKey', 'text', array('label' => 'Authentication PassKey ', 'required' => true, 'attr' => array('value'=>$labServer->getPasskey(), 'readonly' => true)))
             ->add('type', 'text', array('label' => 'Type ', 'required' => true, 'attr' => array('value'=>$labServer->getType(), 'readonly' => true)))
             ->add('initialPassKey', 'text', array('label' => 'Initial PassKey ', 'required' => true, 'attr' => array('value'=>$labServer->getInitialPasskey(), 'readonly' => true)))
-            ->add('configuration', 'textarea', array('label' => 'Configuration', 'required' => false, 'data'=>$labServer->getConfiguration()))
+            ->add('configuration', 'textarea', array('label' => 'Lab Configuration', 'required' => false, 'data'=>$labServer->getConfiguration()))
             ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true,  'attr' => array('value'=>$labServer->getLabInfo(), 'readonly' => false)))
             ->add('public_sub','choice', array('label' => 'Permission for subscribers',
                                                'data' => $labServer->getPublicSub(),
