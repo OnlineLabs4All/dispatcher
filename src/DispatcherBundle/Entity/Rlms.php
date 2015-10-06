@@ -25,7 +25,7 @@ class Rlms
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $Guid;
 
@@ -86,12 +86,12 @@ class Rlms
     protected $rlmsType;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $serviceUrl;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $serviceDescriptionUrl;
 
@@ -99,6 +99,16 @@ class Rlms
      * @ORM\Column(type="text", nullable=true)
      */
     protected $rlmsSpecificData; //Optional field, used to transfer additional information if necessary.
+
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    protected $username; //Username to authenticate WebLab Deusto requests
+
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    protected $password; //Password to authenticate WebLab Deusto requests
 
     /**
      * Get id
@@ -453,5 +463,89 @@ class Rlms
     public function getServiceDescriptionUrl()
     {
         return $this->serviceDescriptionUrl;
+    }
+
+    public function setAll($data, $ownerId)
+    {
+        $this->Guid = $data['guid'];
+        $this->name = $data['name'];
+        $this->institution = $data['institution'];
+        $this->contact_name = $data['contact_name'];
+        $this->contact_email = $data['contact_email'];
+        $this->description = $data['description'];
+        $this->owner_id = $ownerId;
+        $this->active = $data['active'];
+        $this->dateCreated = date('Y-m-d\TH:i:sP');
+        $this->passKeyToRlms = $data['passkey_to_rlms'];
+        $this->rlmsType = $data['rlms_type'];
+        $this->serviceUrl = $data['service_url'];
+        $this->serviceDescriptionUrl = $data['service_description_url'];
+        $this->password = md5($data['wd_password']);
+        $this->username = $data['wd_username'];
+
+    }
+
+    public function updateAll($data)
+    {
+        $this->name = $data['name'];
+        $this->institution = $data['institution'];
+        $this->contact_name = $data['contact_name'];
+        $this->contact_email = $data['contact_email'];
+        $this->description = $data['description'];
+        $this->active = $data['active'];
+        $this->serviceUrl = $data['service_url'];
+        $this->serviceDescriptionUrl = $data['service_description_url'];
+        if ($data['wd_password'] != null)
+        {
+            $this->password = md5($data['wd_password']);
+        }
+    }
+
+
+
+    /**
+     * Set username
+     *
+     * @param string $username
+     * @return Rlms
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * Get username
+     *
+     * @return string 
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password
+     * @return Rlms
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Get password
+     *
+     * @return string 
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 }
