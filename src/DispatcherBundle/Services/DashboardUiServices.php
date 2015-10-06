@@ -8,6 +8,9 @@
 namespace DispatcherBundle\Services;
 use Doctrine\ORM\EntityManager;
 use DispatcherBundle\Entity\User;
+use DispatcherBundle\Entity\LabServer;
+use DispatcherBundle\Entity\ExperimentEngine;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class DashboardUiServices
 {
@@ -131,8 +134,69 @@ class DashboardUiServices
         return array('numberOfPages' => ceil($numberOfJobs/$length),
                      'numberOfJobs' => $numberOfJobs);
 
-
-
     }
+
+    public function getEnginesList(User $user)
+    {
+        if ($user->getRole() != 'ROLE_ADMIN')
+        {
+            $engines = $this->em
+                ->getRepository('DispatcherBundle:ExperimentEngine')
+                ->findBy(array('owner_id' => $user->getId()));
+
+            return $engines;
+        }
+        else
+        {
+            $engines = $this->em
+                ->getRepository('DispatcherBundle:ExperimentEngine')
+                ->findAll();
+
+            return $engines;
+        }
+    }
+
+    public function getLabServersList(User $user)
+    {
+        if ($user->getRole() != 'ROLE_ADMIN')
+        {
+            $engines = $this->em
+                ->getRepository('DispatcherBundle:LabServer')
+                ->findBy(array('owner_id' => $user->getId()));
+
+            return $engines;
+        }
+        else
+        {
+            $engines = $this->em
+                ->getRepository('DispatcherBundle:LabServer')
+                ->findAll();
+
+            return $engines;
+        }
+    }
+
+    public function getRlmsList(User $user)
+    {
+        if ($user->getRole() != 'ROLE_ADMIN')
+        {
+            $engines = $this->em
+                ->getRepository('DispatcherBundle:Rlms')
+                ->findBy(array('owner_id' => $user->getId()));
+
+            return $engines;
+        }
+        else
+        {
+            $engines = $this->em
+                ->getRepository('DispatcherBundle:Rlms')
+                ->findAll();
+
+            return $engines;
+        }
+    }
+
+
+
 
 }
