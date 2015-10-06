@@ -105,7 +105,7 @@ class iLabLabServer
         $jobRecord->setJobStatus(1); //Status 1(QUEUED)
         $jobRecord->setSubmitTime(date('Y-m-d\TH:i:sP'));
         $jobRecord->setEstExecTime(20); //replace with real estimation
-        $jobRecord->setQueueAtInsert($queueLength);//replace with real queue length
+        $jobRecord->setQueueAtInsert($queueLength);
         $jobRecord->setExpSpecification($params->experimentSpecification);
         $jobRecord->setProviderId($this->rlmsGuid); //ID of the RLMS requesting execution
         $jobRecord->setDownloaded(false);
@@ -330,7 +330,7 @@ class iLabLabServer
             $broker->setOwnerId($this->labServer->getOwnerId());
             $broker->setActive(true);
             $broker->setDateCreated(date('Y-m-d\TH:i:sP'));
-            $broker->setRlmsType('ISA');
+            $broker->setRlmsType('ISA_SOAP');
             $broker->setServiceUrl($params->service->webServiceUrl);
 
         }
