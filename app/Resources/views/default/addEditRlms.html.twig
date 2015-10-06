@@ -1,0 +1,68 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block mainPanel %}
+
+    <div id="header" class="col-lg-12">
+        <h3 id="header3" class="page-header">{{ viewName }}</h3>
+    </div>
+
+    {{ form_start(form) }}
+    {{ form_row(form._token) }}
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <p class="text-primary">General Information </p>
+                </div>
+                <div class="panel-body">
+
+                    {{ form_errors(form) }}
+
+                    {{ form_row(form.rlms_type) }}
+                    {{ form_row(form.name) }}
+                    {{ form_row(form.description) }}
+                    {{ form_row(form.contact_name) }}
+                    {{ form_row(form.contact_email) }}
+                    {{ form_row(form.institution) }}
+                    {{ form_row(form.service_description_url) }}
+                    {{ form_row(form.active) }}
+
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <p class="text-primary"> ISA-RLMS Specific Information </p>
+                </div>
+                <div class="panel-body">
+                    {{ form_row(form.Guid) }}
+                    {{ form_row(form.passkey_to_rlms) }}
+                    {{ form_row(form.service_url) }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <p class="text-primary">WebLab Deusto-RLMS Specific Information</p>
+                </div>
+                <div class="panel-body">
+
+                    {{ form_row(form.wd_username) }}
+                    {{ form_row(form.wd_password) }}
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {{ form_row(form.submit) }}
+    {{ form_end(form) }}
+
+{% endblock %}
