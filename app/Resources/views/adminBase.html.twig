@@ -281,7 +281,16 @@
             </li>
 
             <li>
-                <a href="{{ path('adminHome') }}"><i class="fa fa-edit fa-fw"></i>Manage RLMS credentials</a>
+                <a href="{{ path('rlms') }}"><i class="fa fa-wrench fa-fw"></i>Manage RLMS<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a href="{{ path('rlms') }}">Show All</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('add_rlms') }}">Create New</a>
+                    </li>
+
+                </ul>
             </li>
             <li>
                 <a href="{{ path('labservers') }}"><i class="fa fa-wrench fa-fw"></i>Manage Lab Servers<span class="fa arrow"></span></a>
