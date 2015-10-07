@@ -18,11 +18,11 @@
     <table class="table table-hover" id="dataTables-example">
         <thead>
         <tr>
-            <th>ID</th>
             <th>APIs</th>
-            <th>Lab Server Name</th>
-            <th>Owner</th>
             <th>Status</th>
+            <th>Name</th>
+            <th>Owner</th>
+            <th>Contact's e-mail</th>
             <th>View/Edit</th>
         </tr>
         </thead>
@@ -30,14 +30,11 @@
         {%  for record in records %}
 
             <tr class="odd gradeX">
-                <td>{{ record.id }}</td>
                 <td>
                     <a href="{{ path('apis_to_rlms', { 'labServerId' : record.id}) }}">
                        <i class="fa fa-gear"> APIs</i>
                     </a>
                 </td>
-                <td>{{ record.name }}</td>
-                <td>{{ record.institution }}</td>
                 <td>
                     {% if record.active == true %}
                         <span class="label label-success">Active</span>
@@ -48,6 +45,9 @@
                     {% endif %}
 
                 </td>
+                <td>{{ record.name }}</td>
+                <td>{{ record.institution }}</td>
+                <td>{{ record.contactEmail }}</td>
                 <td>
                     <a href="{{ path('labservers') }}/{{ record.id }}">
                         <i class="fa fa-edit"> view/edit</i>

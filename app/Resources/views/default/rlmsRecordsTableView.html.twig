@@ -18,11 +18,10 @@
                 <table class="table table-hover" id="dataTables-example">
                     <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>Status</th>
                         <th>Name</th>
                         <th>RLMS</th>
                         <th>Institution</th>
-                        <th>Status</th>
                         <th>Lab Server mapping</th>
                         <th>View/Edit</th>
                     </tr>
@@ -31,10 +30,6 @@
                     {%  for record in records %}
 
                         <tr class="odd gradeX">
-                            <td>{{ record.id }}</td>
-                            <td>{{ record.name }}</td>
-                            <td>{{ record.rlmsType }}</td>
-                            <td>{{ record.institution }}</td>
                             <td>
                                 {% if record.active == true %}
                                     <span class="label label-success">Active</span>
@@ -43,11 +38,13 @@
                                 {% else %}
                                     {{ record.active }}
                                 {% endif %}
-
                             </td>
+                            <td>{{ record.name }}</td>
+                            <td>{{ record.rlmsType }}</td>
+                            <td>{{ record.institution }}</td>
                             <td>
                                 <a href="{{ path('rlms_ls_mapping') }}/{{ record.id }}">
-                                    <i class="fa fa-edit"> Associated Lab Servers</i>
+                                    <i class="fa fa-edit"> Associate/Dissociate</i>
                                 </a>
                             </td>
                             <td>
