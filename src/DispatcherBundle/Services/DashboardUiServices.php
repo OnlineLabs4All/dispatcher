@@ -242,4 +242,24 @@ class DashboardUiServices
         }
     }
 
+    public function checkUserPermissionOnResource(User $user, $resource)
+    {
+        if ($resource != null)
+        {
+            if ($user->getRole() == 'ROLE_ADMIN')
+            {
+                return array('granted' => true);
+            }
+            if ($user->getId() == $resource->getOwnerId())
+            {
+                return array('granted' => true);
+            }
+            return array('granted' => false,
+                         'warning' =>'You do not have permissions to view/modify this resource');
+        }
+        return array('granted' => false,
+                     'warning' =>'The resource does not exit');
+
+    }
+
 }

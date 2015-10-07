@@ -54,7 +54,6 @@ class AdminController extends Controller
 
         $rlms_list = $dashboadServices->getRlmsList($user);
 
-
         return $this->render('default/rlmsRecordsTableView.html.twig',
             array( 'viewName'=> 'Remote Laboratory Management Systems',
                 'records' => (array)$rlms_list));
@@ -69,12 +68,16 @@ class AdminController extends Controller
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $dashboadServices = $this->get('dashboardUiServices');
 
-        $records = $dashboadServices->getRlmsList($user);
-
-
         $repository = $this->getDoctrine()
             ->getRepository('DispatcherBundle:Rlms');
         $rlms = $repository->findOneBy(array('id' => $rlmsId));
+
+        //Verify user's permissions to access resource
+        $permissions = $dashboadServices->checkUserPermissionOnResource($user, $rlms);
+        if ( $permissions['granted'] == false)
+        {
+            Return new Response($permissions['warning']);
+        }
         $form = $this->buildEditRlmsForm($rlms);
         $form->handleRequest($request);
 
@@ -98,9 +101,6 @@ class AdminController extends Controller
     public function AddRlmsAction(Request $request)
     {
         //retrieve user data
-        $user = $this->get('security.token_storage')->getToken()->getUser();
-        $dashboadServices = $this->get('dashboardUiServices');
-
         //retrieve user data
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $form =  $this->createAddRlmsForm($user->getUsername());
@@ -128,6 +128,18 @@ class AdminController extends Controller
      */
     public function rlmsToLsMappingAction(Request $request, $rlmsId)
     {
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $repository = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:Rlms');
+        $rlms = $repository->findOneBy(array('id' => $rlmsId));
+        $dashboadServices = $this->get('dashboardUiServices');
+        //Verify user's permissions to access resource
+        $permissions = $dashboadServices->checkUserPermissionOnResource($user, $rlms);
+        if ( $permissions['granted'] == false)
+        {
+            Return new Response($permissions['warning']);
+        }
+
         $labServerId = $request->query->getInt('labServerId', null);
         $newMapping = $request->query->getInt('newMapping', null);
 
@@ -142,6 +154,7 @@ class AdminController extends Controller
             {
                 $dashboadServices->removeRlmsLsMapping($rlmsId, $labServerId);
             }
+            return $this->redirectToRoute('rlms_ls_mapping', array('rlmsId' => $rlmsId));
         }
         //retrieve user data
         $user = $this->get('security.token_storage')->getToken()->getUser();
@@ -165,7 +178,6 @@ class AdminController extends Controller
         $length = $request->query->getInt('length', 20);
         $status = (int)$request->query->getInt('status', 1);
         $labServerId = (int)$request->query->getInt('labServerId', -1);
-
 
         $user= $this->get('security.token_storage')->getToken()->getUser();
         $dashboadServices = $this->get('dashboardUiServices');
@@ -209,7 +221,6 @@ class AdminController extends Controller
 
         $records = $dashboadServices->getEnginesList($user);
 
-
             return $this->render('default/engineRecordsTableView.html.twig',
                 array( 'viewName'=> 'Subscriber Engines',
                     'records' => (array)$records));
@@ -220,9 +231,20 @@ class AdminController extends Controller
      */
     public function EngineAction($engineId, Request $request)
     {
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
         $repository = $this->getDoctrine()
             ->getRepository('DispatcherBundle:ExperimentEngine');
         $engine = $repository->findOneBy(array('id' => $engineId));
+
+        $dashboadServices = $this->get('dashboardUiServices');
+        //Verify user's permissions to access resource
+        $permissions = $dashboadServices->checkUserPermissionOnResource($user, $engine);
+        if ( $permissions['granted'] == false)
+        {
+            Return new Response($permissions['warning']);
+        }
+
         $form = $this->buildEditEngineForm($engine);
         $form->handleRequest($request);
 
@@ -273,9 +295,20 @@ class AdminController extends Controller
      */
     public function LabServerAction(Request $request, $labserverId)
     {
-       $labServer = $this->getDoctrine()
+        //get user of current session
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $labServer = $this->getDoctrine()
             ->getRepository('DispatcherBundle:LabServer')
             ->findOneBy(array('id' => $labserverId));
+
+        $dashboadServices = $this->get('dashboardUiServices');
+        //Verify user's permissions to access resource
+        $permissions = $dashboadServices->checkUserPermissionOnResource($user, $labServer);
+        if ( $permissions['granted'] == false)
+        {
+            Return new Response($permissions['warning']);
+        }
+
         $form = $this->buildEditLabServerForm($labServer);
 
         $form->handleRequest($request);
