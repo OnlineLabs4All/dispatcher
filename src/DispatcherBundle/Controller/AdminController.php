@@ -76,7 +76,9 @@ class AdminController extends Controller
         $permissions = $dashboadServices->checkUserPermissionOnResource($user, $rlms);
         if ( $permissions['granted'] == false)
         {
-            Return new Response($permissions['warning']);
+            return $this->render('default/warning.html.twig', array(
+                'warning' => $permissions['warning'],
+                'viewName' => 'Something went wrong'));
         }
         $form = $this->buildEditRlmsForm($rlms);
         $form->handleRequest($request);
@@ -137,7 +139,9 @@ class AdminController extends Controller
         $permissions = $dashboadServices->checkUserPermissionOnResource($user, $rlms);
         if ( $permissions['granted'] == false)
         {
-            Return new Response($permissions['warning']);
+            return $this->render('default/warning.html.twig', array(
+                'warning' => $permissions['warning'],
+                'viewName' => 'Something went wrong'));
         }
 
         $labServerId = $request->query->getInt('labServerId', null);
@@ -164,7 +168,7 @@ class AdminController extends Controller
         $mappingResults = $dashboadServices->getMappings($labServers, $mappings);
 
         return $this->render('default/rlmsLsMapping.html.twig',
-            array( 'viewName'=> 'Associate Lab Servers with RLMS',
+            array( 'viewName'=> 'Associate Lab Servers with "'.$rlms->getName().'"',
                    'rlmsId' => $rlmsId,
                    'labservers' => (array)$mappingResults));
     }
@@ -242,7 +246,9 @@ class AdminController extends Controller
         $permissions = $dashboadServices->checkUserPermissionOnResource($user, $engine);
         if ( $permissions['granted'] == false)
         {
-            Return new Response($permissions['warning']);
+            return $this->render('default/warning.html.twig', array(
+                'warning' => $permissions['warning'],
+                'viewName' => 'Something went wrong'));
         }
 
         $form = $this->buildEditEngineForm($engine);
@@ -306,7 +312,9 @@ class AdminController extends Controller
         $permissions = $dashboadServices->checkUserPermissionOnResource($user, $labServer);
         if ( $permissions['granted'] == false)
         {
-            Return new Response($permissions['warning']);
+            return $this->render('default/warning.html.twig', array(
+                                          'warning' => $permissions['warning'],
+                                          'viewName' => 'Something went wrong'));
         }
 
         $form = $this->buildEditLabServerForm($labServer);
