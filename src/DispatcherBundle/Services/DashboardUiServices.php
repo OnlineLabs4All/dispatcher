@@ -6,6 +6,7 @@
  */
 
 namespace DispatcherBundle\Services;
+use DispatcherBundle\Entity\LsToRlmsMapping;
 use Doctrine\ORM\EntityManager;
 use DispatcherBundle\Entity\User;
 use DispatcherBundle\Entity\LabServer;
@@ -76,7 +77,7 @@ class DashboardUiServices
                          'jobRecords' => $jobRecords);
     }
 
-    //get JodRecord based on user permissions and identity
+    //get Single JodRecord based on user permissions and identity
     public function getSingleJobRecord(User $user, $expId)
     {
         if ($user->getRole() == 'ROLE_ADMIN')
@@ -96,7 +97,7 @@ class DashboardUiServices
         }
         return null;
     }
-
+    //provide Functionality for pagination feature
     public function getPagination(User $user, $length, $status, $labServerId)
     {
         $repository = $this
@@ -115,7 +116,6 @@ class DashboardUiServices
                 ->select('COUNT(job)')
                 ->getQuery()
                 ->getSingleScalarResult();
-
         }
         else
         {
@@ -128,8 +128,6 @@ class DashboardUiServices
                 ->getQuery()
                 ->getSingleScalarResult();
         }
-
-
 
         return array('numberOfPages' => ceil($numberOfJobs/$length),
                      'numberOfJobs' => $numberOfJobs);
@@ -160,19 +158,19 @@ class DashboardUiServices
     {
         if ($user->getRole() != 'ROLE_ADMIN')
         {
-            $engines = $this->em
+            $labServers = $this->em
                 ->getRepository('DispatcherBundle:LabServer')
                 ->findBy(array('owner_id' => $user->getId()));
 
-            return $engines;
+            return $labServers;
         }
         else
         {
-            $engines = $this->em
+            $labServers = $this->em
                 ->getRepository('DispatcherBundle:LabServer')
                 ->findAll();
 
-            return $engines;
+            return $labServers;
         }
     }
 
@@ -180,23 +178,68 @@ class DashboardUiServices
     {
         if ($user->getRole() != 'ROLE_ADMIN')
         {
-            $engines = $this->em
+            $RlmsList = $this->em
                 ->getRepository('DispatcherBundle:Rlms')
                 ->findBy(array('owner_id' => $user->getId()));
 
-            return $engines;
+            return $RlmsList;
         }
         else
         {
-            $engines = $this->em
+            $RlmsList = $this->em
                 ->getRepository('DispatcherBundle:Rlms')
                 ->findAll();
 
-            return $engines;
+            return $RlmsList;
         }
     }
 
+    public function getMappingsForRlms($rlmsId)
+    {
+        $mappings = $this->em
+                        ->getRepository('DispatcherBundle:LsToRlmsMapping')
+                        ->findBy(array('rlmsId' =>$rlmsId));
+        return $mappings;
+    }
 
+    public function getMappings($labServers, $mappings)
+    {
+        $labServersWithMapping = &$labServers;
+        foreach ($labServers as $labServer)
+        {
+            //$mappingResult[$labServer->getId()] = false;
+            $labServer->mapped = false;
+            foreach ($mappings as $mapping)
+            {
+                if ($labServer->getId() == $mapping->getLabServerId())
+                {
+                    $labServer->mapped = true;
+                   //$mappingResult[$labServer->getId()] = true;
+                }
+            }
+        }
+        return $labServers;
 
+    }
+
+    public function addRlmsLsMapping($rlmsId, $labServerId)
+    {
+        $mapping = new LsToRlmsMapping();
+        $mapping->setRlmsId($rlmsId);
+        $mapping->setLabServerId($labServerId);
+        $this->em->persist($mapping);
+        $this->em->flush();
+    }
+    public function removeRlmsLsMapping($rlmsId, $labServerId)
+    {
+        $mapping = $this->em
+            ->getRepository('DispatcherBundle:LsToRlmsMapping')
+            ->findOneBy(array('rlmsId' => $rlmsId, 'labServerId' => $labServerId));
+        if ($mapping != null)
+        {
+            $this->em->remove($mapping);
+            $this->em->flush();
+        }
+    }
 
 }
