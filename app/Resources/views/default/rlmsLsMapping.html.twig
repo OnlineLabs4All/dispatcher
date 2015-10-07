@@ -5,6 +5,7 @@
     <div class="col-lg-12">
         <h3 class="page-header">{{ viewName }}</h3>
     </div>
+
     <div class="col-lg-12">
 
     <div class="panel panel-info">
@@ -33,9 +34,9 @@
                             <td>{{ labserver.type }}</td>
                             <td>
                                 {% if labserver.mapped == true %}
-                                    <a href="{{ path('rlms_ls_mapping') }}/{{ rlmsId }}?labServerId={{ labserver.id }}&newMapping=0"><button type="button" class="btn btn-success btn-sm"><i class="fa fa-link"></i> Associated</button></a>
+                                    <a href="{{ path('rlms_ls_mapping') }}/{{ rlmsId }}?labServerId={{ labserver.id }}&newMapping=0"><button type="button" class="btn btn-success btn-sm"><i class="fa fa-link"></i> Dissociate</button></a>
                                 {% elseif labserver.mapped == false %}
-                                    <a href="{{ path('rlms_ls_mapping') }}/{{ rlmsId }}?labServerId={{ labserver.id }}&newMapping=1"><button type="button" class="btn btn-danger btn-sm"><i class="fa fa-times"></i> Dissociated</button></a>
+                                    <a href="{{ path('rlms_ls_mapping') }}/{{ rlmsId }}?labServerId={{ labserver.id }}&newMapping=1"><button type="button" class="btn btn-danger btn-sm"><i class="fa fa-link"></i> Associate</button></a>
                                 {% endif %}
                             </td>
                         </tr>
