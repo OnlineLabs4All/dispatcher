@@ -23,6 +23,7 @@
                         <th>RLMS</th>
                         <th>Institution</th>
                         <th>Status</th>
+                        <th>Lab Server mapping</th>
                         <th>View/Edit</th>
                     </tr>
                     </thead>
@@ -43,6 +44,11 @@
                                     {{ record.active }}
                                 {% endif %}
 
+                            </td>
+                            <td>
+                                <a href="{{ path('rlms_ls_mapping') }}/{{ record.id }}">
+                                    <i class="fa fa-edit"> Associated Lab Servers</i>
+                                </a>
                             </td>
                             <td>
                                 <a href="{{ path('edit_rlms') }}/{{ record.id }}">
