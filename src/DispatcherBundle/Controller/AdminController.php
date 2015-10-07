@@ -92,7 +92,6 @@ class AdminController extends Controller
         ));
     }
 
-    //buildAddRlmsForm
     /**
      * @Route("/addRlms", name="add_rlms")
      */
@@ -122,6 +121,39 @@ class AdminController extends Controller
             'viewName'=>'Register a new RLMS',
             'form' => $form->createView()
         ));
+    }
+
+    /**
+     * @Route("/mapping/{rlmsId}", name="rlms_ls_mapping", defaults={"rlmsId" = null})
+     */
+    public function rlmsToLsMappingAction(Request $request, $rlmsId)
+    {
+        $labServerId = $request->query->getInt('labServerId', null);
+        $newMapping = $request->query->getInt('newMapping', null);
+
+        if ($labServerId != null)
+        {
+            $dashboadServices = $this->get('dashboardUiServices');
+            if ($newMapping == '1') //add new mapping
+            {
+                 $dashboadServices->addRlmsLsMapping($rlmsId, $labServerId);
+            }
+            elseif ($newMapping == '0') //remove mapping
+            {
+                $dashboadServices->removeRlmsLsMapping($rlmsId, $labServerId);
+            }
+        }
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $dashboadServices = $this->get('dashboardUiServices');
+        $labServers = $dashboadServices->getLabServersList($user);
+        $mappings = $dashboadServices->getMappingsForRlms($rlmsId);
+        $mappingResults = $dashboadServices->getMappings($labServers, $mappings);
+
+        return $this->render('default/rlmsLsMapping.html.twig',
+            array( 'viewName'=> 'Associate Lab Servers with RLMS',
+                   'rlmsId' => $rlmsId,
+                   'labservers' => (array)$mappingResults));
     }
 
     /**
@@ -164,7 +196,6 @@ class AdminController extends Controller
             return $this->render('default/recordView.html.twig', array('viewName'=> 'Experiment Record','record' => (array)$jobRecord));
 
        // return $this->render('default/recordView.html.twig', array('viewName'=> 'Experiment Record','record' => null));
-
     }
 
     /**
@@ -571,6 +602,19 @@ class AdminController extends Controller
             ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
             ->getForm();
 
+        return $form;
+    }
+
+    private function buildEditRlmsToLsMappingForm($labServers, $rlmsLsMapping, $rlmsId)
+    {
+        $form = $this->createFormBuilder();
+
+        foreach ($labServers as $labServer) {
+            $form->add((string)$labServer->getId(), 'checkbox', array('label' => $labServer->getName(), 'required' => true, 'attr' => array('readonly' => false)));
+        }
+
+        $form->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+             ->getForm();
         return $form;
     }
 }
