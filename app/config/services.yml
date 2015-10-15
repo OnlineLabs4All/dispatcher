@@ -39,3 +39,8 @@ services:
     dashboardUiServices:
       class: DispatcherBundle\Services\DashboardUiServices
       arguments: [@doctrine.orm.entity_manager]
+
+    genericLabServerServices:
+              class:  DispatcherBundle\Services\GenericLabServerServices
+              arguments: [@doctrine.orm.entity_manager]
+
