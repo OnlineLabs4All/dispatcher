@@ -18,6 +18,7 @@ use DispatcherBundle\Entity\ExperimentEngine;
 use \DateTime;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use DispatcherBundle\Model\Subscriber\LabInfo;
+use Symfony\Component\Console\Output\OutputInterface;
 //use SoapServer;
 
 
@@ -32,12 +33,17 @@ class iLabApiController extends Controller
      * @Method({"POST"})
      *
      */
-    public function batchedApiAction($labServerId)
+    public function batchedApiAction(Request $request, $labServerId)
     {
+        $myfile = fopen('testando.txt','w') or die("Unable to open file");
+        fwrite($myfile, $request->getContent());
+        fclose($myfile);
+
         ini_set("soap.wsdl_cache_enabled", "0");
         $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/batchedLabServer.wsdl";
 
-        $soapServer = new \SoapServer($wsdl_url, array('soap_version' => SOAP_1_2));
+        //$soapServer = new \SoapServer($wsdl_url, array('soap_version' => SOAP_1_2));
+        $soapServer = new \SoapServer($wsdl_url, array('uri' => 'http://ilab.mit.edu'));
         //$soapServer->setObject($this->get('BatchedLabServerApi'));
         //var_dump($soapServer);
         $iLabBatched = $this->get('iLabLabServer');
@@ -51,7 +57,7 @@ class iLabApiController extends Controller
         return $response;
     }
 
-    //This route accepts POST method and instantiate the SOAP server
+    //This route accepts POST method and instantiate the SOAP server for Interactive labs
     /**
      * @Route("/{labServerId}/ils/soap", name="isa_apiRoot_ils")
      * @Method({"POST"})
@@ -79,7 +85,7 @@ class iLabApiController extends Controller
 
     //This route accepts only GET method and returns the WSDL for an specific Lab Server
     /**
-     * @Route("/{labServerId}/ils/soap/", name="interactive_ls_wsdl")
+     * @Route("/{labServerId}/ils/soap", name="interactive_ls_wsdl")
      * @Method({"GET"})
      *
      */
@@ -99,10 +105,25 @@ class iLabApiController extends Controller
 
     //This route accepts only GET method and returns the WSDL for an specific Lab Server
     /**
-     * @Route("/{labServerId}/soap/", name="batched_ls_wsdl")
+     * @Route("/{labServerId}/soap", name="batched_ls_wsdl")
      * @Method({"GET"})
      *
      */
+
+    /*
+    public function getBatchedWsdlAction(Request $request, $labServerId)
+    {
+        $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/batchedLabServer.wsdl";
+        $wsdl = file_get_contents($wsdl_url);
+
+        //var_dump($wsdl);
+        $response = new Response();
+        $response->headers->set('Content-Type', 'application/xml');
+        $response->setContent($wsdl);
+        return $response;
+    }
+    */
+
     public function getBatchedWsdlAction(Request $request, $labServerId)
     {
         //$wsdl_gen = $this->get('wsdlGenerator');
@@ -147,6 +168,72 @@ class iLabApiController extends Controller
             'minTimetoLive' => $minTimetoLive));
 
         return new Response($opaque->userGroup);
+    }
+
+    // ========== ISA Json API - University of Queensland =====================
+
+    //This route accepts POST method and instantiate the SOAP server for BATCHED LABS
+    /**
+     * @Route("/{labServerId}/json", name="isa_json_api")
+     * @Method({"POST", "GET"})
+     *
+     */
+    public function batchedJsonApiAction(Request $request, $labServerId)
+    {
+
+        $myfile = fopen('testando.txt','w') or die("Unable to open file");
+        fwrite($myfile, $request->getContent());
+        fclose($myfile);
+
+        //authenticate request
+        $jsonRequestString = $request->getContent();
+        $jsonRequest = json_decode($jsonRequestString);
+        $action = $jsonRequest->action;
+
+
+        $iLabAuthenticator = $this->get('IsaRlmsAuthenticator');
+        $auth = $iLabAuthenticator->authenticateMethodUqBroker($jsonRequest, $jsonRequest->token, $jsonRequest->guid, $labServerId);
+
+        if ($auth['authenticated'] == true)
+        //if (true)
+        {
+            $iLabBatched = $this->get('genericLabServerServices');
+            $iLabBatched->setLabServerId($labServerId);
+
+            switch ($action)
+            {
+                case 'getLabConfiguration':
+                    $jsonResponse = $iLabBatched->getLabConfiguration();
+                    break;
+                case 'getLabStatus':
+                    $jsonResponse = $iLabBatched->getLabStatus();
+                    break;
+                case 'getLabInfo':
+                    $jsonResponse = $iLabBatched->getLabInfo();
+                    break;
+                case 'getEffectiveQueueLength':
+                    $priorityHint = $jsonRequest->params->priorityHint;
+                    $jsonResponse = $iLabBatched->getEffectiveQueueLength($priorityHint);
+                    break;
+                case 'submit':
+                    $rlmsExpId = $jsonRequest->params->experimentID;
+                    $experimentSpecification = $jsonRequest->params->experimentSpecification;
+                    $userGoup = $jsonRequest->params->userGroup;
+                    $priorityHint = $jsonRequest->params->priorityHint;
+                    $rlmsGuid = $jsonRequest->guid;
+                    $jsonResponse = $iLabBatched->submit($rlmsExpId, $experimentSpecification, $userGoup, $priorityHint, $rlmsGuid);
+            }
+
+
+
+            $response = new Response(json_encode($jsonResponse));
+            $response->headers->set('Content-Type','application/json; charset=utf-8');
+            return $response;
+        }
+
+        $response = new response;
+        $response->setStatusCode(401);
+        return $response;
     }
 
 }
