@@ -526,7 +526,7 @@ class AdminController extends Controller
             ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'attr' => array('value'=>$rlms->getContactName(), 'readonly' => false)))
             ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('value'=>$rlms->getContactEmail(), 'readonly' => false)))
             ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('value'=>$rlms->getInstitution(), 'readonly' => false)))
-            ->add('Guid', 'text', array('label' => 'GUID', 'required' => false, 'attr' => array('value'=>$rlms->getGuid(), 'readonly' => false)))
+            ->add('guid', 'text', array('label' => 'GUID', 'required' => false, 'attr' => array('value'=>$rlms->getGuid(), 'readonly' => false)))
             ->add('rlms_type', 'text', array('label' => 'RLMS Type', 'attr' => array('value'=> $rlms->getRlmsType(), 'readonly' => true)))
             ->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value'=>$rlms->getPassKeyToRlms(), 'readonly' => true)))
             ->add('service_url', 'text', array('label' => 'Service URL', 'required' => false, 'attr' => array('value'=>$rlms->getServiceUrl(), 'readonly' => true)))
@@ -558,7 +558,7 @@ class AdminController extends Controller
             ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'attr' => array('readonly' => false)))
             ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('readonly' => false)))
             ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('readonly' => false)))
-            ->add('Guid', 'text', array('label' => 'GUID', 'required' => false, 'attr' => array('readonly' => false)))
+            ->add('guid', 'text', array('label' => 'GUID', 'required' => false, 'attr' => array('readonly' => false)))
             ->add('rlms_type', 'choice',
                 array('label' => 'Choose a supported RLMS',
                       'required' => true,
