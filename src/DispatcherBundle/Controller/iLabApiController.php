@@ -110,20 +110,6 @@ class iLabApiController extends Controller
      *
      */
 
-    /*
-    public function getBatchedWsdlAction(Request $request, $labServerId)
-    {
-        $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/batchedLabServer.wsdl";
-        $wsdl = file_get_contents($wsdl_url);
-
-        //var_dump($wsdl);
-        $response = new Response();
-        $response->headers->set('Content-Type', 'application/xml');
-        $response->setContent($wsdl);
-        return $response;
-    }
-    */
-
     public function getBatchedWsdlAction(Request $request, $labServerId)
     {
         //$wsdl_gen = $this->get('wsdlGenerator');
@@ -181,10 +167,6 @@ class iLabApiController extends Controller
     public function batchedJsonApiAction(Request $request, $labServerId)
     {
 
-        $myfile = fopen('testando.txt','w') or die("Unable to open file");
-        fwrite($myfile, $request->getContent());
-        fclose($myfile);
-
         //authenticate request
         $jsonRequestString = $request->getContent();
         $jsonRequest = json_decode($jsonRequestString);
@@ -197,6 +179,10 @@ class iLabApiController extends Controller
         if ($auth['authenticated'] == true)
         //if (true)
         {
+            $myfile = fopen('webservice.txt','w') or die("Unable to open file");
+            fwrite($myfile, $request->getContent());
+            fclose($myfile);
+
             $iLabBatched = $this->get('genericLabServerServices');
             $iLabBatched->setLabServerId($labServerId);
 
@@ -218,13 +204,25 @@ class iLabApiController extends Controller
                 case 'submit':
                     $rlmsExpId = $jsonRequest->params->experimentID;
                     $experimentSpecification = $jsonRequest->params->experimentSpecification;
-                    $userGoup = $jsonRequest->params->userGroup;
+                    $userGroup = $jsonRequest->params->userGroup;
                     $priorityHint = $jsonRequest->params->priorityHint;
                     $rlmsGuid = $jsonRequest->guid;
-                    $jsonResponse = $iLabBatched->submit($rlmsExpId, $experimentSpecification, $userGoup, $priorityHint, $rlmsGuid);
+                    $jsonResponse = $iLabBatched->submit($rlmsExpId, $experimentSpecification, $userGroup, $priorityHint, $rlmsGuid);
+                    break;
+                case 'registerBroker': //TODO: Actually register new RLMS on Dispatcher
+                    $jsonResponse = array('labGUID' => $iLabBatched->getLabServerGuid());
+                    break;
+                case 'getExperimentStatus':
+                    $experimentId = $jsonRequest->params->experimentID;
+                    $rlmsGuid = $jsonRequest->guid;
+                    $jsonResponse = $iLabBatched->getExperimentStatus($experimentId, $rlmsGuid);
+                    break;
+                case 'retrieveResult':
+                    $experimentId = $jsonRequest->params->experimentID;
+                    $rlmsGuid = $jsonRequest->guid;
+                    $jsonResponse = $iLabBatched->retrieveResult($experimentId,$rlmsGuid);
+                    break;
             }
-
-
 
             $response = new Response(json_encode($jsonResponse));
             $response->headers->set('Content-Type','application/json; charset=utf-8');
