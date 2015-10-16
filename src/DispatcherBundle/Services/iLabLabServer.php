@@ -92,7 +92,7 @@ class iLabLabServer
             ->andWhere('job.priority >= :priority')
             ->setParameter('jobStatus', 1) //
             ->setParameter('labServerId',$this->labServer->getId())
-            ->setParameter('priority', $params->priorityHint)
+            ->setParameter('priority', 0)
             ->select('COUNT(job)')
             ->getQuery()
             ->getSingleScalarResult();
@@ -220,8 +220,6 @@ class iLabLabServer
                                                           'warningMessages' => $warningMessages,
                                                           'errorMessage' => $errorMessage)
                          );
-
-
         return $response;
     }
 
