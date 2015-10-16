@@ -6,6 +6,7 @@
  */
 namespace DispatcherBundle\Services;
 use DispatcherBundle\Entity\JobRecord;
+use DispatcherBundle\Entity\LabServer;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\Null;
@@ -15,11 +16,12 @@ use DOMDocument;
 
 class GenericLabServerServices
 {
+    private $labServer;
 
     public function __construct(EntityManager $em)
     {
         $this->em = $em;
-
+        $labServer = new LabServer;
     }
 
     public function setLabServerId($labServerId){
@@ -30,6 +32,11 @@ class GenericLabServerServices
             ->findOneBy(array('id' => $labServerId));
     }
 
+    public function getLabServerGuid()
+    {
+        return $this->labServer->getGuid();
+    }
+
     public function getLabInfo(){
         $response = array('labInfo' => $this->labServer->getLabInfo());
         return $response;
@@ -37,9 +44,9 @@ class GenericLabServerServices
 
     public function getLabConfiguration(){
         //$userGroup = $params->userGroup; //can be used to return different lab configurations depending on the user group.
-        $response = array('labConfiguration:' => $this->labServer->getConfiguration());
-        //$response = array('navmenuPhoto'=>array('image'=> 'https://cdn4.iconfinder.com/data/icons/SOPHISTIQUE/medical/png/400/laboratory.png'));
-
+        $response = array('labConfiguration' => array('navmenuPhoto' => array(array('image'=> array('https://github.com/OnlineLabs4All/dispatcher/blob/master/web/img/logo_100px.png?raw=true'))),
+                                                      'labConfiguration' => $this->labServer->getConfiguration()));
+        //{'navmenuPhoto': [{'image': ['http://cliparts.co/cliparts/piq/Kn7/piqKn7y7T.png']}]}
         return $response;
     }
 
@@ -50,7 +57,7 @@ class GenericLabServerServices
             $response = array(
                 'online' => $this->labServer->getActive(),
                 'labStatusMessage' => "1:Powered up",
-                'labGUID' => $this->labServer->getGuid());
+                'guid' => $this->labServer->getGuid());
             return $response;
         }
 
@@ -109,7 +116,7 @@ class GenericLabServerServices
         $jobRecord->setLabServerId($this->labServer->getId());
         $jobRecord->setLabServerOwnerId($this->labServer->getOwnerId());
         $jobRecord->setRlmsAssignedId($rlmsExpId);
-        $jobRecord->setPriority($priorityHint);
+        $jobRecord->setPriority(0); //TODO: For the future, this should be configured with the RLMS to Lab Server Mapping table
         $jobRecord->setJobStatus(1); //Status 1(QUEUED)
         $jobRecord->setSubmitTime(date('Y-m-d\TH:i:sP'));
         $jobRecord->setEstExecTime(20); //replace with real estimation
@@ -142,6 +149,81 @@ class GenericLabServerServices
             'wait' => array('effectiveQueueLength' => $queueLength,
                 'estWait' => $estWait));
         return $response;
+    }
+
+    public function getExperimentStatus($experimentId, $rlmsGuid)
+    {
+        $jobRecord = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord')
+            ->findOneBy(array('expId' => $experimentId, 'providerId' => $rlmsGuid));
+
+        $repository = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord');
+
+        //get the length of the queue considering the job priority
+        $queueLength = $repository->createQueryBuilder('job')
+            ->where('job.jobStatus = :jobStatus')
+            ->andWhere('job.expId < :expId')
+            ->andWhere('job.labServerId = :labServerId')
+            ->andWhere('job.priority >= :priority')
+            ->setParameter('jobStatus', 1)
+            ->setParameter('expId', $jobRecord->getExpId())
+            ->setParameter('labServerId', $this->labServer->getId())
+            ->setParameter('priority', $jobRecord->getPriority())
+            ->select('COUNT(job)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $statusCode = $jobRecord->getJobStatus();
+        $effectiveQueueLength = $queueLength; //get the length of the queue considering the job priority
+
+        $response = array('statusCode'=> $statusCode,
+                          'effectiveQueueLength'=> $effectiveQueueLength);
+        return $response;
+    }
+
+    public function retrieveResult($experimentId, $rlmsGuid)
+    {
+        $jobRecord = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord')
+            ->findOneBy(array('expId' => $experimentId, 'providerId' => $rlmsGuid));
+
+        $statusCode = $jobRecord->getJobStatus();
+
+        if ($statusCode != 3){
+            $experimentResults = $jobRecord->getExpResults();
+            $xmlResultExtension = Null;
+            $xmlBlobExtension = Null;
+            $warningMessages = Null;
+            $errorMessage = Null;
+            $errorMessage = 'Results not available. Experiment is not completed or has been cancelled. See status code.';
+        }
+        else{
+            //$opaque = json_decode($jobRecord->getOpaqueData());
+            $experimentResults = $jobRecord->getExpResults();
+            $xmlBlobExtension = Null;
+            $warningMessages = Null;
+            $errorMessage = Null;
+
+            //set job record as downloaded
+            $jobRecord->setDownloaded(true);
+            $this->em->persist($jobRecord);
+            $this->em->flush();
+        }
+
+        $response = array('statusCode' => $statusCode,
+                          'experimentResults' => $experimentResults,
+                         'errorMessage' => $errorMessage);
+        return $response;
+
+    }
+    //TODO: Retunr experiment medatada, like elapsed time, execution engine, etc.
+    public function getExperimentMetadata($experimentId, $rlmsId)
+    {
+
     }
 
 }
