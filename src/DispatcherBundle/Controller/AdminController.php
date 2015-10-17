@@ -398,27 +398,31 @@ class AdminController extends Controller
 
         if ($labServer->getType() == 'ILS')
         {
-            $service_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/ils/soap";
+            $soap_service_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/ils/soap";
+            $json_service_url = "";
             $wsdl_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/ils/soap";
         }
         else
         {
-            $service_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/soap";
+            $soap_service_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/soap";
+            $json_service_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/json";
             $wsdl_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/soap";
+
         }
 
         return $this->render('default/apiEndpoints.html.twig', array(
-            'viewName' => 'My APIs',
+            'viewName' => 'Lab Server APIs',
             'labServerName' => $labServer->getName(),
             'apis' => array(
-                            array('name' => 'ISA Lab Server API Endpoints and credentials to register with Service Broker',
-                                  'description' => $wsdl_url,
-                                  'endpoint' => $service_url,
+                            array('name' => 'Register Lab Server with a Service Broker',
+                                  'wsdl' => $wsdl_url,
+                                  'soap_endpoint' => $soap_service_url,
+                                  'json_endpoint' => $json_service_url,
                                   'guid' => $labServer->getGuid(),
                                   'passkey' => $labServer->getPassKey(),
                                   'initialPasskey' => $labServer->getInitialPassKey(),
-                                  'info' => 'Implements the iLab Shared Architecture lab server API. Use the service endpoint, GUID and passKey to install the Lab Server process agent in your iLab Service Broker.
-                                             For interactive lab server, use the Initial Paysskey to install the domain credentials.',
+                                  'info' => 'Use the service endpoint, GUID and passKey to install the Lab Server process agent in your iLab Service Broker.
+                                             For interactive lab server, use the Initial Passkey to install the domain credentials.',
                                   'documentation' => 'Not Available')
             )
         ));
