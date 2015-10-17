@@ -35,17 +35,10 @@ class iLabApiController extends Controller
      */
     public function batchedApiAction(Request $request, $labServerId)
     {
-        $myfile = fopen('testando.txt','w') or die("Unable to open file");
-        fwrite($myfile, $request->getContent());
-        fclose($myfile);
-
         ini_set("soap.wsdl_cache_enabled", "0");
         $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/batchedLabServer.wsdl";
 
-        //$soapServer = new \SoapServer($wsdl_url, array('soap_version' => SOAP_1_2));
-        $soapServer = new \SoapServer($wsdl_url, array('uri' => 'http://ilab.mit.edu'));
-        //$soapServer->setObject($this->get('BatchedLabServerApi'));
-        //var_dump($soapServer);
+        $soapServer = new \SoapServer($wsdl_url, array('soap_version' => SOAP_1_2));
         $iLabBatched = $this->get('iLabLabServer');
         $iLabBatched->setLabServerId($labServerId);
         $soapServer->setObject($iLabBatched);
@@ -65,7 +58,7 @@ class iLabApiController extends Controller
      */
     public function interactiveApiAction(Request $request, $labServerId)
     {
-        ini_set("soap.wsdl_cache_enabled", "0");
+        ini_set("soap.wsdl_cache_enabled", "1");
         $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/interactiveLabServer.wsdl";
 
         $soapServer = new \SoapServer($wsdl_url, array('soap_version' => SOAP_1_2));
@@ -91,14 +84,10 @@ class iLabApiController extends Controller
      */
     public function getInteractiveWsdlAction(Request $request, $labServerId)
     {
-        //$wsdl_gen = $this->get('wsdlGenerator');
         $service_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/ils/soap";
         //returns the wsdl
-        //echo "test";
         $response = $this->render('wsdl/interactiveLs.wsdl.twig', array('service_url'=> $service_url));
-        //$response->headers->set('Content-Type', 'application/xml');
         //return $response;
-        //$response = new Response($wsdl_gen->getBatchedLsWsdl());
         $response->headers->set('Content-Type', 'application/xml');
         return $response;
     }
@@ -109,56 +98,18 @@ class iLabApiController extends Controller
      * @Method({"GET"})
      *
      */
-
     public function getBatchedWsdlAction(Request $request, $labServerId)
     {
-        //$wsdl_gen = $this->get('wsdlGenerator');
         $service_url = $request->getScheme()."://".$request->getHttpHost()."/apis/isa/".$labServerId."/soap";
         //returns the wsdl
-        //echo "test";
         $response = $this->render('wsdl/batchedLs.wsdl.twig', array('service_url'=> $service_url));
-        //$response->headers->set('Content-Type', 'application/xml');
         //return $response;
-        //$response = new Response($wsdl_gen->getBatchedLsWsdl());
         $response->headers->set('Content-Type', 'application/xml');
         return $response;
     }
 
-    /**
-     * @Route("/test/{experimentID}", name="test_route")
-     *
-     */
-    public function testAction(Request $request, $experimentID)
-    {
-        $repository = $this->getDoctrine()
-            ->getRepository('DispatcherBundle:JobRecord');
-
-        $jobRecord =  $repository->findOneBy(array('rlmsAssignedId' => $experimentID, 'providerId' => '9954C5B79AEB432A94DE29E6EE44EB69'));
-        $statusCode = $jobRecord->getJobStatus();
-        $effectiveQueueLength = 2;
-        $estWait = 32;
-        $estRuntime = 15;
-        $estRemainingRuntime = 54;
-        $minTimetoLive= 7200;
-
-        $opaque = json_decode($jobRecord->getOpaqueData());
-
-
-
-        $response = array('GetExperimentStatusResult' => array(
-            'statusReport' => array('statusCode' =>  $statusCode,
-                'wait' => array('effectiveQueueLength' => $effectiveQueueLength,
-                    'estWait' => $estWait),
-                'estRuntime' => $estRuntime,
-                'estRemainingRuntime' => $estRemainingRuntime),
-            'minTimetoLive' => $minTimetoLive));
-
-        return new Response($opaque->userGroup);
-    }
-
     // ========== ISA Json API - University of Queensland =====================
 
-    //This route accepts POST method and instantiate the SOAP server for BATCHED LABS
     /**
      * @Route("/{labServerId}/json", name="isa_json_api")
      * @Method({"POST", "GET"})
@@ -167,24 +118,23 @@ class iLabApiController extends Controller
     public function batchedJsonApiAction(Request $request, $labServerId)
     {
 
-        //authenticate request
+        //read request
         $jsonRequestString = $request->getContent();
         $jsonRequest = json_decode($jsonRequestString);
-        $action = $jsonRequest->action;
 
-
+        //Authenticate request
         $iLabAuthenticator = $this->get('IsaRlmsAuthenticator');
         $auth = $iLabAuthenticator->authenticateMethodUqBroker($jsonRequest, $jsonRequest->token, $jsonRequest->guid, $labServerId);
 
         if ($auth['authenticated'] == true)
         //if (true)
         {
-            $myfile = fopen('webservice.txt','w') or die("Unable to open file");
-            fwrite($myfile, $request->getContent());
-            fclose($myfile);
-
+            //$myfile = fopen('webservice.txt','w') or die("Unable to open file");
+            //fwrite($myfile, $request->getContent());
+            //close($myfile);
             $iLabBatched = $this->get('genericLabServerServices');
             $iLabBatched->setLabServerId($labServerId);
+            $action = $jsonRequest->action;
 
             switch ($action)
             {
@@ -222,6 +172,10 @@ class iLabApiController extends Controller
                     $rlmsGuid = $jsonRequest->guid;
                     $jsonResponse = $iLabBatched->retrieveResult($experimentId,$rlmsGuid);
                     break;
+                default:
+                    $jsonResponse = array();
+                    break;
+
             }
 
             $response = new Response(json_encode($jsonResponse));
