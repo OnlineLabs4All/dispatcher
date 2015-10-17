@@ -136,16 +136,21 @@ class IsaRlmsAuthenticator{
 
                     if ($mapping != null)
                     {
-                        return array('authenticated' => true, 'fault' => '');
+                        return array('authenticated' => true,
+                                     'fault' => '');
                     }
-                    return array('authenticated' => false, 'fault' => 'Token is correct, but Broker and Lab Server are not mapped to each other. Contact your Experiment Dispatcher administrator');
+                    return array('authenticated' => false,
+                                 'fault' => 'Token is correct, but Broker and Lab Server are not mapped to each other. Contact your Experiment Dispatcher administrator');
 
                 }
-                return array('authenticated' => false, 'fault' => 'Unauthorized, could not verify token');
+                return array('authenticated' => false,
+                             'fault' => 'Unauthorized, could not verify token');
             }
-            return array('authenticated' => false, 'fault' => 'Provided Lab Server Id does not exit');
+            return array('authenticated' => false,
+                         'fault' => 'Provided Lab Server Id does not exit');
         }
-        return array('authenticated' => false, 'fault' => 'Provided Service Broker GUID is not registered');
+        return array('authenticated' => false,
+                     'fault' => 'Provided Service Broker GUID is not registered');
     }
 
 }
