@@ -56,8 +56,7 @@ class GenericLabServerServices
         {
             $response = array(
                 'online' => $this->labServer->getActive(),
-                'labStatusMessage' => "1:Powered up",
-                'guid' => $this->labServer->getGuid());
+                'labStatusMessage' => "1:Powered up");
             return $response;
         }
 
