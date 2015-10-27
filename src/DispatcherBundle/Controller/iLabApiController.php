@@ -117,7 +117,6 @@ class iLabApiController extends Controller
      */
     public function batchedJsonApiAction(Request $request, $labServerId)
     {
-
         //read request
         $jsonRequestString = $request->getContent();
         $jsonRequest = json_decode($jsonRequestString);
@@ -126,18 +125,17 @@ class iLabApiController extends Controller
         $iLabAuthenticator = $this->get('IsaRlmsAuthenticator');
         $auth = $iLabAuthenticator->authenticateMethodUqBroker($jsonRequest, $jsonRequest->token, $jsonRequest->guid, $labServerId);
 
-        if ($auth['authenticated'] == true)
-        //if (true)
-        {
-            //$myfile = fopen('webservice.txt','w') or die("Unable to open file");
-            //fwrite($myfile, $request->getContent());
-            //close($myfile);
+        if ($auth['authenticated'] == true){
+        //if (true){
+            $myfile = fopen('webservice.txt','w') or die("Unable to open file");
+            fwrite($myfile, $request->getContent());
+            fclose($myfile);
+
             $iLabBatched = $this->get('genericLabServerServices');
             $iLabBatched->setLabServerId($labServerId);
             $action = $jsonRequest->action;
 
-            switch ($action)
-            {
+            switch ($action){
                 case 'getLabConfiguration':
                     $jsonResponse = $iLabBatched->getLabConfiguration();
                     break;
@@ -172,17 +170,19 @@ class iLabApiController extends Controller
                     $rlmsGuid = $jsonRequest->guid;
                     $jsonResponse = $iLabBatched->retrieveResult($experimentId,$rlmsGuid);
                     break;
+                case 'cancel':
+                    $experimentId = $jsonRequest->params->experimentID;
+                    //$rlmsGuid = $jsonRequest->guid;
+                    $jsonResponse = $iLabBatched->cancelExperiment($experimentId);
+                    break;
                 default:
                     $jsonResponse = array();
                     break;
-
             }
-
             $response = new Response(json_encode($jsonResponse));
             $response->headers->set('Content-Type','application/json; charset=utf-8');
             return $response;
         }
-
         $response = new response;
         $response->setStatusCode(401);
         return $response;
