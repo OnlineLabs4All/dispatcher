@@ -219,6 +219,27 @@ class GenericLabServerServices
         return $response;
 
     }
+    public function cancelExperiment($experimentId)
+    {
+        $jobRecord = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord')
+            ->findOneBy(array('expId' => $experimentId));
+
+        $statusCode = $jobRecord->getJobStatus();
+
+        if ($statusCode != 2){ //what to do if experiment is not being executed (2 = IN PROGRESS)
+            $CancelResult = true;
+            $jobRecord->setJobStatus(5);
+            $this->em->persist($jobRecord);
+            $this->em->flush();
+        }
+        else{//what to do if experiment is running
+            $CancelResult = false;
+        }
+        $response = array('cancelled' => $CancelResult);
+        return $response;
+    }
     //TODO: Retunr experiment medatada, like elapsed time, execution engine, etc.
     public function getExperimentMetadata($experimentId, $rlmsId)
     {
