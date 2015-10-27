@@ -74,8 +74,7 @@ class AdminController extends Controller
 
         //Verify user's permissions to access resource
         $permissions = $dashboadServices->checkUserPermissionOnResource($user, $rlms);
-        if ( $permissions['granted'] == false)
-        {
+        if ( $permissions['granted'] == false){
             return $this->render('default/warning.html.twig', array(
                 'warning' => $permissions['warning'],
                 'viewName' => 'Something went wrong'));
@@ -137,8 +136,7 @@ class AdminController extends Controller
         $dashboadServices = $this->get('dashboardUiServices');
         //Verify user's permissions to access resource
         $permissions = $dashboadServices->checkUserPermissionOnResource($user, $rlms);
-        if ( $permissions['granted'] == false)
-        {
+        if ( $permissions['granted'] == false){
             return $this->render('default/warning.html.twig', array(
                 'warning' => $permissions['warning'],
                 'viewName' => 'Something went wrong'));
@@ -147,15 +145,13 @@ class AdminController extends Controller
         $labServerId = $request->query->getInt('labServerId', null);
         $newMapping = $request->query->getInt('newMapping', null);
 
-        if ($labServerId != null)
-        {
+        if ($labServerId != null){
             $dashboadServices = $this->get('dashboardUiServices');
-            if ($newMapping == '1') //add new mapping
-            {
+
+            if ($newMapping == '1'){ //add new mapping
                  $dashboadServices->addRlmsLsMapping($rlmsId, $labServerId);
             }
-            elseif ($newMapping == '0') //remove mapping
-            {
+            elseif ($newMapping == '0'){ //remove mapping
                 $dashboadServices->removeRlmsLsMapping($rlmsId, $labServerId);
             }
             return $this->redirectToRoute('rlms_ls_mapping', array('rlmsId' => $rlmsId));
@@ -188,8 +184,7 @@ class AdminController extends Controller
 
         //$paginationInfo = $dashboadServices->getPagination($user, $length, $status, $labServerId);
 
-        if ($expId == null)
-        {
+        if ($expId == null){
             $base_url =  $request->getScheme()."://".$request->getHttpHost().$request->getBasePath();
             $current_url = $request->getUri();
 
@@ -244,8 +239,7 @@ class AdminController extends Controller
         $dashboadServices = $this->get('dashboardUiServices');
         //Verify user's permissions to access resource
         $permissions = $dashboadServices->checkUserPermissionOnResource($user, $engine);
-        if ( $permissions['granted'] == false)
-        {
+        if ( $permissions['granted'] == false){
             return $this->render('default/warning.html.twig', array(
                 'warning' => $permissions['warning'],
                 'viewName' => 'Something went wrong'));
@@ -310,8 +304,7 @@ class AdminController extends Controller
         $dashboadServices = $this->get('dashboardUiServices');
         //Verify user's permissions to access resource
         $permissions = $dashboadServices->checkUserPermissionOnResource($user, $labServer);
-        if ( $permissions['granted'] == false)
-        {
+        if ( $permissions['granted'] == false) {
             return $this->render('default/warning.html.twig', array(
                                           'warning' => $permissions['warning'],
                                           'viewName' => 'Something went wrong'));
@@ -396,18 +389,15 @@ class AdminController extends Controller
 
         $labServer =  $repository->findOneBy(array('id' => $labServerId));
 
-        if ($labServer->getType() == 'ILS')
-        {
+        if ($labServer->getType() == 'ILS'){
             $soap_service_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/ils/soap";
             $json_service_url = "";
             $wsdl_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/ils/soap";
         }
-        else
-        {
+        else{
             $soap_service_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/soap";
             $json_service_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/json";
             $wsdl_url = $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/".$labServerId."/soap";
-
         }
 
         return $this->render('default/apiEndpoints.html.twig', array(
@@ -451,9 +441,7 @@ class AdminController extends Controller
         return $labServers;
         }
         return null;
-
         //var_dump($labServers);
-
     }
 
     //generate form for a new subscriber Engine
@@ -522,8 +510,8 @@ class AdminController extends Controller
     }
 
     //generate form to EDIT a RLMS Credentials
-    private function buildEditRlmsForm(Rlms $rlms){
-
+    private function buildEditRlmsForm(Rlms $rlms)
+    {
         $form = $this->createFormBuilder()
             ->add('name', 'text', array('label' => 'Name', 'attr' => array('value'=>$rlms->getName(), 'readonly' => false)))
             ->add('description', 'textarea', array('label' => 'Description','data'=>$rlms->getDescription()))
@@ -552,8 +540,8 @@ class AdminController extends Controller
     }
 
     //generate form to CREATE a RLMS Credentials
-    private function createAddRlmsForm($username){
-
+    private function createAddRlmsForm($username)
+    {
         $passkey = md5(microtime().rand());
         $form = $this->createFormBuilder()
 
@@ -566,8 +554,8 @@ class AdminController extends Controller
             ->add('rlms_type', 'choice',
                 array('label' => 'Choose a supported RLMS',
                       'required' => true,
-                      'choices' => array('ISA_SOAP'=>'ISA Service Broker (SOAP)',
-                                         'ISA_REST'=>'ISA Service Broker (REST)',
+                      'choices' => array('ISA_SOAP_API'=>'ISA Service Broker (SOAP API)',
+                                         'ISA_JSON_API'=>'ISA Service Broker (JSON)',
                                          'WEBLAB_DEUSTO' => 'WebLab Deusto')))
             ->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value' => $passkey,'readonly' => false)))
             ->add('service_url', 'text', array('label' => 'Service URL', 'required' => false, 'attr' => array('readonly' => false)))
@@ -587,7 +575,8 @@ class AdminController extends Controller
         return $form;
     }
 
-    private function buildCreateLabServerForm(){
+    private function buildCreateLabServerForm()
+    {
         $gen_guid = md5(microtime().rand());
         $gen_passKey = md5(microtime().rand());
         $gen_initPassKey = md5(microtime().rand());
@@ -621,8 +610,8 @@ class AdminController extends Controller
        return $form;
     }
 
-    private function buildEditLabServerForm(LabServer $labServer){
-
+    private function buildEditLabServerForm(LabServer $labServer)
+    {
         $form = $this->createFormBuilder()
 
             ->add('name', 'text', array('label' => 'Lab Server name', 'required' => true, 'attr' => array('value'=>$labServer->getName(), 'readonly' => false)))
@@ -655,10 +644,13 @@ class AdminController extends Controller
         $form = $this->createFormBuilder();
 
         foreach ($labServers as $labServer) {
-            $form->add((string)$labServer->getId(), 'checkbox', array('label' => $labServer->getName(), 'required' => true, 'attr' => array('readonly' => false)));
+            $form->add((string)$labServer->getId(), 'checkbox', array('label' => $labServer->getName(),
+                                                                      'required' => true,
+                                                                      'attr' => array('readonly' => false)));
         }
 
-        $form->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+        $form->add('submit','submit', array('label' => 'Save changes',
+                                            'attr' => array('class'=>'btn btn-success')))
              ->getForm();
         return $form;
     }
