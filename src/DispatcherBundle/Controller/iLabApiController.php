@@ -127,9 +127,9 @@ class iLabApiController extends Controller
 
         if ($auth['authenticated'] == true){
         //if (true){
-            $myfile = fopen('webservice.txt','w') or die("Unable to open file");
-            fwrite($myfile, $request->getContent());
-            fclose($myfile);
+            //$myfile = fopen('webservice.txt','w') or die("Unable to open file");
+            //fwrite($myfile, $request->getContent());
+            //fclose($myfile);
 
             $iLabBatched = $this->get('genericLabServerServices');
             $iLabBatched->setLabServerId($labServerId);
