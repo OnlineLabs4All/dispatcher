@@ -13,7 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-
+use DispatcherBundle\Entity\LabSession;
 
 //This controller implements the WebLab Deusto HTTP Methods for batched laboratories
 /**
@@ -23,23 +23,78 @@ class WeblabDeustoApiController extends Controller
 {
     //This route accepts POST method and instantiate the SOAP server for BATCHED LABS
     /**
-     * @Route("/login/json/", name="weblabdeusto_login")
+     * @Route("/login/json", name="weblabdeusto_login")
      * @Method({"GET", "POST"})
      *
      */
     public function weblabDeustoLoginAction(Request $request)
     {
-        $requestJson = json_decode($request->getContent());
+        $requestString = $request->getContent();
+        $requestJson = json_decode($requestString);
 
-        $responseJson = array('is_exception' => false,
-                          'result' => array('id' => 'resulting-session-identifier(string)'));
 
+        $webLabAuthenticator = $this->get('webLabRlmsAuthenticator');
+        //var_dump($requestJson);
+        $username = $requestJson->params->username;
+        $password = $requestJson->params->password;
+        $authResp = $webLabAuthenticator->webLabLogin($username, $password);
+
+        $responseJson = array('is_exception' => $authResp['is_exception'],
+                          'result' => array('id' => $authResp['session_id']));
         $response = new Response();
-        $response->headers->set('Set-Cookie', 'weblabsessionid=123456');
+        $response->headers->set('Set-Cookie', 'weblabsessionid='.$authResp['session_id']);
+        $response->headers->set('Content-type', 'application/json');
+        $response->setContent(json_encode($responseJson));
+        Return $response;
+    }
+
+    /**
+     * @Route("/json", name="weblabdeusto_login2")
+     * @Method({"POST"})
+     *
+     */
+    public function weblabDeustoAction(Request $request)
+    {
+        $requestJson = json_decode($request->getContent());
+        $method = $requestJson->method;
+        $webLabAuthenticator = $this->get('webLabRlmsAuthenticator');
+        $response = new Response();
+
+        switch($method){
+            case 'login':
+                $webLabAuthenticator = $this->get('webLabRlmsAuthenticator');
+                //var_dump($requestJson);
+                $username = $requestJson->params->username;
+                $password = $requestJson->params->password;
+                $authResp = $webLabAuthenticator->webLabLogin($username, $password);
+
+                $responseJson = array('is_exception' => $authResp['is_exception'],
+                    'result' => array('id' => $authResp['session_id']));
+                $response->headers->set('Set-Cookie', 'weblabsessionid='.$authResp['session_id']);
+                break;
+            case 'list_experiments':
+                $session_id = $requestJson->params->session_id->id;
+
+                if ($webLabAuthenticator->validateSessionById($session_id)){
+
+                    $responseJson = array('is_exception' => false,
+                        'result' => array(array('time_allowed' => '604800',
+                                                'experiment' => array('category' => array('name' => 'test_category'),
+                                                                      'name' => 'experimnet_name',
+                                                                      'start_date' => date('Y-m-d\TH:i:sP'),
+                                                                      'end_date' => date('Y-m-d\TH:i:sP')))));
+
+                }
+
+        }
+
+
         $response->headers->set('Content-type', 'application/json');
         $response->setContent(json_encode($responseJson));
         Return $response;
 
     }
+
+
 
 }
