@@ -476,12 +476,12 @@ class Rlms
         $this->owner_id = $ownerId;
         $this->active = $data['active'];
         $this->dateCreated = date('Y-m-d\TH:i:sP');
-        $this->passKeyToRlms = $data['passkey_to_rlms'];
+        //$this->passKeyToRlms = $data['passkey_to_rlms'];
         $this->rlmsType = $data['rlms_type'];
         $this->serviceUrl = $data['service_url'];
         $this->serviceDescriptionUrl = $data['service_description_url'];
-        $this->password = md5($data['wd_password']);
-        $this->username = $data['wd_username'];
+        $this->password = md5($data['rlms_password']);
+        $this->username = $data['rlms_username'];
 
     }
 
@@ -495,9 +495,9 @@ class Rlms
         $this->active = $data['active'];
         $this->serviceUrl = $data['service_url'];
         $this->serviceDescriptionUrl = $data['service_description_url'];
-        if ($data['wd_password'] != null)
+        if ($data['rlms_password'] != null)
         {
-            $this->password = md5($data['wd_password']);
+            $this->password = md5($data['rlms_password']);
         }
     }
 
