@@ -518,13 +518,13 @@ class AdminController extends Controller
             ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'attr' => array('value'=>$rlms->getContactName(), 'readonly' => false)))
             ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('value'=>$rlms->getContactEmail(), 'readonly' => false)))
             ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('value'=>$rlms->getInstitution(), 'readonly' => false)))
-            ->add('guid', 'text', array('label' => 'GUID', 'required' => false, 'attr' => array('value'=>$rlms->getGuid(), 'readonly' => false)))
+            ->add('guid', 'text', array('label' => 'GUID', 'required' => true, 'attr' => array('value'=>$rlms->getGuid(), 'readonly' => true)))
             ->add('rlms_type', 'text', array('label' => 'RLMS Type', 'attr' => array('value'=> $rlms->getRlmsType(), 'readonly' => true)))
-            ->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value'=>$rlms->getPassKeyToRlms(), 'readonly' => true)))
+            //->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value'=>$rlms->getPassKeyToRlms(), 'readonly' => true)))
             ->add('service_url', 'text', array('label' => 'Service URL', 'required' => false, 'attr' => array('value'=>$rlms->getServiceUrl(), 'readonly' => true)))
             ->add('service_description_url', 'text', array('label' => 'URL of a parsable description of RLMS API (WSDL, Swagger, etc)', 'required' => false, 'attr' => array('value'=>$rlms->getServiceDescriptionUrl(), 'readonly' => true)))
-            ->add('wd_username', 'text', array('label' => 'Username',  'required' => false, 'attr' => array('value'=>$rlms->getUsername(), 'readonly' => true)))
-            ->add('wd_password', 'repeated', array(
+            ->add('rlms_username', 'text', array('label' => 'Username',  'required' => false, 'attr' => array('value'=>$rlms->getUsername(), 'readonly' => true)))
+            ->add('rlms_password', 'repeated', array(
                 'type' => 'password',
                 'invalid_message' => 'The password fields must match.',
                 'options' => array('attr' => array('class' => 'password-field')),
@@ -542,7 +542,8 @@ class AdminController extends Controller
     //generate form to CREATE a RLMS Credentials
     private function createAddRlmsForm($username)
     {
-        $passkey = md5(microtime().rand());
+        //$passkey = md5(microtime().rand());
+        //$rlms_username = md5(microtime().rand());
         $form = $this->createFormBuilder()
 
             ->add('name', 'text', array('label' => 'Name', 'attr' => array('readonly' => false)))
@@ -554,14 +555,14 @@ class AdminController extends Controller
             ->add('rlms_type', 'choice',
                 array('label' => 'Choose a supported RLMS',
                       'required' => true,
-                      'choices' => array('ISA_SOAP_API'=>'ISA Service Broker (SOAP API)',
-                                         'ISA_JSON_API'=>'ISA Service Broker (JSON)',
+                      'choices' => array('ISA_SOAP'=>'ISA Service Broker (SOAP)',
+                                         'ISA_JSON'=>'ISA Service Broker (JSON)',
                                          'WEBLAB_DEUSTO' => 'WebLab Deusto')))
-            ->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value' => $passkey,'readonly' => false)))
+            //->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value' => $passkey,'readonly' => false)))
             ->add('service_url', 'text', array('label' => 'Service URL', 'required' => false, 'attr' => array('readonly' => false)))
             ->add('service_description_url', 'text', array('label' => 'URL of a parsable description of RLMS API (WSDL, Swagger, etc)', 'required' => false, 'attr' => array('readonly' => false)))
-            ->add('wd_username', 'text', array('label' => 'Username',  'required' => false, 'attr' => array('value' => $username,'readonly' => false)))
-            ->add('wd_password', 'repeated', array(
+            ->add('rlms_username', 'text', array('label' => 'Username',  'required' => false, 'attr' => array('value' => '','readonly' => false)))
+            ->add('rlms_password', 'repeated', array(
                 'type' => 'password',
                 'invalid_message' => 'The password fields must match.',
                 'options' => array('attr' => array('class' => 'password-field')),
