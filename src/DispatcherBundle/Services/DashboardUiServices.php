@@ -25,23 +25,19 @@ class DashboardUiServices
     public function getJobRecordsTable(User $user, $length, $page, $status, $labServer)
     {
         $filter = array();
-        if ($status != -1)
-        {
+        if ($status != -1){
             $filter['jobStatus'] = $status;
         }
-        if ($labServer != -1)
-        {
+        if ($labServer != -1){
             $filter['labServerId'] = $labServer;
         }
-        if ($user->getRole() != 'ROLE_ADMIN')
-        {
+        if ($user->getRole() != 'ROLE_ADMIN'){
             $filter['labServerOwnerId'] = $user->getId();
             $jobRecordsCountTotal = $this->em
                 ->getRepository('DispatcherBundle:JobRecord')
                 ->findBy($filter, array('expId'=> 'DESC'));
         }
-        else
-        {
+        else{
             $jobRecordsCountTotal = $this->em
                 ->getRepository('DispatcherBundle:JobRecord')
                 ->findBy($filter, array('expId'=> 'DESC'));
@@ -56,15 +52,22 @@ class DashboardUiServices
 
         $numberOfPages = ceil(count($jobRecordsCountTotal)/$length);
 
-        if ($page < $numberOfPages) {$nextPage = $page + 1;}
-        else {$nextPage = $numberOfPages;}
+        if ($page < $numberOfPages){
+            $nextPage = $page + 1;
+        }
+        else{
+            $nextPage = $numberOfPages;
+        }
 
-        if ($page > 1){ $previousPage = $page - 1;}
-        else {$previousPage = 1;}
+        if ($page > 1){
+            $previousPage = $page - 1;
+        }
+        else{
+            $previousPage = 1;
+        }
 
         $pages = array();
-        for ($pg=1; $pg <= $numberOfPages; $pg++)
-        {
+        for ($pg=1; $pg <= $numberOfPages; $pg++){
             $pages[$pg] = $pg;
         }
 
@@ -80,20 +83,17 @@ class DashboardUiServices
     //get Single JodRecord based on user permissions and identity
     public function getSingleJobRecord(User $user, $expId)
     {
-        if ($user->getRole() == 'ROLE_ADMIN')
-        {
+        if ($user->getRole() == 'ROLE_ADMIN'){
             $jobRecord = $this->em
                 ->getRepository('DispatcherBundle:JobRecord')
                 ->findOneBy(array('expId' => $expId));
             return $jobRecord;
         }
-        elseif ($user->getRole() == 'ROLE_USER')
-        {
+        elseif ($user->getRole() == 'ROLE_USER'){
             $jobRecord = $this->em
                 ->getRepository('DispatcherBundle:JobRecord')
                 ->findOneBy(array('expId' => $expId, 'labServerOwnerId' => $user->getId()));
             return $jobRecord;
-
         }
         return null;
     }
@@ -104,8 +104,7 @@ class DashboardUiServices
             ->em
             ->getRepository('DispatcherBundle:JobRecord');
 
-        if ($user->getRole() != 'ROLE_ADMIN')
-        {
+        if ($user->getRole() != 'ROLE_ADMIN'){
             $numberOfJobs = $repository->createQueryBuilder('job')
                 ->where('job.jobStatus = :jobStatus')
                 ->andWhere('job.labServerId = :labServerId')
@@ -117,8 +116,7 @@ class DashboardUiServices
                 ->getQuery()
                 ->getSingleScalarResult();
         }
-        else
-        {
+        else{
             $numberOfJobs = $repository->createQueryBuilder('job')
                 ->where('job.jobStatus = :jobStatus')
                 ->andWhere('job.labServerId = :labServerId')
@@ -136,60 +134,51 @@ class DashboardUiServices
 
     public function getEnginesList(User $user)
     {
-        if ($user->getRole() != 'ROLE_ADMIN')
-        {
+        if ($user->getRole() != 'ROLE_ADMIN'){
             $engines = $this->em
                 ->getRepository('DispatcherBundle:ExperimentEngine')
                 ->findBy(array('owner_id' => $user->getId()));
 
             return $engines;
         }
-        else
-        {
+        else{
             $engines = $this->em
                 ->getRepository('DispatcherBundle:ExperimentEngine')
                 ->findAll();
-
             return $engines;
         }
     }
 
     public function getLabServersList(User $user)
     {
-        if ($user->getRole() != 'ROLE_ADMIN')
-        {
+        if ($user->getRole() != 'ROLE_ADMIN'){
             $labServers = $this->em
                 ->getRepository('DispatcherBundle:LabServer')
                 ->findBy(array('owner_id' => $user->getId()));
 
             return $labServers;
         }
-        else
-        {
+        else{
             $labServers = $this->em
                 ->getRepository('DispatcherBundle:LabServer')
                 ->findAll();
-
             return $labServers;
         }
     }
 
     public function getRlmsList(User $user)
     {
-        if ($user->getRole() != 'ROLE_ADMIN')
-        {
+        if ($user->getRole() != 'ROLE_ADMIN'){
             $RlmsList = $this->em
                 ->getRepository('DispatcherBundle:Rlms')
                 ->findBy(array('owner_id' => $user->getId()));
 
             return $RlmsList;
         }
-        else
-        {
+        else{
             $RlmsList = $this->em
                 ->getRepository('DispatcherBundle:Rlms')
                 ->findAll();
-
             return $RlmsList;
         }
     }
@@ -204,15 +193,12 @@ class DashboardUiServices
 
     public function getMappings($labServers, $mappings)
     {
-        $labServersWithMapping = &$labServers;
-        foreach ($labServers as $labServer)
-        {
+        //$labServersWithMapping = $labServers;
+        foreach ($labServers as $labServer){
             //$mappingResult[$labServer->getId()] = false;
             $labServer->mapped = false;
-            foreach ($mappings as $mapping)
-            {
-                if ($labServer->getId() == $mapping->getLabServerId())
-                {
+            foreach ($mappings as $mapping){
+                if ($labServer->getId() == $mapping->getLabServerId()){
                     $labServer->mapped = true;
                    //$mappingResult[$labServer->getId()] = true;
                 }
@@ -235,8 +221,7 @@ class DashboardUiServices
         $mapping = $this->em
             ->getRepository('DispatcherBundle:LsToRlmsMapping')
             ->findOneBy(array('rlmsId' => $rlmsId, 'labServerId' => $labServerId));
-        if ($mapping != null)
-        {
+        if ($mapping != null){
             $this->em->remove($mapping);
             $this->em->flush();
         }
@@ -244,14 +229,11 @@ class DashboardUiServices
 
     public function checkUserPermissionOnResource(User $user, $resource)
     {
-        if ($resource != null)
-        {
-            if ($user->getRole() == 'ROLE_ADMIN')
-            {
+        if ($resource != null){
+            if ($user->getRole() == 'ROLE_ADMIN'){
                 return array('granted' => true);
             }
-            if ($user->getId() == $resource->getOwnerId())
-            {
+            if ($user->getId() == $resource->getOwnerId()){
                 return array('granted' => true);
             }
             return array('granted' => false,
