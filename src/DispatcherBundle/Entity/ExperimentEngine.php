@@ -513,7 +513,7 @@ class ExperimentEngine
     }
 
 
-    public function setAll($data)
+    public function setAll($data, $ownerId)
     {
         $this->labserverId = $data['labserverId'];
 
@@ -528,7 +528,7 @@ class ExperimentEngine
         $this->country = $data['country'];
         $this->geolocation = '';
         $this->description = $data['description'];
-        $this->owner_id = 1;//change after user database is created
+        $this->owner_id = $ownerId;//change after user database is created
         $this->active = $data['active'];
         $this->visible_in_catalogue = $data['visible_in_catalogue'];
         $this->dateCreated = date('Y-m-d\TH:i:sP');
@@ -550,7 +550,7 @@ class ExperimentEngine
         $this->country = $data['country'];
         $this->geolocation = '';
         $this->description = $data['description'];
-        $this->owner_id = 1;//change after user database is created
+        //$this->owner_id = 1;//change after user database is created
         $this->active = $data['active'];
         $this->visible_in_catalogue = $data['visible_in_catalogue'];
     }
