@@ -17,6 +17,14 @@ services:
       class: DispatcherBundle\Security\IsaRlmsAuthenticator
       arguments: [@doctrine.orm.entity_manager]
 
+    webLabRlmsAuthenticator:
+          class: DispatcherBundle\Security\WebLabRlmsAuthenticator
+          arguments: [@doctrine.orm.entity_manager]
+
+    webLabDeustoServices:
+              class: DispatcherBundle\Services\WebLabDeustoServices
+              arguments: [@doctrine.orm.entity_manager]
+
     iLabLabServer:
       class:  DispatcherBundle\Services\iLabLabServer
       arguments: [@doctrine.orm.entity_manager, @isaRlmsAuthenticator]
@@ -43,4 +51,3 @@ services:
     genericLabServerServices:
               class:  DispatcherBundle\Services\GenericLabServerServices
               arguments: [@doctrine.orm.entity_manager]
-
