@@ -277,7 +277,7 @@ class AdminController extends Controller
 
             $engine = new ExperimentEngine();
             $data =$form->getData();
-            $engine->setAll($data);
+            $engine->setAll($data, $user->getId());
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($engine);
