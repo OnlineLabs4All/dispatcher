@@ -58,6 +58,7 @@ class WeblabDeustoApiController extends Controller
         $requestJson = json_decode($request->getContent());
         $method = $requestJson->method;
         $webLabAuthenticator = $this->get('webLabRlmsAuthenticator');
+        $webLabService = $this->get('webLabDeustoServices');
         $response = new Response();
 
         switch($method){
@@ -75,19 +76,14 @@ class WeblabDeustoApiController extends Controller
             case 'list_experiments':
                 $session_id = $requestJson->params->session_id->id;
 
-                if ($webLabAuthenticator->validateSessionById($session_id)){
+                $session = $webLabAuthenticator->validateSessionById($session_id);
 
-                    $responseJson = array('is_exception' => false,
-                        'result' => array(array('time_allowed' => '604800',
-                                                'experiment' => array('category' => array('name' => 'test_category'),
-                                                                      'name' => 'experimnet_name',
-                                                                      'start_date' => date('Y-m-d\TH:i:sP'),
-                                                                      'end_date' => date('Y-m-d\TH:i:sP')))));
+                if ($session != null){
+
+                    $responseJson = $webLabService->listExperiments($session);
 
                 }
-
         }
-
 
         $response->headers->set('Content-type', 'application/json');
         $response->setContent(json_encode($responseJson));
