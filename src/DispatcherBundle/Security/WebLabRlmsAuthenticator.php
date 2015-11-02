@@ -56,18 +56,14 @@ class WebLabRlmsAuthenticator
             ->findOneBy(array('session_id' => $session_id ));
 
         if ($labSession != null){
-            return $this->isValid($labSession->getEndDate());
+            $now = date_create(date('Y-m-d\TH:i:sP'));
+            $end = date_create($labSession->getEndDate());
+            if ($now < $end){
+                return $labSession;
+            }
+            return null;
         }
-        return false;
+        return null;
     }
 
-    private function isValid($endDate)
-    {
-        $now = date_create(date('Y-m-d\TH:i:sP'));
-        $end = date_create($endDate);
-        if ($now < $end){
-            return true;
-        }
-        return false;
-    }
 }
