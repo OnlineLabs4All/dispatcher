@@ -39,7 +39,7 @@ class JobRecord
     protected $providerId; //ID of the provider RLMS
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     protected $rlmsAssignedId;
 
