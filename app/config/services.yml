@@ -23,7 +23,7 @@ services:
 
     webLabDeustoServices:
               class: DispatcherBundle\Services\WebLabDeustoServices
-              arguments: [@doctrine.orm.entity_manager]
+              arguments: [@doctrine.orm.entity_manager, @genericLabServerServices]
 
     iLabLabServer:
       class:  DispatcherBundle\Services\iLabLabServer
