@@ -152,10 +152,10 @@ class iLabApiController extends Controller
                 case 'submit':
                     $rlmsExpId = $jsonRequest->params->experimentID;
                     $experimentSpecification = $jsonRequest->params->experimentSpecification;
-                    $userGroup = $jsonRequest->params->userGroup;
+                    $opaqueData = $jsonRequest->params->userGroup; //stored in the opaque data field
                     $priorityHint = $jsonRequest->params->priorityHint;
                     $rlmsGuid = $jsonRequest->guid;
-                    $jsonResponse = $iLabBatched->submit($rlmsExpId, $experimentSpecification, $userGroup, $priorityHint, $rlmsGuid);
+                    $jsonResponse = $iLabBatched->submit($rlmsExpId, $experimentSpecification, $opaqueData, $priorityHint, $rlmsGuid);
                     break;
                 case 'registerBroker': //TODO: Actually register new RLMS on Dispatcher
                     $jsonResponse = array('labGUID' => $iLabBatched->getLabServerGuid());
@@ -168,7 +168,7 @@ class iLabApiController extends Controller
                 case 'retrieveResult':
                     $experimentId = $jsonRequest->params->experimentID;
                     $rlmsGuid = $jsonRequest->guid;
-                    $jsonResponse = $iLabBatched->retrieveResult($experimentId,$rlmsGuid);
+                    $jsonResponse = $iLabBatched->retrieveResult($experimentId, $rlmsGuid);
                     break;
                 case 'cancel':
                     $experimentId = $jsonRequest->params->experimentID;
