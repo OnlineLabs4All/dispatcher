@@ -92,7 +92,7 @@ class GenericLabServerServices
         return $response;
     }
 
-    public function Submit($rlmsExpId, $experimentSpecification, $userGoup, $priorityHint, $rlmsGuid){
+    public function Submit($rlmsExpId, $experimentSpecification, $opaqueData, $priorityHint, $rlmsGuid){
 
         $jobRecord = new JobRecord();
 
@@ -125,7 +125,7 @@ class GenericLabServerServices
         $jobRecord->setDownloaded(false);
         $jobRecord->setErrorOccurred(false);
         $jobRecord->setProcessingEngine(-1); //no processing Engine yet assigned (-1)
-        $jobRecord->setOpaqueData(json_encode(array('userGroup' => $userGoup)));
+        $jobRecord->setOpaqueData($opaqueData);
 
         $this->em->persist($jobRecord);
         $this->em->flush();
