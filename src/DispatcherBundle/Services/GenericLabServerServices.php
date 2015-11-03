@@ -183,12 +183,12 @@ class GenericLabServerServices
         return $response;
     }
 
-    public function retrieveResult($experimentId, $rlmsGuid)
+    public function retrieveResult($experimentId, $providerId) //providerId can be RLMS GUID or internal ID
     {
         $jobRecord = $this
             ->em
             ->getRepository('DispatcherBundle:JobRecord')
-            ->findOneBy(array('expId' => $experimentId, 'providerId' => $rlmsGuid));
+            ->findOneBy(array('expId' => $experimentId, 'providerId' => $providerId));
 
         $statusCode = $jobRecord->getJobStatus();
 
