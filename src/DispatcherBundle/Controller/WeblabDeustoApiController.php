@@ -66,9 +66,9 @@ class WeblabDeustoApiController extends Controller
      */
     public function weblabDeustoAction(Request $request)
     {
-        $myfile = fopen('webservice.txt','w') or die("Unable to open file");
-        fwrite($myfile, $request->getContent());
-        fclose($myfile);
+        //$myfile = fopen('webservice.txt','w') or die("Unable to open file");
+        //fwrite($myfile, $request->getContent());
+        //fclose($myfile);
 
         $requestJson = json_decode($request->getContent());
         $method = $requestJson->method;
@@ -113,10 +113,6 @@ class WeblabDeustoApiController extends Controller
                 break;
             case 'reserve_experiment':
 
-                //$myfile = fopen('webservice.txt','w') or die("Unable to open file");
-                //fwrite($myfile, $request->getContent());
-                //fclose($myfile);
-
                 $session_id = $requestJson->params->session_id->id;
                 $labSession = $webLabAuthenticator->validateSessionById($session_id);
 
@@ -131,10 +127,6 @@ class WeblabDeustoApiController extends Controller
                 }
                 break;
             case 'get_reservation_status':
-
-                //$myfile = fopen('webservice.txt','w') or die("Unable to open file");
-                //fwrite($myfile, $request->getContent());
-                //fclose($myfile);
 
                 $session_id = $request->cookies->get('weblabsessionid');
                 $labSession = $webLabAuthenticator->validateSessionById($session_id);
