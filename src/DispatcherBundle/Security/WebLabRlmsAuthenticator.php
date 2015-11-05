@@ -77,11 +77,16 @@ class WebLabRlmsAuthenticator
             $now = date_create(date('Y-m-d\TH:i:sP'));
             $end = date_create($labSession->getEndDate());
             if ($now < $end){
-                return $labSession;
+                return array('is_exception' => false,
+                             'labSession' => $labSession );
             }
-            return null;
+            return array('is_exception' => true,
+                         'message' => 'Session has already expired. Please login again.',
+                         'code' => 'Client.SessionNotFound');
         }
-        return null;
+        return array('is_exception' => true,
+                     'message' => 'Session does not exist. Please login.',
+                     'code' => 'Client.SessionNotFound');
     }
 
     public function setSessionLabServer($session_id, $exp_cat, $exp_name)
