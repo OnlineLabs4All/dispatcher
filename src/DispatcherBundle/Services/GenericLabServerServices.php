@@ -215,10 +215,35 @@ class GenericLabServerServices
 
         $response = array('statusCode' => $statusCode,
                           'experimentResults' => $experimentResults,
-                         'errorMessage' => $errorMessage);
+                          'errorMessage' => $errorMessage);
         return $response;
 
     }
+
+    public function retrieveExperimentSpecification($experimentId, $providerId) //providerId can be RLMS GUID or internal ID
+    {
+        $jobRecord = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord')
+            ->findOneBy(array('expId' => $experimentId, 'providerId' => $providerId));
+
+        if ( $jobRecord != null){
+
+            $statusCode = $jobRecord->getJobStatus();
+            $response = array('statusCode' => $statusCode,
+                              'experimentResults' => $jobRecord->getExpResults(),
+                              'experimentSpecification' => $jobRecord->getExpSpecification());
+        }
+        else{
+            $response = array('statusCode' => '',
+                              'experimentResults' => '',
+                              'errorMessage' => 'Experiment not found');
+        }
+
+        return $response;
+
+    }
+
     public function cancelExperiment($experimentId)
     {
         $jobRecord = $this
@@ -240,10 +265,53 @@ class GenericLabServerServices
         $response = array('cancelled' => $CancelResult);
         return $response;
     }
-    //TODO: Retunr experiment medatada, like elapsed time, execution engine, etc.
-    public function getExperimentMetadata($experimentId, $rlmsId)
-    {
 
+    public function getExperimentMetadata(JobRecord $jobRecord)
+    {
+        $labServer = $this
+            ->em
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findOneBy(array('id' => $jobRecord->getLabServerId()));
+
+        if ($jobRecord->getProcessingEngine() != -1){
+        $engine = $this
+            ->em
+            ->getRepository('DispatcherBundle:ExperimentEngine')
+            ->findOneBy(array('id' => $jobRecord->getProcessingEngine()));
+
+            $processingEngineMetadata = array('name' => $engine->getName(),
+                                              'id' => $engine->getId());
+        }
+        else{
+            $processingEngineMetadata = array('name' => 'Not assigned',
+                                              'id' => -1);
+        }
+
+       if($jobRecord != null){
+            $jobMetadata = array('expId' => $jobRecord->getExpId(),
+                                 'engine' => $processingEngineMetadata,
+                                 'labServer' => array('name' => $labServer->getName(),
+                                                      'id' => $labServer->getId(),
+                                                      'cat_name' => $labServer->getExpCategory(),
+                                                      'exp_name' => $labServer->getExpName()),
+                                 'execElapsed' => $jobRecord->getExecElapsed(),
+                                 'jobElapsed' => $jobRecord->getJobElapsed(),
+                                 'queueAtInsert' => $jobRecord->getQueueAtInsert(),
+                                 'errorOccurred' => $jobRecord->getErrorOccurred(),
+                                 'errorReport' => $jobRecord->getErrorReport());
+            return $jobMetadata;
+        }
+        return null;
+    }
+
+    public function getJobRecordById($experimentId, $rlmsId)
+    {
+        $jobRecord = $this
+            ->em
+            ->getRepository('DispatcherBundle:JobRecord')
+            ->findOneBy(array('expId' => $experimentId, 'providerId' => $rlmsId));
+
+        return $jobRecord;
     }
 
 }
