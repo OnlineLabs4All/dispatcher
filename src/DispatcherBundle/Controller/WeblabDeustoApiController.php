@@ -66,9 +66,9 @@ class WeblabDeustoApiController extends Controller
      */
     public function weblabDeustoAction(Request $request)
     {
-        $myfile = fopen('webservice.txt','w') or die("Unable to open file");
-        fwrite($myfile, $request->getContent());
-        fclose($myfile);
+        //$myfile = fopen('webservice.txt','w') or die("Unable to open file");
+        //fwrite($myfile, $request->getContent());
+        //fclose($myfile);
 
         $requestJson = json_decode($request->getContent());
         $method = $requestJson->method;
