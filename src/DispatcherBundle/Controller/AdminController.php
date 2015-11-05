@@ -159,7 +159,8 @@ class AdminController extends Controller
         //retrieve user data
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $dashboadServices = $this->get('dashboardUiServices');
-        $labServers = $dashboadServices->getLabServersList($user);
+        //$labServers = $dashboadServices->getLabServersList($user);
+        $labServers = $dashboadServices->getLabServersListForRlmsOwner($rlms);
         $mappings = $dashboadServices->getMappingsForRlms($rlmsId);
         $mappingResults = $dashboadServices->getMappings($labServers, $mappings);
 
