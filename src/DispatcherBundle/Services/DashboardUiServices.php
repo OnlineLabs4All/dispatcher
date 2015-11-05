@@ -12,6 +12,7 @@ use DispatcherBundle\Entity\User;
 use DispatcherBundle\Entity\LabServer;
 use DispatcherBundle\Entity\ExperimentEngine;
 use Symfony\Component\Form\FormBuilderInterface;
+use DispatcherBundle\Entity\Rlms;
 
 class DashboardUiServices
 {
@@ -164,6 +165,15 @@ class DashboardUiServices
                 ->findAll();
             return $labServers;
         }
+    }
+
+    public function getLabServersListForRlmsOwner(Rlms $rlms)
+    {
+        $labServers = $this->em
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findBy(array('owner_id' => $rlms->getOwnerId()));
+
+            return $labServers;
     }
 
     public function getRlmsList(User $user)
