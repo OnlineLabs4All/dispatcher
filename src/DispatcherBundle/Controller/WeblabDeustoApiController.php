@@ -29,9 +29,7 @@ class WeblabDeustoApiController extends Controller
      */
     public function weblabDeustoLoginAction(Request $request)
     {
-        $myfile = fopen('login.txt','w') or die("Unable to open file");
-        fwrite($myfile, $request->getContent());
-        fclose($myfile);
+
         $requestString = $request->getContent();
         $requestJson = json_decode($requestString);
 
