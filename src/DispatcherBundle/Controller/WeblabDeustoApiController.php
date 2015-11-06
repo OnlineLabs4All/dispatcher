@@ -58,7 +58,7 @@ class WeblabDeustoApiController extends Controller
     }
 
     /**
-     * @Route("/json/", name="weblabdeusto_login2")
+     * @Route("/json/", name="weblabdeusto_services")
      * @Method({"POST"})
      *
      */
