@@ -61,7 +61,7 @@ class WebLabRlmsAuthenticator
 
         $response = array('is_exception' => true,
                           'message' => 'Invalid credentials',
-                          'code' => 'JSON:Client.InvalidCredentials',
+                          'code' => 'Client.InvalidCredentials',
                           'session_id'=> '');
         return $response;
     }
