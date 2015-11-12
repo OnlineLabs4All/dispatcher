@@ -7,8 +7,6 @@ security:
 
         DispatcherBundle\Entity\User: bcrypt
 
-
-
     # http://symfony.com/doc/current/book/security.html#hierarchical-roles
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER
@@ -18,19 +16,17 @@ security:
     providers:
 
         #main:
-        #    entity: { class: DispatcherBundle:User, property: username }
-
         in_memory:
             memory:
                 users:
                     user:  { password: userpass, roles: [ 'ROLE_USER' ] }
                     admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
-                    api_user: { password: apipass, roles: [ 'ROLE_APIUSER' ] }
-                    htl: { password: fhiscool, roles: ['ROLE_APIUSER']}
 
         site_user_provider:
             id: siteUserProvider
 
+        engines_api_user_provider:
+            id: api_key_user_provider
 
         #api_key_user_provider:
         #            id: api_key_user_provider
@@ -64,11 +60,14 @@ security:
         engines_api:
            pattern: ^/apis/engine
            stateless: true
-           #simple_preauth:
-           #   authenticator: apikey_authenticator
+           simple_preauth:
+              authenticator: engineApikey_authenticator
+           provider: engines_api_user_provider
            anonymous: ~
-           http_basic:
-              realm: "Experiment Engine API"
+
+         #  http_basic:
+         #     realm: "Experiment Engine API"
+         #  provider: in_memory
 
         default:
             #pattern: ^/secured

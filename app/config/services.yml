@@ -51,3 +51,14 @@ services:
     genericLabServerServices:
               class:  DispatcherBundle\Services\GenericLabServerServices
               arguments: [@doctrine.orm.entity_manager]
+
+    engineAuthenticator:
+              class: DispatcherBundle\Security\EngineAuthenticator
+              arguments: [@doctrine.orm.entity_manager]
+
+    api_key_user_provider:
+              class: DispatcherBundle\Security\ApiKeyUserProvider
+              arguments: [@doctrine.orm.entity_manager]
+
+    engineApikey_authenticator:
+              class:     DispatcherBundle\Security\EngineApiAuthenticator
