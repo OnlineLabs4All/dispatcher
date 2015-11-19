@@ -97,21 +97,33 @@ class iLabLabServer
             ->getQuery()
             ->getSingleScalarResult();
 
-        $jobRecord->setLabServerId($this->labServer->getId());
-        $jobRecord->setLabServerOwnerId($this->labServer->getOwnerId());
-        $jobRecord->setProviderId($this->rlmsGuid);
-        $jobRecord->setRlmsAssignedId($params->experimentID);
-        $jobRecord->setPriority($params->priorityHint);
-        $jobRecord->setJobStatus(1); //Status 1(QUEUED)
-        $jobRecord->setSubmitTime(date('Y-m-d\TH:i:sP'));
-        $jobRecord->setEstExecTime(20); //replace with real estimation
-        $jobRecord->setQueueAtInsert($queueLength);
-        $jobRecord->setExpSpecification($params->experimentSpecification);
-        $jobRecord->setProviderId($this->rlmsGuid); //ID of the RLMS requesting execution
-        $jobRecord->setDownloaded(false);
-        $jobRecord->setErrorOccurred(false);
-        $jobRecord->setProcessingEngine(-1); //no processing Engine yet assigned (-1)
-        $jobRecord->setOpaqueData(json_encode(array('userGroup' => $params->userGroup)));
+        $exp_spec_hash = hash('sha256', $params->experimentSpecification);
+        $expResults = null;
+        $jobStatus = 1;
+        $dataset = $this->labServer->getUseDataset();
+
+        if ($dataset == true){
+
+            $identicalJob = $this
+                ->em
+                ->getRepository('DispatcherBundle:JobRecord')
+                ->findOneBy(array('expSpecChecksum' => $exp_spec_hash,
+                                  'labServerId' => $this->labServer->getId(),
+                                  'jobStatus' => 3));
+
+            //if identical experiment if found double check if experiment specification is really identical to
+            // avoid returning wrong results in the unlikely case of collision of the hash algorithm
+            if (($identicalJob != null) && ($identicalJob->getExpSpecification() == $params->experimentSpecification)){
+                $jobStatus = 3; //set job status to complete if identical record is found
+                $jobRecord->createNewFromDataset($params->experimentID, $params->experimentSpecification,$params->userGroup, $queueLength, $this->labServer, $this->rlmsGuid, $exp_spec_hash, $jobStatus, $identicalJob);
+            }
+            else{
+                $jobRecord->createNew($params->experimentID, $params->experimentSpecification,$params->userGroup, $queueLength, $this->labServer, $this->rlmsGuid, $exp_spec_hash, $jobStatus);
+            }
+        }
+        else{
+            $jobRecord->createNew($params->experimentID, $params->experimentSpecification,$params->userGroup, $queueLength, $this->labServer, $this->rlmsGuid, null, $jobStatus);
+        }
 
         $this->em->persist($jobRecord);
         $this->em->flush();

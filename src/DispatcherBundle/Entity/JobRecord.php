@@ -98,6 +98,16 @@ class JobRecord
     protected $expSpecification;
 
     /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    protected $expSpecChecksum; //checksum of experment specification
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    protected $isFromDataset;
+
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     protected $expResults;
@@ -591,5 +601,100 @@ class JobRecord
     public function getLabServerOwnerId()
     {
         return $this->labServerOwnerId;
+    }
+
+    /**
+     * Set expSpecChecksum
+     *
+     * @param string $expSpecChecksum
+     * @return JobRecord
+     */
+    public function setExpSpecChecksum($expSpecChecksum)
+    {
+        $this->expSpecChecksum = $expSpecChecksum;
+
+        return $this;
+    }
+
+    /**
+     * Get expSpecChecksum
+     *
+     * @return string 
+     */
+    public function getExpSpecChecksum()
+    {
+        return $this->expSpecChecksum;
+    }
+
+    public function createNew($expId, $expSpec, $opaqueData, $queueLength, LabServer $labServer, $rlmsGuid, $exp_spec_hash, $jobStatus)
+    {
+        $this->setLabServerId($labServer->getId());
+        $this->setLabServerOwnerId($labServer->getOwnerId());
+        $this->setProviderId($rlmsGuid); //ID of the RLMS requesting execution
+        $this->setRlmsAssignedId($expId);
+        $this->setPriority(0); //Set priority 0 for the moment;
+        $this->setSubmitTime(date('Y-m-d\TH:i:sP'));
+        $this->setEstExecTime(20); //replace with real estimation
+        $this->setExpSpecification($expSpec);
+        $this->setQueueAtInsert($queueLength);
+        $this->setExpSpecChecksum($exp_spec_hash);
+        $this->setDownloaded(false);
+        $this->setErrorOccurred(false);
+        $this->setProcessingEngine(-1); //no processing Engine yet assigned (-1)
+        $this->setOpaqueData($opaqueData);
+        $this->setJobStatus($jobStatus); //Status
+        $this->setIsFromDataset(false);
+    }
+
+    public function createNewFromDataset($expId, $expSpec, $opaqueData, $queueLength, LabServer $labServer, $rlmsGuid, $exp_spec_hash, $jobStatus, JobRecord $identicalJob)
+    {
+        $this->setLabServerId($labServer->getId());
+        $this->setLabServerOwnerId($labServer->getOwnerId());
+        $this->setProviderId($rlmsGuid); //ID of the RLMS requesting execution
+        $this->setRlmsAssignedId($expId);
+        $this->setPriority(0); //Set priority 0 for the moment;
+        $this->setSubmitTime(date('Y-m-d\TH:i:sP'));
+        $this->setEstExecTime(20); //replace with real estimation
+        $this->setExpSpecification($expSpec);
+        $this->setQueueAtInsert($queueLength);
+        $this->setExpSpecChecksum($exp_spec_hash);
+        $this->setDownloaded(false);
+        $this->setErrorOccurred(false);
+        $this->setOpaqueData($opaqueData);
+        $this->setIsFromDataset(true);
+
+        // Set experiment results if identical is found
+        $this->setJobStatus($jobStatus); //Status
+        $this->setProcessingEngine($identicalJob->getProcessingEngine());
+        $this->setExecElapsed($identicalJob->getExecElapsed());
+        $this->setJobElapsed($identicalJob->getJobElapsed());
+        $this->setExpResults($identicalJob->getExpResults());
+        $this->setErrorOccurred($identicalJob->getErrorOccurred());
+        $this->setErrorReport($identicalJob->getErrorReport());
+        $this->setExecutionTime($identicalJob->getExecutionTime());
+        $this->setEndTime($identicalJob->getEndTime());
+    }
+
+    /**
+     * Set isFromDataset
+     *
+     * @param boolean $isFromDataset
+     * @return JobRecord
+     */
+    public function setIsFromDataset($isFromDataset)
+    {
+        $this->isFromDataset = $isFromDataset;
+
+        return $this;
+    }
+
+    /**
+     * Get isFromDataset
+     *
+     * @return boolean 
+     */
+    public function getIsFromDataset()
+    {
+        return $this->isFromDataset;
     }
 }

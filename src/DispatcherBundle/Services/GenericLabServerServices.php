@@ -112,8 +112,38 @@ class GenericLabServerServices
             ->getQuery()
             ->getSingleScalarResult();
 
-        $jobRecord->setLabServerId($this->labServer->getId());
-        $jobRecord->setLabServerOwnerId($this->labServer->getOwnerId());
+        //calculate hash of experiment specification
+        $exp_spec_hash = hash('sha256', $experimentSpecification);
+        $expResults = null;
+        $jobStatus = 1;
+        $dataset = $this->labServer->getUseDataset();
+
+        if ($dataset == true){
+
+            $identicalJob = $this
+                ->em
+                ->getRepository('DispatcherBundle:JobRecord')
+                ->findOneBy(array('expSpecChecksum' => $exp_spec_hash,
+                    'labServerId' => $this->labServer->getId(),
+                    'jobStatus' => 3));
+
+            //if identical experiment if found double check if experiment specification is really identical to
+            // avoid returning wrong results in the unlikely case of collision of the hash algorithm
+            if (($identicalJob != null) && ($identicalJob->getExpSpecification() == $experimentSpecification)){
+                $jobStatus = 3; //set job status to complete if identical record is found
+
+                $jobRecord->createNewFromDataset($rlmsExpId, $experimentSpecification, $opaqueData, $queueLength, $this->labServer, $rlmsGuid, $exp_spec_hash, $jobStatus, $identicalJob);
+            }
+            else{
+                $jobRecord->createNew($rlmsExpId, $experimentSpecification, $opaqueData, $queueLength, $this->labServer, $rlmsGuid, $exp_spec_hash, $jobStatus);
+            }
+        }
+        else{
+            $jobRecord->createNew($rlmsExpId, $experimentSpecification, $opaqueData, $queueLength, $this->labServer, $rlmsGuid, null, $jobStatus);
+        }
+
+        /*
+
         $jobRecord->setRlmsAssignedId($rlmsExpId);
         $jobRecord->setPriority(0); //TODO: For the future, this should be configured with the RLMS to Lab Server Mapping table
         $jobRecord->setJobStatus(1); //Status 1(QUEUED)
@@ -126,6 +156,7 @@ class GenericLabServerServices
         $jobRecord->setErrorOccurred(false);
         $jobRecord->setProcessingEngine(-1); //no processing Engine yet assigned (-1)
         $jobRecord->setOpaqueData($opaqueData);
+*/
 
         $this->em->persist($jobRecord);
         $this->em->flush();

@@ -28,8 +28,15 @@
                     {{ form_row(form.contact_email) }}
                     {{ form_row(form.institution) }}
                     {{ form_row(form.labInfo) }}
-                    {{ form_row(form.public_sub) }}
                     {{ form_row(form.active) }}
+
+                    <div class="alert alert-warning">
+                        {{ form_row(form.useDataset) }}
+                        <p class="fa fa-warning"></p>
+                        If checked, the Dispatcher will search for an identical experiment specification already submitted.
+                        If found, it will return the results from the dataset and a new experiment will not run.
+                        Uncheck this option if debugging experiments or if you want that all experiments are executed.
+                    </div>
 
 
                 </div>

@@ -125,6 +125,11 @@ class LabServer
      */
     protected $exp_name;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $useDataset;
+
 
     public function setAll($data, $ownerId)
     {
@@ -138,7 +143,7 @@ class LabServer
         $this->active = $data['active'];
         //$this->visible_in_catalogue = $data['visible_in_catalogue'];
         $this->configuration = $data['configuration'];
-        $this->public_sub = $data['public_sub'];
+        $this->public_sub = false;
         $this->dateCreated = date('Y-m-d\TH:i:sP');
         $this->passKey = $data['passKey'];
         $this->initialPassKey = $data['initialPassKey'];
@@ -146,6 +151,7 @@ class LabServer
         $this->type = $data['type'];
         $this->exp_category = $data['exp_category'];
         $this->exp_name = $data['exp_name'];
+        $this->useDataset = $data['useDataset'];
     }
 
     public function updateAll($data)
@@ -158,10 +164,11 @@ class LabServer
         $this->active = $data['active'];
         //$this->visible_in_catalogue = $data['visible_in_catalogue'];
         $this->configuration = $data['configuration'];
-        $this->public_sub = $data['public_sub'];
+        $this->public_sub = false;
         $this->labInfo = $data['labInfo'];
         $this->exp_category = $data['exp_category'];
         $this->exp_name = $data['exp_name'];
+        $this->useDataset = $data['useDataset'];
 
     }
 
@@ -633,5 +640,28 @@ class LabServer
     public function getExpName()
     {
         return $this->exp_name;
+    }
+
+    /**
+     * Set useDataset
+     *
+     * @param boolean $useDataset
+     * @return LabServer
+     */
+    public function setUseDataset($useDataset)
+    {
+        $this->useDataset = $useDataset;
+
+        return $this;
+    }
+
+    /**
+     * Get useDataset
+     *
+     * @return boolean 
+     */
+    public function getUseDataset()
+    {
+        return $this->useDataset;
     }
 }

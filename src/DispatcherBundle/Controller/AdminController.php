@@ -601,11 +601,10 @@ class AdminController extends Controller
                 array('label' => 'Active',
                     'required' => true,
                     'choices' => array('1'=>'Lab Server is active', '0'=>'Lab Server is NOT active')))
-
+            ->add('useDataset', 'checkbox', array('label' => 'Retrieve results from dataset when available',
+                'required' => false))
             ->add('configuration', 'textarea', array('label' => 'Lab Configuration', 'required' => false))
             ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true))
-            ->add('public_sub','choice', array('label' => 'Permission for subscribers',
-                'choices' => array('1'=>'Public (anyone can subscribe)', '0'=>'Private (only owner can subscribe)')))
             ->add('submit','submit', array('label' => 'Add New Lab Server','attr' => array('class'=>'btn btn-success')))
             ->getForm();
 
@@ -629,9 +628,9 @@ class AdminController extends Controller
             ->add('initialPassKey', 'text', array('label' => 'Initial PassKey ', 'required' => true, 'attr' => array('value'=>$labServer->getInitialPasskey(), 'readonly' => true)))
             ->add('configuration', 'textarea', array('label' => 'Lab Configuration', 'required' => false, 'data'=>$labServer->getConfiguration()))
             ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true,  'attr' => array('value'=>$labServer->getLabInfo(), 'readonly' => false)))
-            ->add('public_sub','choice', array('label' => 'Permission for subscribers',
-                                               'data' => $labServer->getPublicSub(),
-                'choices' => array('1'=>'Public (anyone can subscribe)', '0'=>'Private (only owner can subscribe)')))
+            ->add('useDataset', 'checkbox', array('label' => 'Retrieve results from dataset when available',
+                'required' => false,
+                'data' => $labServer->getUseDataset()))
             ->add('active', 'checkbox', array('label' => 'Active',
                 'required' => false,
                 'data'=> $labServer->getActive() ))
