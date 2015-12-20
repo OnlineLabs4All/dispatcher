@@ -9,7 +9,8 @@ namespace DispatcherBundle\Security;
 use Doctrine\ORM\EntityManager;
 
 
-class IsaRlmsAuthenticator{
+class IsaRlmsAuthenticator
+{
 
     public function __construct(EntityManager $em)
     {
@@ -19,34 +20,31 @@ class IsaRlmsAuthenticator{
     //Authenticate credentials of type AuthHeader
     public function authenticateBatchedMethod($sbGuid, $lsPaskey, $labserverId)
     {
-        $broker = $this
+        $labServer = $this
             ->em
-            ->getRepository('DispatcherBundle:Rlms')
-            ->findOneBy(array('Guid' => $sbGuid));
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findOneBy(array('passKey' => $lsPaskey, 'id' => $labserverId));
 
-        if ($broker != null) //if Broker exists, authenticate labServer
-        {
-            $labServer = $this
+        if ($labServer != null){ //if LabServer exists and passkey is correct, authenticate broker
+            $broker = $this
                 ->em
-                ->getRepository('DispatcherBundle:LabServer')
-                ->findOneBy(array('passKey' => $lsPaskey, 'id' => $labserverId));
+                ->getRepository('DispatcherBundle:Rlms')
+                ->findOneBy(array('Guid' => $sbGuid, 'owner_id' => $labServer->getOwnerId()));
 
-            if ($labServer != null)
-            {
+            if ($broker != null){
                 $mapping = $this
                     ->em
                     ->getRepository('DispatcherBundle:LsToRlmsMapping')
                     ->findOneBy(array('labServerId' => $labServer->getId(), 'rlmsId' => $broker->getId()));
 
-                if ($mapping != null)
-                {
+                if ($mapping != null){
                     return array('authenticated' => true, 'fault' => '');
                 }
                 return array('authenticated' => false, 'fault' => 'Broker and Lab Server  were found, but they are not mapped to each other. Contact your Experiment Dispatcher administrator');
             }
-            return array('authenticated' => false, 'fault' => 'Provided Lab Server passkey is incorrect');
+            return array('authenticated' => false, 'fault' => 'Service Broker GUID is not registered');
         }
-        return array('authenticated' => false, 'fault' => 'Provided Service Broker GUID is not registered');
+        return array('authenticated' => false, 'fault' => 'Provided Lab Server passkey is incorrect');
     }
 
     //Authenticate credentials of type InitAuthHeader
@@ -77,34 +75,32 @@ class IsaRlmsAuthenticator{
     //AgentAuthHeader - Authenticate all other methods for interactive services
     public function authenticateAgent($sbGuid, $labserverId)
     {
-        $broker = $this
+        $labServer = $this
             ->em
-            ->getRepository('DispatcherBundle:Rlms')
-            ->findOneBy(array('Guid' => $sbGuid));
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findOneBy(array('id' => $labserverId));
 
-        if ($broker != null) //if Broker exists, authenticate labServer
-        {
-            $labServer = $this
+        if ($labServer != null){ //if Lab Server exists, authenticate Broker
+
+            $broker = $this
                 ->em
-                ->getRepository('DispatcherBundle:LabServer')
-                ->findOneBy(array('id' => $labserverId, 'type' => 'ILS'));
+                ->getRepository('DispatcherBundle:Rlms')
+                ->findOneBy(array('Guid' => $sbGuid, 'owner_id' => $labServer->getOwnerId()));
 
-            if ($labServer != null)
-            {
+            if ($broker != null){
                 $mapping = $this
                     ->em
                     ->getRepository('DispatcherBundle:LsToRlmsMapping')
                     ->findOneBy(array('labServerId' => $labServer->getId(), 'rlmsId' => $broker->getId()));
 
-                if ($mapping != null)
-                {
+                if ($mapping != null){
                     return array('authenticated' => true, 'fault' => '');
                 }
                 return array('authenticated' => false, 'fault' => 'Broker and Lab Server  were found, but they are not mapped to each other. Contact your Experiment Dispatcher administrator');
             }
-            return array('authenticated' => false, 'fault' => 'Lab server was not found. Contact your Experiment Dispatcher administrator');
+            return array('authenticated' => false, 'fault' => 'Provided Service Broker GUID is not registered');
         }
-        return array('authenticated' => false, 'fault' => 'Provided Service Broker GUID is not registered');
+        return array('authenticated' => false, 'fault' => 'Lab server was not found. Contact your Experiment Dispatcher administrator');
     }
 
     public function authenticateMethodUqBroker($jsonRequest, $token, $sbGuid, $labserverId)
@@ -113,45 +109,39 @@ class IsaRlmsAuthenticator{
         $jsonRequest->token = '';
         $data = json_encode($jsonRequest);
 
-        $broker = $this
+        $labServer = $this
             ->em
-            ->getRepository('DispatcherBundle:Rlms')
-            ->findOneBy(array('Guid' => $sbGuid));
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findOneBy(array('id' => $labserverId));
 
-        if ($broker != null) //if Broker exists, authenticate labServer
-        {
-            $labServer = $this
+        if ($labServer != null){ //if Lab Server exists, authenticate Broker
+            $broker = $this
                 ->em
-                ->getRepository('DispatcherBundle:LabServer')
-                ->findOneBy(array('id' => $labserverId));
+                ->getRepository('DispatcherBundle:Rlms')
+                ->findOneBy(array('Guid' => $sbGuid, 'owner_id' => $labServer->getOwnerId()));
 
-            if ($labServer != null)
-            {
-                if ($token == base64_encode(hash_hmac('sha1', $sbGuid.$data,$labServer->getPassKey(),true)))
-                {
+            if ($broker != null){
+                if ($token == base64_encode(hash_hmac('sha1', $sbGuid.$data,$labServer->getPassKey(),true))){
                     $mapping = $this
                         ->em
                         ->getRepository('DispatcherBundle:LsToRlmsMapping')
                         ->findOneBy(array('labServerId' => $labServer->getId(), 'rlmsId' => $broker->getId()));
 
-                    if ($mapping != null)
-                    {
+                    if ($mapping != null){
                         return array('authenticated' => true,
                                      'fault' => '');
                     }
                     return array('authenticated' => false,
                                  'fault' => 'Token is correct, but Broker and Lab Server are not mapped to each other. Contact your Experiment Dispatcher administrator');
-
                 }
                 return array('authenticated' => false,
-                             'fault' => 'Unauthorized, could not verify token');
+                             'fault' => 'Unauthorized, token is not valid');
             }
             return array('authenticated' => false,
-                         'fault' => 'Provided Lab Server Id does not exit');
+                         'fault' => 'Provided Service Broker GUID is not registered');
         }
         return array('authenticated' => false,
-                     'fault' => 'Provided Service Broker GUID is not registered');
+                     'fault' => 'Provided Lab Server Id does not exit');
     }
-
 }
 
