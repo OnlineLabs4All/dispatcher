@@ -6,7 +6,7 @@
  */
 namespace DispatcherBundle\Security;
 
-use Symfony\Component\Security\Core\Authentication\SimplePreAuthenticatorInterface;
+use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
