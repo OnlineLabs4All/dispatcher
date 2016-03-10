@@ -26,22 +26,48 @@ class DashboardUiServices
     public function getJobRecordsTable(User $user, $length, $page, $status, $labServer)
     {
         $filter = array();
+        $statuses = array(1, 2, 3, 4, 5); //list of all possible job statuses for the filtering
+        $labServerIds = $this->getLabServerIds($user);
+
         if ($status != -1){
+            $statuses = array($status);
             $filter['jobStatus'] = $status;
         }
         if ($labServer != -1){
+            $labServerIds = array($labServer);
             $filter['labServerId'] = $labServer;
         }
         if ($user->getRole() != 'ROLE_ADMIN'){
             $filter['labServerOwnerId'] = $user->getId();
-            $jobRecordsCountTotal = $this->em
-                ->getRepository('DispatcherBundle:JobRecord')
-                ->findBy($filter, array('expId'=> 'DESC'));
+
+            $repository = $this
+                ->em
+                ->getRepository('DispatcherBundle:JobRecord');
+
+            $jobRecordsCountTotal = $repository->createQueryBuilder('job')
+                ->select('count(job.expId)')
+                ->Where('job.jobStatus IN  (:statuses)')
+                ->setParameter('statuses', $statuses)
+                ->andWhere('job.labServerId IN (:labServerIds)')
+                ->setParameter('labServerIds', $labServerIds)
+                ->andWhere('job.labServerOwnerId = :labServerOwnerId')
+                ->setParameter('labServerOwnerId', $user->getId())
+                ->getQuery()
+                ->getSingleScalarResult();
         }
         else{
-            $jobRecordsCountTotal = $this->em
-                ->getRepository('DispatcherBundle:JobRecord')
-                ->findBy($filter, array('expId'=> 'DESC'));
+            $repository = $this
+                ->em
+                ->getRepository('DispatcherBundle:JobRecord');
+
+            $jobRecordsCountTotal = $repository->createQueryBuilder('job')
+                ->select('count(job.expId)')
+                ->Where('job.jobStatus IN  (:statuses)')
+                ->setParameter('statuses', $statuses)
+                ->andWhere('job.labServerId IN (:labServerIds)')
+                ->setParameter('labServerIds', $labServerIds)
+                ->getQuery()
+                ->getSingleScalarResult();
         }
 
         $offset = ($page - 1) * $length;
@@ -49,9 +75,8 @@ class DashboardUiServices
         $jobRecords = $this->em
             ->getRepository('DispatcherBundle:JobRecord')
             ->findBy($filter, array('expId'=> 'DESC'), $length, $offset);
-            //var_dump($records);
 
-        $numberOfPages = ceil(count($jobRecordsCountTotal)/$length);
+        $numberOfPages = ceil($jobRecordsCountTotal/$length);
 
         if ($page < $numberOfPages){
             $nextPage = $page + 1;
@@ -72,7 +97,7 @@ class DashboardUiServices
             $pages[$pg] = $pg;
         }
 
-            return array('totalNumberOfJobs' => count($jobRecordsCountTotal),
+            return array('totalNumberOfJobs' => $jobRecordsCountTotal,
                          'numberOfPages' => $numberOfPages,
                          'length' => count($jobRecords),
                          'nextPage' => $nextPage,
@@ -251,7 +276,30 @@ class DashboardUiServices
         }
         return array('granted' => false,
                      'warning' =>'The resource does not exit');
+    }
 
+    private function getLabServerIds(User $user)
+    {
+        $labServers = $this->em
+            ->getRepository('DispatcherBundle:LabServer');
+
+        if ($user->getRole() != 'ROLE_ADMIN'){
+            $labServerIds = $labServers->createQueryBuilder('labServers')
+                ->where('labServers.owner_id = :userId')
+                ->setParameter('userId',$user->getId())
+                ->select('labServers.id')
+                ->getQuery()
+                ->getArrayResult();
+        }
+        else{
+
+            $labServerIds = $labServers->createQueryBuilder('labServers')
+                ->select('labServers.id')
+                ->getQuery()
+                ->getArrayResult();
+        }
+
+        return $labServerIds;
     }
 
 }
