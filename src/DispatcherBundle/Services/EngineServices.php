@@ -10,15 +10,11 @@ namespace DispatcherBundle\Services;
 use DispatcherBundle\Entity\ExperimentEngine;
 use DispatcherBundle\Entity\JobRecord;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Validator\Constraints\DateTime;
-use Symfony\Component\Validator\Constraints\Null;
 use DispatcherBundle\Model\Subscriber\Status;
 use DispatcherBundle\Model\Subscriber\LabInfo;
 use DispatcherBundle\Model\Subscriber\QueueLength;
 use DispatcherBundle\Model\Subscriber\ExperimentGetResponse;
 use DispatcherBundle\Model\Subscriber\ExperimentPostResponse;
-use SimpleXMLElement;
-use DOMDocument;
 
 
 class EngineServices
