@@ -223,7 +223,7 @@ class AdminController extends Controller
 
             return $this->render('default/engineRecordsTableView.html.twig',
                 array( 'viewName'=> 'Subscriber Engines',
-                    'records' => (array)$records));
+                       'records' => $records));
     }
 
     /**
@@ -380,6 +380,25 @@ class AdminController extends Controller
 
         return new Response($user->getUserName());
     }
+
+    /**
+     * @Route("/changeobRecords", name="changeJobRecords")
+     */
+    public function deleteJobs(Request $request)
+    {
+        $dashboadServices = $this->get('dashboardUiServices');
+        $user = $this->getUser();
+        $jobRecords = $request->request->all();
+
+        foreach ($jobRecords as $jobRecord){
+            //var_dump($jobRecord);
+            $dashboadServices->deleteJobRecord($jobRecord, $user);
+        }
+
+        //return new Response();
+        return $this->redirectToRoute('expRecords');
+    }
+
     /**
      * @Route("/apis/{labServerId}", name="apis_to_rlms")
      */
@@ -432,14 +451,10 @@ class AdminController extends Controller
     private function getLabServers($user)
     {
         $dashboadServices = $this->get('dashboardUiServices');
-        $repository = $dashboadServices->getLabServersList($user);
+        $labServers = $dashboadServices->getLabServerNamesAndIdsForUser($user);
 
-        if ($repository != null){
-
-             foreach ($repository as $labServer){
-                    $labServers[(string)$labServer->getId()] = $labServer->getName().' (ID: '.$labServer->getId().')';
-                 }
-        return $labServers;
+        if ($labServers != null){
+            return $labServers;
         }
         return null;
         //var_dump($labServers);

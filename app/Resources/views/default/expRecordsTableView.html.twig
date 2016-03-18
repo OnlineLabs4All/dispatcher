@@ -2,7 +2,6 @@
 
 {% block mainPanel %}
 
-
     <br/>
     <h3 class="page-header">{{ viewName }}</h3>
 
@@ -13,27 +12,53 @@
     <a href="{{ baseUrl }}{{ path('expRecords') }}?status=3&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-success">Completed</button></a>
     <a href="{{ baseUrl }}{{ path('expRecords') }}?status=2&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-warning">In Progress</button></a>
     <a href="{{ baseUrl }}{{ path('expRecords') }}?status=5&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Cancelled</button></a>
-   <a href="{{ baseUrl }}{{ path('expRecords') }}?status=4&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Completed with errors</button></a>
+    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=4&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Completed with errors</button></a>
+
+   <form id="deleteExperiment" method="post" action="{{ path('changeJobRecords') }}">
+
+   <br>
+   <table>
+      <tr>
+       <td> <strong>With selected:</strong></td>
+       <td><label class="btn btn-default" onclick="confirmDelete()">Delete</label></td>
+       <td>
+       <div class="dropdown">
+       <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+           Change status..
+           <span class="caret"></span>
+       </button>
+      <ul class="dropdown-menu" aria-labelledby="changeStatusMenu">
+       <li><a href="#">Queued</a></li>
+       <li><a href="#">Completed</a></li>
+       <li><a href="#">In Progress</a></li>
+       <li><a href="#">Cancelled</a></li>
+       <li><a href="#">Completed with errors</a></li>
+      </ul>
+      </div>
+       </td>
+     </tr>
+   </table>
 
 
     <div class="table-responsive">
         <table class="table table-hover" id="experimentRecord">
         <thead>
         <tr>
-            
+            <th></th>
             <th>ID</th>
             <th>Status</th>
             <th>Submit Time</th>
             <th>RMLS Assigned ID</th>
-            <th>processing Engine</th>
-            <th>Lab Server ID</th>
+            <th>Engine</th>
+            <th>Lab Server</th>
             <th></th>
         </tr>
         </thead>
         <tbody>
-    {%  for record in records %}
+        {%  for record in records %}
 
         <tr class="odd gradeX">
+            <td><input type="checkbox" name="{{ record.expID }}" value="{{ record.expID }}" /></td>
             <td>{{ record.expID }}</td>
             <td>
                 {% if record.jobStatus == 1 %}
@@ -54,7 +79,7 @@
             <td>{{ record.submitTime }}</td>
             <td>{{ record.rlmsAssignedId }}</td>
             <td class="center">{{ record.processingEngine }}</td>
-            <td class="center">{{ record.labServerId }}</td>
+            <td class="center">{{ record.labServerName }}</td>
             <td>
                 <a href="{{ path('expRecords') }}/{{ record.expID }}">
                 <i class="fa fa-folder-open"> View</i>
@@ -62,7 +87,7 @@
             </td>
         </tr>
        {% endfor %}
-
+        </form>
         </tbody>
         </table>
         <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ previousPage }}&status={{ status }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-default">Previous</button></a>
@@ -80,5 +105,14 @@
         <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ nextPage }}&status={{ status }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-default">Next</button></a>
         page {{ currentPage }}/{{ numberOfPages }}
     </div>
+
+<script>
+function confirmDelete() {
+    var result = confirm("Are you sure you want to permanently delete these experiments?");
+    if (result){
+    document.getElementById("deleteExperiment").submit();
+    }
+}
+</script>
 
 {% endblock %}

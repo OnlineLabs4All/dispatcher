@@ -25,6 +25,8 @@ class DashboardUiServices
     //get JodRecords table based on user permissions and identity
     public function getJobRecordsTable(User $user, $length, $page, $status, $labServer)
     {
+        $labServerNamesAndIds = $this->getLabServerNamesAndIdsForUser($user);
+
         $filter = array();
         $statuses = array(1, 2, 3, 4, 5); //list of all possible job statuses for the filtering
         $labServerIds = $this->getLabServerIds($user);
@@ -75,6 +77,12 @@ class DashboardUiServices
         $jobRecords = $this->em
             ->getRepository('DispatcherBundle:JobRecord')
             ->findBy($filter, array('expId'=> 'DESC'), $length, $offset);
+
+        $i = 0;
+        foreach ($jobRecords as $jobRecord){
+            $jobRecords[$i]->labServerName =  $labServerNamesAndIds[$jobRecord->getLabSErverId()];
+            $i++;
+        }
 
         $numberOfPages = ceil($jobRecordsCountTotal/$length);
 
@@ -160,19 +168,24 @@ class DashboardUiServices
 
     public function getEnginesList(User $user)
     {
+        $labServersNames = $this->getLabServerNamesAndIdsForUser($user);
+
         if ($user->getRole() != 'ROLE_ADMIN'){
             $engines = $this->em
                 ->getRepository('DispatcherBundle:ExperimentEngine')
                 ->findBy(array('owner_id' => $user->getId()));
-
-            return $engines;
         }
         else{
             $engines = $this->em
                 ->getRepository('DispatcherBundle:ExperimentEngine')
                 ->findAll();
-            return $engines;
         }
+        $i = 0;
+        foreach ($engines as $engine){
+           $engines[$i]->labServerName =  $labServersNames[$engine->getLabserverId()];
+            $i++;
+        }
+        return $engines;
     }
 
     public function getLabServersList(User $user)
@@ -190,6 +203,35 @@ class DashboardUiServices
                 ->findAll();
             return $labServers;
         }
+    }
+
+    public function getLabServerNamesAndIdsForUser($user)
+    {
+        if ($user->getRole() != 'ROLE_ADMIN'){
+            $repository = $this->em->getRepository('DispatcherBundle:LabServer');
+            $labServerIdsAndNames = $repository->createQueryBuilder('LabServer')
+                ->where('LabServer.owner_id = :owner_id')
+                ->setParameter('owner_id', $user->getId())
+                ->select('LabServer.id, LabServer.name')
+                ->getQuery()
+                ->getArrayResult();
+        }
+        else{
+            $repository = $this->em->getRepository('DispatcherBundle:LabServer');
+            $labServerIdsAndNames = $repository->createQueryBuilder('LabServer')
+                ->select('LabServer.id, LabServer.name')
+                ->getQuery()
+                ->getArrayResult();
+        }
+        if ($labServerIdsAndNames != null){
+
+            foreach ($labServerIdsAndNames as $labServerIdAndName){
+                $labServers[$labServerIdAndName['id']] = $labServerIdAndName['name'];
+            }
+            return $labServers;
+        }
+        return null;
+        //var_dump($labServers);
     }
 
     public function getLabServersListForRlmsOwner(Rlms $rlms)
@@ -276,6 +318,27 @@ class DashboardUiServices
         }
         return array('granted' => false,
                      'warning' =>'The resource does not exit');
+    }
+
+    public function deleteJobRecord($expId, User $user)
+    {
+        if ($user->getRole() != 'ROLE_ADMIN'){
+            $jobRecord = $this->em
+                ->getRepository('DispatcherBundle:JobRecord')
+                ->findOneBy(array('expId' => $expId, 'labServerOwnerId' =>$user->getId()));
+        }
+        else{
+            $jobRecord = $this->em
+                ->getRepository('DispatcherBundle:JobRecord')
+                ->findOneBy(array('expId' => $expId));
+        }
+        if ($jobRecord != null){
+            $this->em->remove($jobRecord);
+            $this->em->flush();
+
+            return true;
+        }
+        return false;
     }
 
     private function getLabServerIds(User $user)

@@ -20,8 +20,8 @@
         <tr>
 
             <th>ID</th>
-            <th>Lab Server</th>
             <th>Engine</th>
+            <th>Lab Server</th>
             <th>Last Contact</th>
             <th>Status</th>
             <th></th>
@@ -32,8 +32,8 @@
 
             <tr class="odd gradeX">
                 <td>{{ record.id }}</td>
-                <td>{{ record.labserverId }}</td>
                 <td>{{ record.name }}</td>
+                <td>{{ record.labServerName }}</td>
                 <td><div id="lastContact">{{record.lastContact}}</div></td>
                 <td>
                     {% if record.active == true %}
