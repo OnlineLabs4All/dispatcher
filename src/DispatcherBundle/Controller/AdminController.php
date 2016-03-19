@@ -382,24 +382,6 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/changeobRecords", name="changeJobRecords")
-     */
-    public function deleteJobs(Request $request)
-    {
-        $dashboadServices = $this->get('dashboardUiServices');
-        $user = $this->getUser();
-        $jobRecords = $request->request->all();
-
-        foreach ($jobRecords as $jobRecord){
-            //var_dump($jobRecord);
-            $dashboadServices->deleteJobRecord($jobRecord, $user);
-        }
-
-        //return new Response();
-        return $this->redirectToRoute('expRecords');
-    }
-
-    /**
      * @Route("/apis/{labServerId}", name="apis_to_rlms")
      */
     public function showApisAction(Request $request, $labServerId)

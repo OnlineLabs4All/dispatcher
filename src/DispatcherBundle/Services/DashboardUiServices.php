@@ -341,6 +341,30 @@ class DashboardUiServices
         return false;
     }
 
+    public function changeJobStatus($expId, $newStatus, User $user)
+    {
+        if ($user->getRole() != 'ROLE_ADMIN'){
+            $jobRecord = $this->em
+                ->getRepository('DispatcherBundle:JobRecord')
+                ->findOneBy(array('expId' => $expId, 'labServerOwnerId' =>$user->getId()));
+        }
+        else{
+            $jobRecord = $this->em
+                ->getRepository('DispatcherBundle:JobRecord')
+                ->findOneBy(array('expId' => $expId));
+        }
+        if ($jobRecord != null){
+            $jobRecord->setJobStatus($newStatus);
+            if ($newStatus == 1){
+                $jobRecord->setProcessingEngine(-1);
+            }
+            $this->em->persist($jobRecord);
+            $this->em->flush();
+            return true;
+        }
+        return false;
+    }
+
     private function getLabServerIds(User $user)
     {
         $labServers = $this->em

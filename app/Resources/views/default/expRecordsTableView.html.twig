@@ -14,7 +14,7 @@
     <a href="{{ baseUrl }}{{ path('expRecords') }}?status=5&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Cancelled</button></a>
     <a href="{{ baseUrl }}{{ path('expRecords') }}?status=4&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Completed with errors</button></a>
 
-   <form id="deleteExperiment" method="post" action="{{ path('changeJobRecords') }}">
+   <form id="actOnJobRecords" method="post" action="">
 
    <br>
    <table>
@@ -28,11 +28,11 @@
            <span class="caret"></span>
        </button>
       <ul class="dropdown-menu" aria-labelledby="changeStatusMenu">
-       <li><a href="#">Queued</a></li>
-       <li><a href="#">Completed</a></li>
-       <li><a href="#">In Progress</a></li>
-       <li><a href="#">Cancelled</a></li>
-       <li><a href="#">Completed with errors</a></li>
+       <li><a href="#" onclick="confirmChangeStatusToQueued()">Queued</a></li>
+       <li><a href="#" onclick="confirmChangeStatusToCompleted()">Completed</a></li>
+       <li><a href="#" onclick="confirmChangeStatusToInProgress()">In Progress</a></li>
+       <li><a href="#" onclick="confirmChangeStatusToInCancelled()">Cancelled</a></li>
+       <li><a href="#" onclick="confirmChangeStatusToCompletedWithErrors()">Completed with errors</a></li>
       </ul>
       </div>
        </td>
@@ -110,7 +110,48 @@
 function confirmDelete() {
     var result = confirm("Are you sure you want to permanently delete these experiments?");
     if (result){
-    document.getElementById("deleteExperiment").submit();
+    document.getElementById("actOnJobRecords").action = '{{ path('deleteResource') }}';
+    document.getElementById("actOnJobRecords").submit();
+    }
+}
+
+function confirmChangeStatusToQueued() {
+    var result = confirm("Are you sure you want to change the Job Status to Queued?");
+    if (result){
+    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '1'}) }}';
+    document.getElementById("actOnJobRecords").submit();
+    }
+}
+
+function confirmChangeStatusToCompleted() {
+    var result = confirm("Are you sure you want to change the Job Status to Completed?");
+    if (result){
+    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '3'}) }}';
+    document.getElementById("actOnJobRecords").submit();
+    }
+}
+
+function confirmChangeStatusToInProgress() {
+    var result = confirm("Are you sure you want to change the Job Status to In Progress?");
+    if (result){
+    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '2'}) }}';
+    document.getElementById("actOnJobRecords").submit();
+    }
+}
+
+function confirmChangeStatusToInCancelled() {
+    var result = confirm("Are you sure you want to change the Job Status to Cancelled?");
+    if (result){
+    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '5'}) }}';
+    document.getElementById("actOnJobRecords").submit();
+    }
+}
+
+function confirmChangeStatusToCompletedWithErrors() {
+    var result = confirm("Are you sure you want to change the Job Status to Completed with errors?");
+    if (result){
+    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '4'}) }}';
+    document.getElementById("actOnJobRecords").submit();
     }
 }
 </script>
