@@ -417,7 +417,8 @@ class EngineServices
 
             $now = date_create(date('Y-m-d\TH:i:sP'));
 
-            if ($finishExecDate > $now)
+            //TODO: test this before commit
+            if (($finishExecDate > $now) && ($startExec < $now))
             {
                 $response = array('success' => true,
                     'errorMessage' => '');

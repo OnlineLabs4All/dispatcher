@@ -226,7 +226,7 @@ class DashboardUiServices
         if ($labServerIdsAndNames != null){
 
             foreach ($labServerIdsAndNames as $labServerIdAndName){
-                $labServers[$labServerIdAndName['id']] = $labServerIdAndName['name'];
+                $labServers[$labServerIdAndName['id']] = $labServerIdAndName['name'].' ('.$labServerIdAndName['id'].')';
             }
             return $labServers;
         }
