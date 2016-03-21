@@ -26,6 +26,7 @@ class UiApiController extends Controller
         $dashboadServices = $this->get('dashboardUiServices');
         $user = $this->getUser();
         $jobRecords = $request->request->all();
+        $current_url = $request->query->get('current_url');
 
         foreach ($jobRecords as $jobRecord) {
             //var_dump($jobRecord);
@@ -33,7 +34,7 @@ class UiApiController extends Controller
         }
 
         //return new Response();
-        return $this->redirectToRoute('expRecords');
+        return $this->redirect($current_url);
     }
 
     /**
@@ -44,6 +45,7 @@ class UiApiController extends Controller
         $dashboadServices = $this->get('dashboardUiServices');
         $user = $this->getUser();
         $expIds = $request->request->all();
+        $current_url = $request->query->get('current_url');
 
         foreach ($expIds as $expId){
             //var_dump($jobRecord);
@@ -51,6 +53,6 @@ class UiApiController extends Controller
         }
 
         //return new Response();
-        return $this->redirectToRoute('expRecords');
+        return $this->redirect($current_url);
     }
 }

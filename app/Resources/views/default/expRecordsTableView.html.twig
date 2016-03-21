@@ -110,7 +110,8 @@
 function confirmDelete() {
     var result = confirm("Are you sure you want to permanently delete these experiments?");
     if (result){
-    document.getElementById("actOnJobRecords").action = '{{ path('deleteResource') }}';
+    var current_url = encodeURIComponent('{{ baseUrl }}{{ path('expRecords') }}?status={{ status }}&labServerId={{ labServerId }}');
+    document.getElementById("actOnJobRecords").action = '{{ path('deleteResource') }}'+'?current_url='+current_url;
     document.getElementById("actOnJobRecords").submit();
     }
 }
@@ -118,7 +119,8 @@ function confirmDelete() {
 function confirmChangeStatusToQueued() {
     var result = confirm("Are you sure you want to change the Job Status to Queued?");
     if (result){
-    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '1'}) }}';
+    var current_url = encodeURIComponent('{{ baseUrl }}{{ path('expRecords') }}?status={{ status }}&labServerId={{ labServerId }}');
+    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '1'}) }}'+'?current_url='+current_url;
     document.getElementById("actOnJobRecords").submit();
     }
 }
@@ -126,7 +128,8 @@ function confirmChangeStatusToQueued() {
 function confirmChangeStatusToCompleted() {
     var result = confirm("Are you sure you want to change the Job Status to Completed?");
     if (result){
-    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '3'}) }}';
+    var current_url = encodeURIComponent('{{ baseUrl }}{{ path('expRecords') }}?status={{ status }}&labServerId={{ labServerId }}');
+    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '3'}) }}'+'?current_url='+current_url;
     document.getElementById("actOnJobRecords").submit();
     }
 }
@@ -134,7 +137,8 @@ function confirmChangeStatusToCompleted() {
 function confirmChangeStatusToInProgress() {
     var result = confirm("Are you sure you want to change the Job Status to In Progress?");
     if (result){
-    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '2'}) }}';
+    var current_url = encodeURIComponent('{{ baseUrl }}{{ path('expRecords') }}?status={{ status }}&labServerId={{ labServerId }}');
+    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '2'}) }}'+'?current_url='+current_url;
     document.getElementById("actOnJobRecords").submit();
     }
 }
@@ -142,7 +146,8 @@ function confirmChangeStatusToInProgress() {
 function confirmChangeStatusToInCancelled() {
     var result = confirm("Are you sure you want to change the Job Status to Cancelled?");
     if (result){
-    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '5'}) }}';
+    var current_url = encodeURIComponent('{{ baseUrl }}{{ path('expRecords') }}?status={{ status }}&labServerId={{ labServerId }}');
+    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '5'}) }}'+'?current_url='+current_url;
     document.getElementById("actOnJobRecords").submit();
     }
 }
@@ -150,7 +155,8 @@ function confirmChangeStatusToInCancelled() {
 function confirmChangeStatusToCompletedWithErrors() {
     var result = confirm("Are you sure you want to change the Job Status to Completed with errors?");
     if (result){
-    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '4'}) }}';
+    var current_url = encodeURIComponent('{{ baseUrl }}{{ path('expRecords') }}?status={{ status }}&labServerId={{ labServerId }}');
+    document.getElementById("actOnJobRecords").action = '{{ path('changeJobStatus', {'newStatus': '4'}) }}'+'?current_url='+current_url;
     document.getElementById("actOnJobRecords").submit();
     }
 }
