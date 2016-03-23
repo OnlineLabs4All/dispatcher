@@ -47,7 +47,7 @@
 
                 </td>
                 <td>{{ record.name }}</td>
-                <td>{{ record.institution }}</td>
+                <td>{{ record.ownerFirstName }} {{ record.ownerLastName }} ({{ record.ownerUsername }})</td>
                 <td>
                     <a href="{{ path('labservers') }}/{{ record.id }}">
                         <i class="fa fa-edit"> view/edit</i>

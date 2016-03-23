@@ -21,7 +21,7 @@
                         <th>Status</th>
                         <th>Name</th>
                         <th>RLMS</th>
-                        <th>Institution</th>
+                        <th>Owner</th>
                         <th>Lab Server mapping</th>
                         <th>View/Edit</th>
                     </tr>
@@ -41,7 +41,7 @@
                             </td>
                             <td>{{ record.name }}</td>
                             <td>{{ record.rlmsType }}</td>
-                            <td>{{ record.institution }}</td>
+                            <td>{{ record.ownerFirstName }} {{ record.ownerLastName }} ({{ record.ownerUsername }})</td>
                             <td>
                                 <a href="{{ path('rlms_ls_mapping') }}/{{ record.id }}">
                                     <i class="fa fa-edit"> Associate/Dissociate</i>

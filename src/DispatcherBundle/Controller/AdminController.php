@@ -53,6 +53,7 @@ class AdminController extends Controller
         $dashboadServices = $this->get('dashboardUiServices');
 
         $rlms_list = $dashboadServices->getRlmsList($user);
+        $rlms_list = $dashboadServices->appendUserInfoToResourceArray($rlms_list);
 
         return $this->render('default/rlmsRecordsTableView.html.twig',
             array( 'viewName'=> 'Remote Laboratory Management Systems',
@@ -134,6 +135,7 @@ class AdminController extends Controller
             ->getRepository('DispatcherBundle:Rlms');
         $rlms = $repository->findOneBy(array('id' => $rlmsId));
         $dashboadServices = $this->get('dashboardUiServices');
+
         //Verify user's permissions to access resource
         $permissions = $dashboadServices->checkUserPermissionOnResource($user, $rlms);
         if ( $permissions['granted'] == false){
@@ -164,10 +166,12 @@ class AdminController extends Controller
         $mappings = $dashboadServices->getMappingsForRlms($rlmsId);
         $mappingResults = $dashboadServices->getMappings($labServers, $mappings);
 
+        $mappingResults = $dashboadServices->appendUserInfoToResourceArray($mappingResults);
+
         return $this->render('default/rlmsLsMapping.html.twig',
             array( 'viewName'=> 'Associate Lab Servers with "'.$rlms->getName().'"',
                    'rlmsId' => $rlmsId,
-                   'labservers' => (array)$mappingResults));
+                   'labservers' => $mappingResults));
     }
 
     /**
@@ -219,11 +223,11 @@ class AdminController extends Controller
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $dashboadServices = $this->get('dashboardUiServices');
 
-        $records = $dashboadServices->getEnginesList($user);
+        $engines = $dashboadServices->getEnginesList($user);
 
             return $this->render('default/engineRecordsTableView.html.twig',
                 array( 'viewName'=> 'Subscriber Engines',
-                       'records' => $records));
+                       'records' => $engines));
     }
 
     /**
@@ -337,6 +341,7 @@ class AdminController extends Controller
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $dashboadServices = $this->get('dashboardUiServices');
         $labServers = $dashboadServices->getLabServersList($user);
+        $labServers = $dashboadServices->appendUserInfoToResourceArray($labServers);
 
         return $this->render('default/labServersRecordsTableView.html.twig',
             array( 'viewName'=> 'Registered Lab Servers',
@@ -427,6 +432,7 @@ class AdminController extends Controller
     {
         return $this->render('default/enginesLocation.html.twig');
     }
+
 
     //internal controller methods
 

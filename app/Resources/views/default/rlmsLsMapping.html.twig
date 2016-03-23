@@ -34,7 +34,7 @@
                         <tr class="odd gradeX">
                             <td>{{ labserver.id }}</td>
                             <td>{{ labserver.name }}</td>
-                            <td>{{ labserver.contactName }}</td>
+                            <td>{{ labserver.ownerFirstName }} {{ labserver.ownerLastName }} ({{ labserver.ownerUsername }})</td>
                             <td>{{ labserver.type }}</td>
                             <td>
                                 {% if labserver.mapped == true %}

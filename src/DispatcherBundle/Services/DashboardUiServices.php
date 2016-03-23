@@ -234,6 +234,32 @@ class DashboardUiServices
         //var_dump($labServers);
     }
 
+    private function getUserNameById($userId)
+    {
+        $repository = $this->em->getRepository('DispatcherBundle:User');
+        $userName = $repository->createQueryBuilder('User')
+            ->where('User.id = :id')
+            ->setParameter('id', $userId)
+            ->select('User.username, User.firstName, User.lastName')
+            ->getQuery()
+            ->getSingleResult();
+        return $userName;
+    }
+
+    public function appendUserInfoToResourceArray($resourceArray)
+    {
+        $i = 0;
+        foreach ($resourceArray as $resource){
+
+            $ownerInfo = $this->getUserNameById($resource->getOwnerId());
+            $resourceArray[$i]->ownerFirstName = $ownerInfo['firstName'];
+            $resourceArray[$i]->ownerLastName = $ownerInfo['lastName'];
+            $resourceArray[$i]->ownerUsername = $ownerInfo['username'];
+            $i++;
+        }
+        return $resourceArray;
+    }
+
     public function getLabServersListForRlmsOwner(Rlms $rlms)
     {
         $labServers = $this->em
