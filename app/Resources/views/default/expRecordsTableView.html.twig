@@ -90,20 +90,22 @@
         </form>
         </tbody>
         </table>
-        <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ previousPage }}&status={{ status }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-default">Previous</button></a>
-        {% for page in pages %}
 
-            {% if (page > (currentPage - 5)) and (page < (currentPage + 5))  %}
-                {%  if page == currentPage %}
-                    <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}"><u>{{ page }}</u></a>
-                {% else %}
-                    <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}">{{ page }} </a>
-                {% endif %}
-            {% endif %}
+        <ul class="pagination">
+            <li><a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ previousPage }}&status={{ status }}&labServerId={{ labServerId }}">Previous</a></li>
+             {% for page in pages %}
 
-        {% endfor %}
-        <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ nextPage }}&status={{ status }}&labServerId={{ labServerId }}"><button type="button" class="btn btn-default">Next</button></a>
-        page {{ currentPage }}/{{ numberOfPages }}
+                  {% if (page > (currentPage - 5)) and (page < (currentPage + 5))  %}
+                    {%  if page == currentPage %}
+                       <li class="active"> <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}">{{ page }}</a></li>
+                    {% else %}
+                      <li> <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}">{{ page }}</a></li>
+                    {% endif %}
+                  {% endif %}
+            {% endfor %}
+
+            <li><a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ nextPage }}&status={{ status }}&labServerId={{ labServerId }}">Next</a></li>
+        </ul>
     </div>
 
 <script>
