@@ -14,6 +14,7 @@ class ExperimentGetResponse{
     public $timestamp;
     public $success;
     public $expId;
+    public $rlmsExpId;
     public $jobStatus;
     public $expSpecification;
     public $message;
@@ -47,6 +48,19 @@ class ExperimentGetResponse{
     {
         return $this->expId;
     }
+
+
+    public function setRlmsExperimentId($rlmsExpId)
+    {
+        $this->rlmsExpId = $rlmsExpId;
+    }
+
+    public function getRlmsExperimentId()
+    {
+        return $this->rlmsExpId;
+    }
+
+
     public function setExpSpecification($expSpec)
     {
         $this->expSpecification = $expSpec;
@@ -86,6 +100,7 @@ class ExperimentGetResponse{
             $xml->addChild('timestamp', $this->getTimeStamp());
             $xml->addChild('success', $this->getSuccess());
             $xml->addChild('expId', $this->getExperimentId());
+            $xml->addChild('rlmsExpId', $this->getRlmsExperimentId());
             $xml->addChild('expSpecification', $this->getExpSpecification());
             $xml->addChild('jobStatus', $this->getJobStatus());
             $xml->addChild('message', $this->getMessage());

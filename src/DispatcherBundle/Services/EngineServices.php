@@ -209,6 +209,7 @@ class EngineServices
             $experiment->setTimeStamp();
             $experiment->setSuccess(true);
             $experiment->setExperimentId($OwnedJob->getExpId());
+            $experiment->setRlmsExperimentId($OwnedJob->getRlmsAssignedId());
             $experiment->setExpSpecification($OwnedJob->getExpSpecification());
             $experiment->setJobStatus($OwnedJob->getJobStatus());
             $experiment->setMessage("Experiment Specification retrieved.");
