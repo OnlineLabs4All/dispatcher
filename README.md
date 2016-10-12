@@ -24,7 +24,7 @@ Values, which are usually not default:
 
 4) Update database with
 ```
-php app/console doctrine:schema:update --force
+$ php app/console doctrine:schema:update --force
 ```
 
 5) Create an admin account in the *site_user* table:
@@ -37,16 +37,21 @@ php app/console doctrine:schema:update --force
 - role (**ROLE_ADMIN**, or **ROLE_USER** for normal users)
 - is_active (set to **1**)
 
+6) **OPTIONAL** - Check if system is ready to run Symfony:
+```
+$ php app/check.php
+```
+
 
 ## Run the dispatcher in debug mode
 
 1) *cd* into the project folder and run
 ```
-php app/console server:run
+$ php app/console server:run
 ```
 or (if an alternative port is needed)
 ```
-php app/console server:run 127.0.0.1:8080
+$ php app/console server:run 127.0.0.1:8080
 ```
 
 2) Open your browser and go to
