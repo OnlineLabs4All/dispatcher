@@ -34,7 +34,23 @@
                 <td>{{ record.id }}</td>
                 <td>{{ record.name }}</td>
                 <td>{{ record.labServerName }}</td>
-                <td><div id="lastContact">{{record.lastContact}}</div></td>
+                <td>
+                    <div id="lastContact">
+                        {% if record.lastContact is null %}
+                            <span style="padding:.3em;">Never</span>
+                        {% elseif (record.active == true) and (record.lastContact|date("U") > "-15 min"|date("U")) %}
+                            <span title="< 15min" class="label label-success" style="padding:.3em;">{{record.lastContact}}</span>
+                        {% elseif (record.active == true) and (record.lastContact|date("U") > "-60 min"|date("U")) %}
+                            <span title="< 60min" class="label label-warning" style="padding:.3em;">{{record.lastContact}}</span>
+                        {% elseif (record.active == true) and (record.lastContact|date("U") > "-1440 min"|date("U")) %}
+                            <span title="< 24h" class="label label-warning" style="padding:.3em;background-color:LightCoral;">{{record.lastContact}}</span>
+                        {% elseif (record.active == true) %} {# More than 1440 min (24h) #}
+                            <span title="> 24h" class="label label-danger" style="padding:.3em;">{{record.lastContact}}</span>
+                        {% else %} {# inactive #}
+                            <span title="Inactive" style="padding:.3em;">{{record.lastContact}}</span>
+                        {% endif %}
+                    </div>
+                </td>
                 <td>
                     {% if record.active == true %}
                         <span class="label label-success">Active</span>
