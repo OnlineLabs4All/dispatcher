@@ -135,13 +135,34 @@ class IsaRlmsAuthenticator
                                  'fault' => 'Token is correct, but Broker and Lab Server are not mapped to each other. Contact your Experiment Dispatcher administrator');
                 }
                 return array('authenticated' => false,
-                             'fault' => 'Unauthorized, token is not valid');
+                             'fault' => 'Unauthorized, token ('.$token.') is not valid.');
             }
             return array('authenticated' => false,
                          'fault' => 'Provided Service Broker GUID is not registered');
         }
         return array('authenticated' => false,
                      'fault' => 'Provided Lab Server Id does not exit');
+    }
+
+    public function calculateToken($jsonRequest, $token, $sbGuid, $labserverId)
+    {
+        //remove token to apply hmac algorithm
+        $jsonRequest->token = '';
+        $data = json_encode($jsonRequest);
+
+        $labServer = $this
+            ->em
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findOneBy(array('id' => $labserverId));
+
+        if ($labServer != null){ //if Lab Server exists, calculate token
+
+                $token = base64_encode(hash_hmac('sha1', $sbGuid.$data,$labServer->getPassKey(),true));
+
+                    return $token;
+             }
+        return 'Provided Lab Server Id does not exit. Cannot calculate token';
+
     }
 }
 

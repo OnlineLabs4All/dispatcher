@@ -9,7 +9,6 @@ use DispatcherBundle\Entity\JobRecord;
 use DispatcherBundle\Entity\LabServer;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraints\DateTime;
-use Symfony\Component\Validator\Constraints\Null;
 use SimpleXMLElement;
 use DOMDocument;
 

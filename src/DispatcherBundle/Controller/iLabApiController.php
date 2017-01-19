@@ -126,10 +126,6 @@ class iLabApiController extends Controller
         $auth = $iLabAuthenticator->authenticateMethodUqBroker($jsonRequest, $jsonRequest->token, $jsonRequest->guid, $labServerId);
 
         if ($auth['authenticated'] == true){
-        //if (true){
-            //$myfile = fopen('webservice.txt','w') or die("Unable to open file");
-            //fwrite($myfile, $request->getContent());
-            //fclose($myfile);
 
             $iLabBatched = $this->get('genericLabServerServices');
             $iLabBatched->setLabServerId($labServerId);
@@ -184,8 +180,29 @@ class iLabApiController extends Controller
             return $response;
         }
         $response = new response;
-        $response->setStatusCode(401);
+        $response = new Response(json_encode($auth));
+        $response->headers->set('Content-Type','application/json; charset=utf-8');
         return $response;
+    }
+
+    //The following method is to help the developer to calculate the token for a request, assuming a lab server exists.
+
+    /**
+     * @Route("/calculateToken/{labServerId}", name="calculateToken")
+     * @Method({"POST"})
+     *
+     */
+    public function calculateTokenAction(Request $request, $labServerId)
+    {
+        //read request
+        $jsonRequestString = $request->getContent();
+        $jsonRequest = json_decode($jsonRequestString);
+
+        //Authenticate request
+        $iLabAuthenticator = $this->get('IsaRlmsAuthenticator');
+        $result = $iLabAuthenticator->calculateToken($jsonRequest, $jsonRequest->token, $jsonRequest->guid, $labServerId);
+
+        return new Response($result);
     }
 
 }
