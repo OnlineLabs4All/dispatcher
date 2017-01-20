@@ -81,6 +81,11 @@ class LabServer
     protected $configuration; //If necessary, stores configuration of the lab in JSON, XML, etc.
 
     /**
+     * @ORM\Column(type="boolean", nullable=false)
+     */
+    protected $singleEngine; //If true, only one experiment engine is allowed to connect to the lab server. Only in this case the service 'setLabConfiguration' is enabled!
+
+    /**
      * @ORM\Column(type="text", nullable=true)
      */
     protected $opaqueData; //Optional field, used to transfer additional information if necessary.
@@ -143,6 +148,7 @@ class LabServer
         $this->active = $data['active'];
         //$this->visible_in_catalogue = $data['visible_in_catalogue'];
         $this->configuration = $data['configuration'];
+        $this->singleEngine = $data['singleEngine'];
         $this->public_sub = false;
         $this->dateCreated = date('Y-m-d\TH:i:sP');
         $this->passKey = $data['passKey'];
@@ -164,6 +170,7 @@ class LabServer
         $this->active = $data['active'];
         //$this->visible_in_catalogue = $data['visible_in_catalogue'];
         $this->configuration = $data['configuration'];
+		$this->singleEngine = $data['singleEngine'];
         $this->public_sub = false;
         $this->labInfo = $data['labInfo'];
         $this->exp_category = $data['exp_category'];
@@ -410,6 +417,29 @@ class LabServer
     public function getConfiguration()
     {
         return $this->configuration;
+    }
+
+    /**
+     * Set singleEngine
+     *
+     * @param boolean $singleEngine
+     * @return LabServer
+     */
+    public function setSingleEngine($singleEngine)
+    {
+        $this->singleEngine = $singleEngine;
+
+        return $this;
+    }
+
+    /**
+     * Get singleEngine
+     *
+     * @return boolean
+     */
+    public function getSingleEngine()
+    {
+        return $this->singleEngine;
     }
 
     /**

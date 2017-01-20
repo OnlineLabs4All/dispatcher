@@ -13,12 +13,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use DispatcherBundle\Entity\ExperimentEngine;
+use DispatcherBundle\Entity\LabServer;
 use \DateTime;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use DispatcherBundle\Model\Subscriber\LabInfo;
 use DispatcherBundle\Model\Subscriber\QueueLength;
 use SoapClient;
 use SoapHeader;
+use SimpleXMLElement;
 
 
 /**
@@ -63,6 +65,7 @@ class ApiController extends Controller
         return $response;
     }
 
+    /*
     public function labConfiguration(Request $request)
     {
         $engine= $this->get('security.token_storage')->getToken()->getUser();
@@ -72,6 +75,7 @@ class ApiController extends Controller
 
         return new Response($labConfiguration);
     }
+    */
 
     /**
      *
@@ -88,16 +92,83 @@ class ApiController extends Controller
      * @Route("/labInfo", name="labInfo")
      * @Method({"GET"})
      */
-
     public function labInfo(Request $request)
     {
         $engine= $this->get('security.token_storage')->getToken()->getUser();
         $engineService = $this->get('engineServices');
-        //getLabConfiguration
+        //getLabInfo
         $labInfo = $engineService->getLabInfo($engine);
         $format = $request->get('_format');
 
         return new Response($labInfo->serialize($format));
+    }
+
+    /**
+     * @Route("/labConfiguration", name="setLabConfiguration")
+     * @Method({"PUT", "POST"})
+     *
+     *  @ApiDoc(
+     *  resource=true,
+     *  resourceDescription="Updates lab configuration of a lab server",
+     *  description="Sends the lab configuration to the server. The request body must only contain the JSON encoded name/value pair 'labConfiguration'.",
+     *
+     *  requirements={
+     *      {
+     *          "name"="labConfiguration",
+     *          "dataType"="string",
+     *          "requirement"="mandatory",
+     *          "description"="Contains lab configuration."
+     *      }
+     *  },
+     *  output ="",
+     *
+     *  statusCodes={
+     *         200="Returned when successful",
+     *         401="Unauthorized",
+     *         415="JSON Request not provided"},
+     * )
+     */
+    public function setLabConfiguration(Request $request)
+    {
+        $engine = $this->get('security.token_storage')->getToken()->getUser();
+
+        //check engine authorization (singleEngine)
+        $labServer = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findOneBy(array('id' => $engine->getLabServerId()));
+
+        if (($labServer->getSingleEngine()) === false ){
+            $response = new response;
+            $response->setStatusCode(401);
+            return $response;
+        }
+
+        //check, if request is of type JSON
+        $jsonString = $request->getContent();
+        $result = json_decode($jsonString);
+
+        if ($result == null)
+        {
+            $response = new response;
+            $response->setStatusCode(415);
+            return $response;
+        }
+
+        //update labConfiguration
+        $engineService = $this->get('engineServices');
+        $experiment = $engineService->setLabConfiguration($engine, $result);
+        
+        //format and return
+        $format = $request->get('_format');
+
+        if ($format == 'xml'){
+            $xml = new SimpleXMLElement('<LabConfiguration/>');
+            $xml->addChild('success', $experiment->success);
+            $xml->addChild('message', $experiment->message);
+            return new Response($xml->asXML());
+        }
+
+        return new Response(json_encode($experiment));
     }
 
     /**
@@ -119,7 +190,7 @@ class ApiController extends Controller
     {
         $engine= $this->get('security.token_storage')->getToken()->getUser();
         $engineService = $this->get('engineServices');
-        //getLabConfiguration
+        //getExperiment
         $experiment = $engineService->getExperiment($engine);
         $format = $request->get('_format');
 
@@ -234,7 +305,7 @@ class ApiController extends Controller
         $engine= $this->get('security.token_storage')->getToken()->getUser();
 
         $engineService = $this->get('engineServices');
-        //getLabConfiguration
+        //getStatus
         $status = $engineService->getStatus($engine);
         $format = $request->get('_format');
 

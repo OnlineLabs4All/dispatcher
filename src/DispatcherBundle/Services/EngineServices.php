@@ -9,6 +9,7 @@
 namespace DispatcherBundle\Services;
 use DispatcherBundle\Entity\ExperimentEngine;
 use DispatcherBundle\Entity\JobRecord;
+use DispatcherBundle\Entity\LabServer;
 use Doctrine\ORM\EntityManager;
 use DispatcherBundle\Model\Subscriber\Status;
 use DispatcherBundle\Model\Subscriber\LabInfo;
@@ -86,6 +87,34 @@ class EngineServices
         $labInfoResponse->setErrorMessage('No experiment engine found for the provided key.');
         return $labInfoResponse;
 
+    }
+
+    public function setLabConfiguration(ExperimentEngine $engine, $results)
+    {
+        if ($engine != null){
+
+            $qb = $this->em->createQueryBuilder();
+            $q = $qb->update('DispatcherBundle:LabServer', 'l')
+                ->set('l.configuration', $qb->expr()->literal($results->labConfiguration))
+                ->where('l.id = ?1')
+                ->setParameter(1, $engine->getLabServerId())
+                ->getQuery();
+            $p = $q->execute();
+
+            if ($p) {
+                $response = (object) [
+                    'success' => true,
+                    'message' => 'Lab configuration updated!',
+                ];
+            } else {
+                $response = (object) [
+                    'success' => false,
+                    'message' => 'Lab configuration NOT updated! Reason could be that lab configuration string of request is identical with current database entry.',
+                ];
+            }
+
+            return $response;
+        }
     }
 
     public function getStatus(ExperimentEngine $engine)

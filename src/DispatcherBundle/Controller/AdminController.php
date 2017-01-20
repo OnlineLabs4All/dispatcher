@@ -607,6 +607,7 @@ class AdminController extends Controller
             ->add('useDataset', 'checkbox', array('label' => 'Retrieve results from dataset when available',
                 'required' => false))
             ->add('configuration', 'textarea', array('label' => 'Lab Configuration', 'required' => false))
+            ->add('singleEngine', 'checkbox', array('label' => 'Allow only one experiment engine to connect to the lab server', 'required' => false))
             ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true))
             ->add('submit','submit', array('label' => 'Add New Lab Server','attr' => array('class'=>'btn btn-success')))
             ->getForm();
@@ -630,6 +631,7 @@ class AdminController extends Controller
             ->add('type', 'text', array('label' => 'Type ', 'required' => true, 'attr' => array('value'=>$labServer->getType(), 'readonly' => true)))
             ->add('initialPassKey', 'text', array('label' => 'Initial PassKey ', 'required' => true, 'attr' => array('value'=>$labServer->getInitialPasskey(), 'readonly' => true)))
             ->add('configuration', 'textarea', array('label' => 'Lab Configuration', 'required' => false, 'data'=>$labServer->getConfiguration()))
+            ->add('singleEngine', 'checkbox', array('label' => 'Allow only one experiment engine to connect to the lab server', 'required' => false, 'data' => $labServer->getSingleEngine()))
             ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true,  'attr' => array('value'=>$labServer->getLabInfo(), 'readonly' => false)))
             ->add('useDataset', 'checkbox', array('label' => 'Retrieve results from dataset when available',
                 'required' => false,
