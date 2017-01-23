@@ -277,11 +277,31 @@ class AdminController extends Controller
         $user = $this->get('security.token_storage')->getToken()->getUser();
         $form =  $this->createEngineForm($user);
         $form->handleRequest($request);
+        $data =$form->getData();
 
+        //form submitted
         if ($form->isValid()) {
+            //check if engine is allowed to subscribe to lab server
+            $labserver = $this->getDoctrine()
+                ->getRepository('DispatcherBundle:LabServer')
+                ->findOneBy(array('id' => $data['labserverId']));
 
+            $engine_count = count($this->getDoctrine()
+                ->getRepository('DispatcherBundle:ExperimentEngine')
+                ->findBy(array('labserverId' => $data['labserverId'])));
+
+            if ( ($labserver->getSingleEngine()) && ($engine_count > 0) )
+            {
+                return $this->render('default/addEditResource.html.twig', array(
+                    'viewName'=>'Register a new Subscriber Engine',
+                    'form' => $form->createView(),
+                    'exception' => true,
+                    'message' => 'Selected lab server is limited to one engine only!'
+                    ));
+            }
+
+            //else: add engine and redirect
             $engine = new ExperimentEngine();
-            $data =$form->getData();
             $engine->setAll($data, $user->getId());
 
             $em = $this->getDoctrine()->getManager();
@@ -289,11 +309,15 @@ class AdminController extends Controller
             $em->flush();
             return $this->redirectToRoute('engines');
         }
+
+        //render view
         return $this->render('default/addEditResource.html.twig', array(
             'viewName'=>'Register a new Subscriber Engine',
+            'exception' => false,
             'form' => $form->createView()
         ));
     }
+
     /**
      * @Route("/labservers/{labserverId}", name="labserver")
      * @Method({"GET", "POST"})
@@ -485,6 +509,7 @@ class AdminController extends Controller
 
         return $form;
     }
+
     //generate form to EDIT a subscriber Engine
     private function buildEditEngineForm(ExperimentEngine $engine){
 

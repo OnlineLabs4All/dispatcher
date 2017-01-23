@@ -170,7 +170,7 @@ class LabServer
         $this->active = $data['active'];
         //$this->visible_in_catalogue = $data['visible_in_catalogue'];
         $this->configuration = $data['configuration'];
-		$this->singleEngine = $data['singleEngine'];
+        $this->singleEngine = $data['singleEngine'];
         $this->public_sub = false;
         $this->labInfo = $data['labInfo'];
         $this->exp_category = $data['exp_category'];

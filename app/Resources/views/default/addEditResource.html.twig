@@ -6,6 +6,10 @@
         <h3 id="header3" class="page-header">{{ viewName }}</h3>
     </div>
 
+        {% if exception %}
+        <div class="alert alert-danger col-lg-12">{{ message }}</div>
+        {% endif %}
+
         {{ form_start(form) }}
         {{ form_errors(form) }}
          {{ form(form) }}
