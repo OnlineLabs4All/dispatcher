@@ -264,6 +264,7 @@ class AdminController extends Controller
         return $this->render('default/addEditResource.html.twig', array(
             'viewName'=>'View/Edit Subscriber Engine',
             'form' => $form->createView(),
+            'exception' => false
         ));
     }
 
@@ -313,8 +314,8 @@ class AdminController extends Controller
         //render view
         return $this->render('default/addEditResource.html.twig', array(
             'viewName'=>'Register a new Subscriber Engine',
-            'exception' => false,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'exception' => false
         ));
     }
 
