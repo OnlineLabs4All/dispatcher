@@ -59,7 +59,7 @@ class iLabServiceBroker
         {
             return new \SoapFault("Server", 'non authorized' );
         }
-        $this->authorityGuid = '6';
+        $this->authorityGuid = 'DA02D5E137DE4469B9CECADFCAD8145F';
         //$this->couponID = $sbHeader->couponID;
         //$this->couponPassKey = $sbHeader->couponPassKey;
     }
