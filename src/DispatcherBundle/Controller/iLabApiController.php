@@ -19,7 +19,7 @@ use \DateTime;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use DispatcherBundle\Model\Subscriber\LabInfo;
 use Symfony\Component\Console\Output\OutputInterface;
-//use SoapServer;
+//use \SoapServer;
 
 
 /**
@@ -27,6 +27,29 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class iLabApiController extends Controller
 {
+    //This route accepts POST method and instantiate the SOAP server for the client ISB Interface
+    /**
+     * @Route("/soap/client", name="isa_sbClient_apiRoot")
+     * @Method({"POST"})
+     *
+     */
+    public function sbSoapClientApiAction(Request $request)
+    {
+        ini_set("soap.wsdl_cache_enabled", "0");
+        $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/sbWsdl.wsdl";
+
+        $soapServer = new \SoapServer($wsdl_url, array('soap_version' => SOAP_1_2));
+        $iLabSbClient = $this->get('iLabServiceBroker');
+        //$iLabSbClient->setLabServerId($labServerId);
+        $soapServer->setObject($iLabSbClient);
+        $response = new Response();
+        $response->headers->set('Content-Type','application/soap+xml; charset=utf-8');
+        ob_start();
+        $soapServer->handle();
+        $response->setContent(ob_get_clean());
+        return $response;
+    }
+
     //This route accepts POST method and instantiate the SOAP server for BATCHED LABS
     /**
      * @Route("/{labServerId}/soap", name="isa_apiRoot")
@@ -107,6 +130,40 @@ class iLabApiController extends Controller
         $response->headers->set('Content-Type', 'application/xml');
         return $response;
     }
+
+    // ========== ISA SOAP Service Broker Client API ==========================
+
+    //This route accepts only GET method and returns the client-broker WSDL
+    /**
+     * @Route("/soap/client", name="sbClient_wsdl")
+     * @Method({"GET"})
+     *
+     */
+    public function getBrokerWsdlAction(Request $request)
+    {
+        $service_base_url = $request->getScheme()."://".$request->getHttpHost();
+        //returns the wsdl
+        $response = $this->render('wsdl/sbWsdl.wsdl.twig', array(
+            'service_url'=> $service_base_url."/apis/isa/soap/sbClient",
+            'service_base_url'=> $service_base_url));
+        //return $response;
+        $response->headers->set('Content-Type', 'application/xml');
+        return $response;
+    }
+
+    /**
+     * @Route("/soap/client/{schema}", name="sbClient_wsdl_schema")
+     * @Method({"GET"})
+     *
+     */
+    public function getBrokerWsdlSchemaAction(Request $request, $schema)
+    {
+        $response = $this->render('wsdl/schema/'.$schema.'.wsdl');
+        //return $response;
+        $response->headers->set('Content-Type', 'application/xml');
+        return $response;
+    }
+
 
     // ========== ISA Json API - University of Queensland =====================
 

@@ -12,7 +12,6 @@ use DispatcherBundle\Entity\LabServer;
 use DispatcherBundle\Entity\LsToRlmsMapping;
 use DispatcherBundle\Entity\Rlms;
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Validator\Constraints\Null;
 use DispatcherBundle\Security\IsaRlmsAuthenticator;
 
 
@@ -177,7 +176,7 @@ class iLabLabServer
             $effectiveQueueLength = $queueLength; //get the length of the queue considering the job priority
             $estRuntime = $jobRecord->getEstExecTime();
             $estWait = $estRuntime * $queueLength;
-            $estRemainingRuntime =  $jobRecord->getEstExecTime() -  $jobRecord->getExecElapsed();
+            $estRemainingRuntime =  $jobRecord->getEstExecTime() - $jobRecord->getExecElapsed();
             $minTimetoLive= 7200;
 
             $response = array('GetExperimentStatusResult' => array(

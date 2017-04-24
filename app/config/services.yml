@@ -29,6 +29,10 @@ services:
       class:  DispatcherBundle\Services\iLabLabServer
       arguments: [@doctrine.orm.entity_manager, @isaRlmsAuthenticator]
 
+    iLabServiceBroker:
+      class:  DispatcherBundle\Services\iLabServiceBroker
+      arguments: [@doctrine.orm.entity_manager, @genericLabServerServices]
+
     engineServices:
           class:  DispatcherBundle\Services\EngineServices
           arguments: [@doctrine.orm.entity_manager, @soapClientIsa]

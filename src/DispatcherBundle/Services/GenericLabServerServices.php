@@ -36,12 +36,21 @@ class GenericLabServerServices
         return $this->labServer->getGuid();
     }
 
-    public function getLabInfo(){
+    public function getLabInfo($labServerId = null){
+
+        if($labServerId != null){
+            $this->setLabServerId($labServerId);
+        }
         $response = array('labInfo' => $this->labServer->getLabInfo());
         return $response;
     }
 
-    public function getLabConfiguration(){
+    public function getLabConfiguration($labServerId = null){
+
+        if($labServerId != null){
+            $this->setLabServerId($labServerId);
+        }
+
         //$userGroup = $params->userGroup; //can be used to return different lab configurations depending on the user group.
         $response = array('labConfiguration' => array('navmenuPhoto' => array(array('image'=> array('https://github.com/OnlineLabs4All/dispatcher/blob/master/web/img/logo_100px.png?raw=true'))),
                                                       'labConfiguration' => $this->labServer->getConfiguration()));
@@ -49,7 +58,11 @@ class GenericLabServerServices
         return $response;
     }
 
-    public function getLabStatus(){
+    public function getLabStatus($labServerId = null){
+
+        if($labServerId != null){
+            $this->setLabServerId($labServerId);
+        }
 
         if ($this->labServer->getActive() == true)
         {
@@ -66,7 +79,11 @@ class GenericLabServerServices
         return $response;
     }
 
-    public function getEffectiveQueueLength($priority){
+    public function getEffectiveQueueLength($priority, $labServerId = null){
+
+        if($labServerId != null){
+            $this->setLabServerId($labServerId);
+        }
 
         $repository = $this
             ->em
@@ -91,7 +108,11 @@ class GenericLabServerServices
         return $response;
     }
 
-    public function Submit($rlmsExpId, $experimentSpecification, $opaqueData, $priorityHint, $rlmsGuid){
+    public function Submit($rlmsExpId, $experimentSpecification, $opaqueData, $priorityHint, $rlmsGuid, $labServerId = null){
+
+        if($labServerId != null){
+            $this->setLabServerId($labServerId);
+        }
 
         $jobRecord = new JobRecord();
 
@@ -199,7 +220,7 @@ class GenericLabServerServices
             ->andWhere('job.priority >= :priority')
             ->setParameter('jobStatus', 1)
             ->setParameter('expId', $jobRecord->getExpId())
-            ->setParameter('labServerId', $this->labServer->getId())
+            ->setParameter('labServerId', $jobRecord->getLabServerId())
             ->setParameter('priority', $jobRecord->getPriority())
             ->select('COUNT(job)')
             ->getQuery()
@@ -220,34 +241,57 @@ class GenericLabServerServices
             ->getRepository('DispatcherBundle:JobRecord')
             ->findOneBy(array('expId' => $experimentId, 'providerId' => $providerId));
 
-        $statusCode = $jobRecord->getJobStatus();
-
-        if ($statusCode != 3){
+        if ($jobRecord == null){
+            $exception = true;
             $experimentResults = $jobRecord->getExpResults();
             $xmlResultExtension = Null;
             $xmlBlobExtension = Null;
             $warningMessages = Null;
-            $errorMessage = Null;
-            $errorMessage = 'Results not available. Experiment is not completed or has been cancelled. See status code.';
+            $errorMessage = 'Experiment ID not found';
+            $statusCode = null;
         }
         else{
-            //$opaque = json_decode($jobRecord->getOpaqueData());
-            $experimentResults = $jobRecord->getExpResults();
-            $xmlBlobExtension = Null;
-            $warningMessages = Null;
-            $errorMessage = Null;
+            $statusCode = $jobRecord->getJobStatus();
 
-            //set job record as downloaded
-            $jobRecord->setDownloaded(true);
-            $this->em->persist($jobRecord);
-            $this->em->flush();
+            if ($statusCode != 3){
+                $exception = true;
+                $experimentResults = $jobRecord->getExpResults();
+                $xmlResultExtension = Null;
+                $xmlBlobExtension = Null;
+                $warningMessages = Null;
+                $errorMessage = Null;
+                $errorMessage = 'Results not available. Experiment is not completed or has been cancelled. See status code.';
+            }
+            else{
+                //$opaque = json_decode($jobRecord->getOpaqueData());
+                $experimentResults = $jobRecord->getExpResults();
+                $xmlBlobExtension = Null;
+                $warningMessages = Null;
+                $errorMessage = Null;
+                $exception = false;
+
+                $xmlResultExtension = 'SubmitTime='.$jobRecord->getSubmitTime().',
+                                   ExecutionTime='.$jobRecord->getExecutionTime().',
+                                   EndTime='.$jobRecord->getExecutionTime().',
+                                   ElapsedExecutionTime='.$jobRecord->getExecElapsed().',
+                                   ElapsedJobTime='.$jobRecord->getJobElapsed();
+
+                //set job record as downloaded
+                $jobRecord->setDownloaded(true);
+                $this->em->persist($jobRecord);
+                $this->em->flush();
+            }
         }
 
-        $response = array('statusCode' => $statusCode,
-                          'experimentResults' => $experimentResults,
-                          'errorMessage' => $errorMessage);
+        $response = array(
+            'exception' => $exception,
+            'statusCode' => $statusCode,
+            'experimentResults' => $experimentResults,
+            'errorMessage' => $errorMessage,
+            'xmlResultExtension' => $xmlResultExtension,
+            'xmlBlobExtension' => $xmlBlobExtension,
+            'warningMessages' => $warningMessages);
         return $response;
-
     }
 
     public function retrieveExperimentSpecification($experimentId, $providerId) //providerId can be RLMS GUID or internal ID

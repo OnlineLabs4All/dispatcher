@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://ilab.mit.edu" elementFormDefault="qualified" targetNamespace="http://ilab.mit.edu" id="schema3" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="GetLabStatus">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="labServerID" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="GetLabStatusResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="GetLabStatusResult" type="tns:LabStatus" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="LabStatus">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="online" type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="1" name="labStatusMessage" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="sbAuthHeader" type="tns:sbAuthHeader" />
+    <xs:complexType name="sbAuthHeader">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="couponID" type="xs:long" />
+            <xs:element minOccurs="0" maxOccurs="1" name="couponPassKey" type="xs:string" />
+        </xs:sequence>
+        <xs:anyAttribute />
+    </xs:complexType>
+    <xs:element name="GetEffectiveQueueLength">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="labServerID" type="xs:string" />
+                <xs:element minOccurs="1" maxOccurs="1" name="priorityHint" type="xs:int" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="GetEffectiveQueueLengthResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="GetEffectiveQueueLengthResult" type="tns:WaitEstimate" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="WaitEstimate">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="effectiveQueueLength" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="estWait" type="xs:double" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="GetLabInfo">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="labServerID" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="GetLabInfoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="GetLabInfoResult" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="GetLabConfiguration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="labServerID" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="GetLabConfigurationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="GetLabConfigurationResult" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Validate">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="labServerID" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="experimentSpecification" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ValidateResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="ValidateResult" type="tns:ValidationReport" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ValidationReport">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="accepted" type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="1" name="warningMessages" type="tns:ArrayOfString" />
+            <xs:element minOccurs="0" maxOccurs="1" name="errorMessage" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="estRuntime" type="xs:double" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfString">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Submit">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="labServerID" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="experimentSpecification" type="xs:string" />
+                <xs:element minOccurs="1" maxOccurs="1" name="priorityHint" type="xs:int" />
+                <xs:element minOccurs="1" maxOccurs="1" name="emailNotification" type="xs:boolean" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SubmitResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="SubmitResult" type="tns:ClientSubmissionReport" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ClientSubmissionReport">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="vReport" type="tns:ValidationReport" />
+            <xs:element minOccurs="1" maxOccurs="1" name="experimentID" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="minTimeToLive" type="xs:double" />
+            <xs:element minOccurs="0" maxOccurs="1" name="wait" type="tns:WaitEstimate" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="GetExperimentStatus">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="experimentID" type="xs:int" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="GetExperimentStatusResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="GetExperimentStatusResult" type="tns:LabExperimentStatus" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="LabExperimentStatus">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="statusReport" type="tns:ExperimentStatus" />
+            <xs:element minOccurs="1" maxOccurs="1" name="minTimetoLive" type="xs:double" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ExperimentStatus">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="statusCode" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="wait" type="tns:WaitEstimate" />
+            <xs:element minOccurs="1" maxOccurs="1" name="estRuntime" type="xs:double" />
+            <xs:element minOccurs="1" maxOccurs="1" name="estRemainingRuntime" type="xs:double" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Cancel">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="experimentID" type="xs:int" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CancelResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="CancelResult" type="xs:boolean" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RetrieveResult">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="experimentID" type="xs:int" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RetrieveResultResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="RetrieveResultResult" type="tns:ResultReport" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ResultReport">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="statusCode" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="experimentResults" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="xmlResultExtension" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="xmlBlobExtension" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="warningMessages" type="tns:ArrayOfString" />
+            <xs:element minOccurs="0" maxOccurs="1" name="errorMessage" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="Notify">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="experimentID" type="xs:int" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="NotifyResponse">
+        <xs:complexType />
+    </xs:element>
+    <xs:element name="SaveClientItem">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="name" type="xs:string" />
+                <xs:element minOccurs="0" maxOccurs="1" name="itemValue" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SaveClientItemResponse">
+        <xs:complexType />
+    </xs:element>
+    <xs:element name="LoadClientItem">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="name" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="LoadClientItemResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="LoadClientItemResult" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DeleteClientItem">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="name" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="DeleteClientItemResponse">
+        <xs:complexType />
+    </xs:element>
+    <xs:element name="ListAllClientItems">
+        <xs:complexType />
+    </xs:element>
+    <xs:element name="ListAllClientItemsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="ListAllClientItemsResult" type="tns:ArrayOfString" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RetrieveSpecification">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="experimentID" type="xs:int" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RetrieveSpecificationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="RetrieveSpecificationResult" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RetrieveExperimentResult">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="experimentID" type="xs:int" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RetrieveExperimentResultResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="RetrieveExperimentResultResult" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RetrieveLabConfiguration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="experimentID" type="xs:int" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RetrieveLabConfigurationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="RetrieveLabConfigurationResult" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SaveAnnotation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="experimentID" type="xs:int" />
+                <xs:element minOccurs="0" maxOccurs="1" name="annotation" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SaveAnnotationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="SaveAnnotationResult" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RetrieveAnnotation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" name="experimentID" type="xs:int" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RetrieveAnnotationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="RetrieveAnnotationResult" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="GetExperimentInformation">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="experimentIDs" type="tns:ArrayOfInt" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfInt">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="int" type="xs:int" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="GetExperimentInformationResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="GetExperimentInformationResult" type="tns:ArrayOfExperimentInformation" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="ArrayOfExperimentInformation">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ExperimentInformation" nillable="true" type="tns:ExperimentInformation" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ExperimentInformation">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="experimentID" type="xs:long" />
+            <xs:element minOccurs="1" maxOccurs="1" name="labServerID" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="userID" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="effectiveGroupID" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="submissionTime" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="completionTime" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="expirationTime" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="minTimeToLive" type="xs:double" />
+            <xs:element minOccurs="1" maxOccurs="1" name="priorityHint" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="statusCode" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="validationWarningMessages" type="tns:ArrayOfString" />
+            <xs:element minOccurs="0" maxOccurs="1" name="validationErrorMessage" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="executionWarningMessages" type="tns:ArrayOfString" />
+            <xs:element minOccurs="0" maxOccurs="1" name="executionErrorMessage" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="annotation" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="xmlResultExtension" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="xmlBlobExtension" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
