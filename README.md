@@ -51,7 +51,7 @@ $ php app/console server:run
 ```
 or (if an alternative port is needed)
 ```
-$ php app/console server:run 127.0.0.1:8080
+$ php app/console server:run 127.0.0.1:8000
 ```
 
 2) Open your browser and go to
