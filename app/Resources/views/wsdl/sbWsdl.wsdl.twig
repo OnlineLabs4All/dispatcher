@@ -1,0 +1,1171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:i0="http://ilab.mit.edu" xmlns:tns="http://ilab.mit.edu/iLabs/Services" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://ilab.mit.edu/iLabs/Services" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    <wsdl:import namespace="http://ilab.mit.edu" location="http://ilabs.cti.ac.at/iLabServiceBroker/iLabServiceBroker.asmx?wsdl=wsdl1" />
+    <wsdl:types>
+        <s:schema targetNamespace="http://ilab.mit.edu/iLabs/Services">
+            <s:include schemaLocation="{{ service_base_url }}{{ path('sbClient_wsdl_schema', { 'schema' : 'schema1'}) }}" />
+            <s:import schemaLocation="{{ service_base_url }}{{ path('sbClient_wsdl_schema', { 'schema' : 'schema2'}) }}" namespace="http://ilab.mit.edu/iLabs/type" />
+            <s:import schemaLocation="{{ service_base_url }}{{ path('sbClient_wsdl_schema', { 'schema' : 'schema3'}) }}" namespace="http://ilab.mit.edu" />
+        </s:schema>
+    </wsdl:types>
+    <wsdl:message name="SaveClientDataSoapIn">
+        <wsdl:part name="parameters" element="tns:SaveClientData" />
+    </wsdl:message>
+    <wsdl:message name="SaveClientDataSoapOut">
+        <wsdl:part name="parameters" element="tns:SaveClientDataResponse" />
+    </wsdl:message>
+    <wsdl:message name="SaveClientDataOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q1="http://ilab.mit.edu/iLabs/type" element="q1:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="LoadClientDataSoapIn">
+        <wsdl:part name="parameters" element="tns:LoadClientData" />
+    </wsdl:message>
+    <wsdl:message name="LoadClientDataSoapOut">
+        <wsdl:part name="parameters" element="tns:LoadClientDataResponse" />
+    </wsdl:message>
+    <wsdl:message name="LoadClientDataOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q2="http://ilab.mit.edu/iLabs/type" element="q2:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="DeleteClientDataSoapIn">
+        <wsdl:part name="parameters" element="tns:DeleteClientData" />
+    </wsdl:message>
+    <wsdl:message name="DeleteClientDataSoapOut">
+        <wsdl:part name="parameters" element="tns:DeleteClientDataResponse" />
+    </wsdl:message>
+    <wsdl:message name="DeleteClientDataOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q3="http://ilab.mit.edu/iLabs/type" element="q3:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="ListClientDataItemsSoapIn">
+        <wsdl:part name="parameters" element="tns:ListClientDataItems" />
+    </wsdl:message>
+    <wsdl:message name="ListClientDataItemsSoapOut">
+        <wsdl:part name="parameters" element="tns:ListClientDataItemsResponse" />
+    </wsdl:message>
+    <wsdl:message name="ListClientDataItemsOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q4="http://ilab.mit.edu/iLabs/type" element="q4:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="GetUserStatusSoapIn">
+        <wsdl:part name="parameters" element="tns:GetUserStatus" />
+    </wsdl:message>
+    <wsdl:message name="GetUserStatusSoapOut">
+        <wsdl:part name="parameters" element="tns:GetUserStatusResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetUserStatusOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q5="http://ilab.mit.edu/iLabs/type" element="q5:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="ModifyUserSoapIn">
+        <wsdl:part name="parameters" element="tns:ModifyUser" />
+    </wsdl:message>
+    <wsdl:message name="ModifyUserSoapOut">
+        <wsdl:part name="parameters" element="tns:ModifyUserResponse" />
+    </wsdl:message>
+    <wsdl:message name="ModifyUserOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q6="http://ilab.mit.edu/iLabs/type" element="q6:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="LaunchLabClientSoapIn">
+        <wsdl:part name="parameters" element="tns:LaunchLabClient" />
+    </wsdl:message>
+    <wsdl:message name="LaunchLabClientSoapOut">
+        <wsdl:part name="parameters" element="tns:LaunchLabClientResponse" />
+    </wsdl:message>
+    <wsdl:message name="LaunchLabClientOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q7="http://ilab.mit.edu/iLabs/type" element="q7:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RequestAuthorizationSoapIn">
+        <wsdl:part name="parameters" element="tns:RequestAuthorization" />
+    </wsdl:message>
+    <wsdl:message name="RequestAuthorizationSoapOut">
+        <wsdl:part name="parameters" element="tns:RequestAuthorizationResponse" />
+    </wsdl:message>
+    <wsdl:message name="RequestAuthorizationAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q8="http://ilab.mit.edu/iLabs/type" element="q8:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RequestAuthorizationOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q9="http://ilab.mit.edu/iLabs/type" element="q9:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="OpenExperimentSoapIn">
+        <wsdl:part name="parameters" element="tns:OpenExperiment" />
+    </wsdl:message>
+    <wsdl:message name="OpenExperimentSoapOut">
+        <wsdl:part name="parameters" element="tns:OpenExperimentResponse" />
+    </wsdl:message>
+    <wsdl:message name="OpenExperimentOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q10="http://ilab.mit.edu/iLabs/type" element="q10:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="AgentCloseExperimentSoapIn">
+        <wsdl:part name="parameters" element="tns:AgentCloseExperiment" />
+    </wsdl:message>
+    <wsdl:message name="AgentCloseExperimentSoapOut">
+        <wsdl:part name="parameters" element="tns:AgentCloseExperimentResponse" />
+    </wsdl:message>
+    <wsdl:message name="AgentCloseExperimentAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q11="http://ilab.mit.edu/iLabs/type" element="q11:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="ClientCloseExperimentSoapIn">
+        <wsdl:part name="parameters" element="tns:ClientCloseExperiment" />
+    </wsdl:message>
+    <wsdl:message name="ClientCloseExperimentSoapOut">
+        <wsdl:part name="parameters" element="tns:ClientCloseExperimentResponse" />
+    </wsdl:message>
+    <wsdl:message name="ClientCloseExperimentOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q12="http://ilab.mit.edu/iLabs/type" element="q12:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentIdsSoapIn">
+        <wsdl:part name="parameters" element="tns:RetrieveExperimentIds" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentIdsSoapOut">
+        <wsdl:part name="parameters" element="tns:RetrieveExperimentIdsResponse" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentIdsOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q13="http://ilab.mit.edu/iLabs/type" element="q13:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentSoapIn">
+        <wsdl:part name="parameters" element="tns:RetrieveExperiment" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentSoapOut">
+        <wsdl:part name="parameters" element="tns:RetrieveExperimentResponse" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q14="http://ilab.mit.edu/iLabs/type" element="q14:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentSummarySoapIn">
+        <wsdl:part name="parameters" element="tns:RetrieveExperimentSummary" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentSummarySoapOut">
+        <wsdl:part name="parameters" element="tns:RetrieveExperimentSummaryResponse" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentSummaryOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q15="http://ilab.mit.edu/iLabs/type" element="q15:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentRecordsSoapIn">
+        <wsdl:part name="parameters" element="tns:RetrieveExperimentRecords" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentRecordsSoapOut">
+        <wsdl:part name="parameters" element="tns:RetrieveExperimentRecordsResponse" />
+    </wsdl:message>
+    <wsdl:message name="RetrieveExperimentRecordsOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q16="http://ilab.mit.edu/iLabs/type" element="q16:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RequestExperimentAccessSoapIn">
+        <wsdl:part name="parameters" element="tns:RequestExperimentAccess" />
+    </wsdl:message>
+    <wsdl:message name="RequestExperimentAccessSoapOut">
+        <wsdl:part name="parameters" element="tns:RequestExperimentAccessResponse" />
+    </wsdl:message>
+    <wsdl:message name="RequestExperimentAccessOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q17="http://ilab.mit.edu/iLabs/type" element="q17:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="SetAnnotationSoapIn">
+        <wsdl:part name="parameters" element="tns:SetAnnotation" />
+    </wsdl:message>
+    <wsdl:message name="SetAnnotationSoapOut">
+        <wsdl:part name="parameters" element="tns:SetAnnotationResponse" />
+    </wsdl:message>
+    <wsdl:message name="SetAnnotationOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q18="http://ilab.mit.edu/iLabs/type" element="q18:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="GetAnnotationSoapIn">
+        <wsdl:part name="parameters" element="tns:GetAnnotation" />
+    </wsdl:message>
+    <wsdl:message name="GetAnnotationSoapOut">
+        <wsdl:part name="parameters" element="tns:GetAnnotationResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetAnnotationOperationAuthHeader">
+        <wsdl:part name="OperationAuthHeader" xmlns:q19="http://ilab.mit.edu/iLabs/type" element="q19:OperationAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RevokeReservationSoapIn">
+        <wsdl:part name="parameters" element="tns:RevokeReservation" />
+    </wsdl:message>
+    <wsdl:message name="RevokeReservationSoapOut">
+        <wsdl:part name="parameters" element="tns:RevokeReservationResponse" />
+    </wsdl:message>
+    <wsdl:message name="RevokeReservationAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q20="http://ilab.mit.edu/iLabs/type" element="q20:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="AddTicketSoapIn">
+        <wsdl:part name="parameters" element="tns:AddTicket" />
+    </wsdl:message>
+    <wsdl:message name="AddTicketSoapOut">
+        <wsdl:part name="parameters" element="tns:AddTicketResponse" />
+    </wsdl:message>
+    <wsdl:message name="AddTicketAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q21="http://ilab.mit.edu/iLabs/type" element="q21:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="CreateTicketSoapIn">
+        <wsdl:part name="parameters" element="tns:CreateTicket" />
+    </wsdl:message>
+    <wsdl:message name="CreateTicketSoapOut">
+        <wsdl:part name="parameters" element="tns:CreateTicketResponse" />
+    </wsdl:message>
+    <wsdl:message name="CreateTicketAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q22="http://ilab.mit.edu/iLabs/type" element="q22:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RedeemTicketSoapIn">
+        <wsdl:part name="parameters" element="tns:RedeemTicket" />
+    </wsdl:message>
+    <wsdl:message name="RedeemTicketSoapOut">
+        <wsdl:part name="parameters" element="tns:RedeemTicketResponse" />
+    </wsdl:message>
+    <wsdl:message name="RedeemTicketAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q23="http://ilab.mit.edu/iLabs/type" element="q23:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RequestTicketCancellationSoapIn">
+        <wsdl:part name="parameters" element="tns:RequestTicketCancellation" />
+    </wsdl:message>
+    <wsdl:message name="RequestTicketCancellationSoapOut">
+        <wsdl:part name="parameters" element="tns:RequestTicketCancellationResponse" />
+    </wsdl:message>
+    <wsdl:message name="RequestTicketCancellationAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q24="http://ilab.mit.edu/iLabs/type" element="q24:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="ModifyDomainCredentialsSoapIn">
+        <wsdl:part name="parameters" element="tns:ModifyDomainCredentials" />
+    </wsdl:message>
+    <wsdl:message name="ModifyDomainCredentialsSoapOut">
+        <wsdl:part name="parameters" element="tns:ModifyDomainCredentialsResponse" />
+    </wsdl:message>
+    <wsdl:message name="ModifyDomainCredentialsAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q25="http://ilab.mit.edu/iLabs/type" element="q25:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="ModifyProcessAgentSoapIn">
+        <wsdl:part name="parameters" element="tns:ModifyProcessAgent" />
+    </wsdl:message>
+    <wsdl:message name="ModifyProcessAgentSoapOut">
+        <wsdl:part name="parameters" element="tns:ModifyProcessAgentResponse" />
+    </wsdl:message>
+    <wsdl:message name="ModifyProcessAgentAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q26="http://ilab.mit.edu/iLabs/type" element="q26:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RetireProcessAgentSoapIn">
+        <wsdl:part name="parameters" element="tns:RetireProcessAgent" />
+    </wsdl:message>
+    <wsdl:message name="RetireProcessAgentSoapOut">
+        <wsdl:part name="parameters" element="tns:RetireProcessAgentResponse" />
+    </wsdl:message>
+    <wsdl:message name="RetireProcessAgentAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q27="http://ilab.mit.edu/iLabs/type" element="q27:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="CancelTicketSoapIn">
+        <wsdl:part name="parameters" element="tns:CancelTicket" />
+    </wsdl:message>
+    <wsdl:message name="CancelTicketSoapOut">
+        <wsdl:part name="parameters" element="tns:CancelTicketResponse" />
+    </wsdl:message>
+    <wsdl:message name="CancelTicketAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q28="http://ilab.mit.edu/iLabs/type" element="q28:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="GetServiceTimeSoapIn">
+        <wsdl:part name="parameters" element="tns:GetServiceTime" />
+    </wsdl:message>
+    <wsdl:message name="GetServiceTimeSoapOut">
+        <wsdl:part name="parameters" element="tns:GetServiceTimeResponse" />
+    </wsdl:message>
+    <wsdl:message name="GetStatusSoapIn">
+        <wsdl:part name="parameters" element="tns:GetStatus" />
+    </wsdl:message>
+    <wsdl:message name="GetStatusSoapOut">
+        <wsdl:part name="parameters" element="tns:GetStatusResponse" />
+    </wsdl:message>
+    <wsdl:message name="StatusNotificationSoapIn">
+        <wsdl:part name="parameters" element="tns:StatusNotification" />
+    </wsdl:message>
+    <wsdl:message name="StatusNotificationSoapOut">
+        <wsdl:part name="parameters" element="tns:StatusNotificationResponse" />
+    </wsdl:message>
+    <wsdl:message name="StatusNotificationAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q29="http://ilab.mit.edu/iLabs/type" element="q29:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="InstallDomainCredentialsSoapIn">
+        <wsdl:part name="parameters" element="tns:InstallDomainCredentials" />
+    </wsdl:message>
+    <wsdl:message name="InstallDomainCredentialsSoapOut">
+        <wsdl:part name="parameters" element="tns:InstallDomainCredentialsResponse" />
+    </wsdl:message>
+    <wsdl:message name="InstallDomainCredentialsInitAuthHeader">
+        <wsdl:part name="InitAuthHeader" xmlns:q30="http://ilab.mit.edu/iLabs/type" element="q30:InitAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RemoveDomainCredentialsSoapIn">
+        <wsdl:part name="parameters" element="tns:RemoveDomainCredentials" />
+    </wsdl:message>
+    <wsdl:message name="RemoveDomainCredentialsSoapOut">
+        <wsdl:part name="parameters" element="tns:RemoveDomainCredentialsResponse" />
+    </wsdl:message>
+    <wsdl:message name="RemoveDomainCredentialsAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q31="http://ilab.mit.edu/iLabs/type" element="q31:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:message name="RegisterSoapIn">
+        <wsdl:part name="parameters" element="tns:Register" />
+    </wsdl:message>
+    <wsdl:message name="RegisterSoapOut">
+        <wsdl:part name="parameters" element="tns:RegisterResponse" />
+    </wsdl:message>
+    <wsdl:message name="RegisterAgentAuthHeader">
+        <wsdl:part name="AgentAuthHeader" xmlns:q32="http://ilab.mit.edu/iLabs/type" element="q32:AgentAuthHeader" />
+    </wsdl:message>
+    <wsdl:portType name="IServiceBroker">
+        <wsdl:operation name="SaveClientData">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Sets a client item value in the user's opaque data store</wsdl:documentation>
+            <wsdl:input message="tns:SaveClientDataSoapIn" />
+            <wsdl:output message="tns:SaveClientDataSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="LoadClientData">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns the value of an client item in the user's opaque data store</wsdl:documentation>
+            <wsdl:input message="tns:LoadClientDataSoapIn" />
+            <wsdl:output message="tns:LoadClientDataSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="DeleteClientData">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Removes an client item from the user's opaque data store</wsdl:documentation>
+            <wsdl:input message="tns:DeleteClientDataSoapIn" />
+            <wsdl:output message="tns:DeleteClientDataSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="ListClientDataItems">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Enumerates the names of all client items in the user's opaque data store</wsdl:documentation>
+            <wsdl:input message="tns:ListClientDataItemsSoapIn" />
+            <wsdl:output message="tns:ListClientDataItemsSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetUserStatus">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">An authority requests the 'completeness' status of a user. This will most likely only be supported for requests from a SCORM.</wsdl:documentation>
+            <wsdl:input message="tns:GetUserStatusSoapIn" />
+            <wsdl:output message="tns:GetUserStatusSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="ModifyUser">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">An authority updates a user. This will most likely only be supported for requests from a SCORM.</wsdl:documentation>
+            <wsdl:input message="tns:ModifyUserSoapIn" />
+            <wsdl:output message="tns:ModifyUserSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="LaunchLabClient">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">An authority requests the launching of a specific client for a user. This will most likely only be supported for requests from a SCORM. The operationHeader coupon will be defined within the SCO and refer to a TicketCollection that includes an Authenticate_Client ticket.</wsdl:documentation>
+            <wsdl:input message="tns:LaunchLabClientSoapIn" />
+            <wsdl:output message="tns:LaunchLabClientSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RequestAuthorization">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Request authorization for the specified types of access, for the specified user, group, authority and  client.</wsdl:documentation>
+            <wsdl:input message="tns:RequestAuthorizationSoapIn" />
+            <wsdl:output message="tns:RequestAuthorizationSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="OpenExperiment">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Opens an Experiment on the ServiceBroker, if an ESS is associated with this experiment the ESS experiment record is configured so that ExperimentRecords or BLOBs can be written to the ESS.</wsdl:documentation>
+            <wsdl:input message="tns:OpenExperimentSoapIn" />
+            <wsdl:output message="tns:OpenExperimentSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="AgentCloseExperiment">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Closes an Experiment on the ServiceBroker, if the SB is not the issuer of the coupon the call is forwarded to the issuer. If an ESS is associated with this experiment the ESS experiment is closed so that no further ExperimentRecords or BLOBs can be written to the ESS.</wsdl:documentation>
+            <wsdl:input message="tns:AgentCloseExperimentSoapIn" />
+            <wsdl:output message="tns:AgentCloseExperimentSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="ClientCloseExperiment">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Closes an Experiment on the ServiceBroker, if an ESS is associated with this experiment the ESS experiment is closed so that no further ExperimentRecords or BLOBs can be written to the ESS.</wsdl:documentation>
+            <wsdl:input message="tns:ClientCloseExperimentSoapIn" />
+            <wsdl:output message="tns:ClientCloseExperimentSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperimentIds">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Uses the ExecuteExperimentTicket to derive client,user and group IDs to authorize access. Criteria may be specified valid field names include; userName, groupName, labServerName,clientName, scheduledStart,creationTime, status  annotation, and experimentID. If an ESS is specified, record_Type, contents and record attributes may also be checked.</wsdl:documentation>
+            <wsdl:input message="tns:RetrieveExperimentIdsSoapIn" />
+            <wsdl:output message="tns:RetrieveExperimentIdsSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperiment">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Uses the users qualifiers to authorize access, forwards call to ESS</wsdl:documentation>
+            <wsdl:input message="tns:RetrieveExperimentSoapIn" />
+            <wsdl:output message="tns:RetrieveExperimentSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperimentSummary">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Uses the users qualifiers to select Experiment summaries, no write permissions are created. Valid field names include; userName, groupName, labServerName,clientName, scheduledStart,creationTime, status  and experimentID.</wsdl:documentation>
+            <wsdl:input message="tns:RetrieveExperimentSummarySoapIn" />
+            <wsdl:output message="tns:RetrieveExperimentSummarySoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperimentRecords">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Uses the users qualifiers to select Experiment summaries, no write permissions are created. Valid field names include; userName, groupName, labServerName,clientName, scheduledStart,creationTime, status  and experimentID.</wsdl:documentation>
+            <wsdl:input message="tns:RetrieveExperimentRecordsSoapIn" />
+            <wsdl:output message="tns:RetrieveExperimentRecordsSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RequestExperimentAccess">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Uses the cridentials granted the experiment specified by the opHeader to check access to the requested experiment, if allowed a new ticket collection is started to access the requested experiment and optional ESS records. Returns null if access denied.</wsdl:documentation>
+            <wsdl:input message="tns:RequestExperimentAccessSoapIn" />
+            <wsdl:output message="tns:RequestExperimentAccessSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="SetAnnotation">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Saves or modifies an optional user defined annotation to the experiment record.</wsdl:documentation>
+            <wsdl:input message="tns:SetAnnotationSoapIn" />
+            <wsdl:output message="tns:SetAnnotationSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetAnnotation">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Retrieves a previously saved experiment annotation.</wsdl:documentation>
+            <wsdl:input message="tns:GetAnnotationSoapIn" />
+            <wsdl:output message="tns:GetAnnotationSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RevokeReservation">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Revokes reservations that intersect the specifications, may be called from the USS or a Remote ServiceBroker</wsdl:documentation>
+            <wsdl:input message="tns:RevokeReservationSoapIn" />
+            <wsdl:output message="tns:RevokeReservationSoapOut" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="ITicketIssuer">
+        <wsdl:operation name="AddTicket">
+            <wsdl:input message="tns:AddTicketSoapIn" />
+            <wsdl:output message="tns:AddTicketSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="CreateTicket">
+            <wsdl:input message="tns:CreateTicketSoapIn" />
+            <wsdl:output message="tns:CreateTicketSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RedeemTicket">
+            <wsdl:input message="tns:RedeemTicketSoapIn" />
+            <wsdl:output message="tns:RedeemTicketSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RequestTicketCancellation">
+            <wsdl:input message="tns:RequestTicketCancellationSoapIn" />
+            <wsdl:output message="tns:RequestTicketCancellationSoapOut" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="IProcessAgent">
+        <wsdl:operation name="ModifyDomainCredentials">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Modify the specified services Domain credentials on this static process agent. Agent_guid is key to the service to be modified and may not be modiied. The agentAuthorizationHeader must use the old values.</wsdl:documentation>
+            <wsdl:input message="tns:ModifyDomainCredentialsSoapIn" />
+            <wsdl:output message="tns:ModifyDomainCredentialsSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="ModifyProcessAgent">
+            <wsdl:input message="tns:ModifyProcessAgentSoapIn" />
+            <wsdl:output message="tns:ModifyProcessAgentSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RetireProcessAgent">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Informs a processAgent that it should retire/un-retire all references to a specific processAent. This may be used to propigate retire calls.</wsdl:documentation>
+            <wsdl:input message="tns:RetireProcessAgentSoapIn" />
+            <wsdl:output message="tns:RetireProcessAgentSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="CancelTicket">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">CancelTicket -- Try to cancel a cached ticket, should return true if cancelled or not found. The serviceBroker version - If not the redeemer the call needs to be repackaged and forwarded to the redeemer.</wsdl:documentation>
+            <wsdl:input message="tns:CancelTicketSoapIn" />
+            <wsdl:output message="tns:CancelTicketSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetServiceTime">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Get the service's local time, this is not in UTC.</wsdl:documentation>
+            <wsdl:input message="tns:GetServiceTimeSoapIn" />
+            <wsdl:output message="tns:GetServiceTimeSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetStatus">
+            <wsdl:input message="tns:GetStatusSoapIn" />
+            <wsdl:output message="tns:GetStatusSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="StatusNotification">
+            <wsdl:input message="tns:StatusNotificationSoapIn" />
+            <wsdl:output message="tns:StatusNotificationSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="InstallDomainCredentials">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Install the calling services credentials on this processAgent.</wsdl:documentation>
+            <wsdl:input message="tns:InstallDomainCredentialsSoapIn" />
+            <wsdl:output message="tns:InstallDomainCredentialsSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="RemoveDomainCredentials">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Modify the specified services Domain credentials on this static process agent. Agent_guid is key to the service to be modified and may not be modiied. The agentAuthorizationHeader must use the old values.</wsdl:documentation>
+            <wsdl:input message="tns:RemoveDomainCredentialsSoapIn" />
+            <wsdl:output message="tns:RemoveDomainCredentialsSoapOut" />
+        </wsdl:operation>
+        <wsdl:operation name="Register">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Register, an optional method, default virtual method is a no-op.</wsdl:documentation>
+            <wsdl:input message="tns:RegisterSoapIn" />
+            <wsdl:output message="tns:RegisterSoapOut" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="IServiceBroker" type="tns:IServiceBroker">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="SaveClientData">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Type/SaveClientItem" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:SaveClientDataOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="LoadClientData">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Type/LoadClientItem" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:LoadClientDataOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="DeleteClientData">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Type/DeleteClientItem" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:DeleteClientDataOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ListClientDataItems">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Type/ListAllClientItems" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:ListClientDataItemsOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetUserStatus">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Type/GetUserStatus" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:GetUserStatusOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ModifyUser">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Type/ModifyUser" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:ModifyUserOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="LaunchLabClient">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Type/LaunchLabClient" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:LaunchLabClientOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RequestAuthorization">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RequestAuthorization" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RequestAuthorizationAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+                <soap:header message="tns:RequestAuthorizationOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="OpenExperiment">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/OpenExperiment" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:OpenExperimentOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="AgentCloseExperiment">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/AgentCloseExperiment" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:AgentCloseExperimentAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ClientCloseExperiment">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/ClientCloseExperiment" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:ClientCloseExperimentOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperimentIds">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetrieveExperimentIds" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RetrieveExperimentIdsOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperiment">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetrieveExperiment" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RetrieveExperimentOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperimentSummary">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetrieveExperimentSummary" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RetrieveExperimentSummaryOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperimentRecords">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetrieveExperimentRecords" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RetrieveExperimentRecordsOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RequestExperimentAccess">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RequestExperimentAccess" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RequestExperimentAccessOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="SetAnnotation">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/SetAnnotation" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:SetAnnotationOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetAnnotation">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/GetAnnotation" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:GetAnnotationOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RevokeReservation">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RevokeReservation" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RevokeReservationAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ITicketIssuer" type="tns:ITicketIssuer">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="AddTicket">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/AddTicket" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:AddTicketAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CreateTicket">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/CreateTicket" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:CreateTicketAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RedeemTicket">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RedeemTicket" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RedeemTicketAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RequestTicketCancellation">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RequestTicketCancellation" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RequestTicketCancellationAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="IProcessAgent" type="tns:IProcessAgent">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="ModifyDomainCredentials">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/ModifyDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:ModifyDomainCredentialsAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ModifyProcessAgent">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/ModifyProcessAgent" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:ModifyProcessAgentAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetireProcessAgent">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetireProcessAgent" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RetireProcessAgentAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CancelTicket">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/CancelTicket" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:CancelTicketAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetServiceTime">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/GetServiceTime" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetStatus">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/GetStatus" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="StatusNotification">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/StatusNotification" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:StatusNotificationAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="InstallDomainCredentials">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/InstallDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:InstallDomainCredentialsInitAuthHeader" part="InitAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RemoveDomainCredentials">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/RemoveDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RemoveDomainCredentialsAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Register">
+            <soap:operation soapAction="http://ilab.mit.edu/iLabs/Services/Register" style="document" />
+            <wsdl:input>
+                <soap:body use="literal" />
+                <soap:header message="tns:RegisterAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="IServiceBroker1" type="tns:IServiceBroker">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="SaveClientData">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Type/SaveClientItem" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:SaveClientDataOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="LoadClientData">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Type/LoadClientItem" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:LoadClientDataOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="DeleteClientData">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Type/DeleteClientItem" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:DeleteClientDataOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ListClientDataItems">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Type/ListAllClientItems" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:ListClientDataItemsOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetUserStatus">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Type/GetUserStatus" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:GetUserStatusOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ModifyUser">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Type/ModifyUser" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:ModifyUserOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="LaunchLabClient">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Type/LaunchLabClient" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:LaunchLabClientOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RequestAuthorization">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RequestAuthorization" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RequestAuthorizationAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+                <soap12:header message="tns:RequestAuthorizationOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="OpenExperiment">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/OpenExperiment" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:OpenExperimentOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="AgentCloseExperiment">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/AgentCloseExperiment" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:AgentCloseExperimentAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ClientCloseExperiment">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/ClientCloseExperiment" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:ClientCloseExperimentOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperimentIds">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetrieveExperimentIds" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RetrieveExperimentIdsOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperiment">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetrieveExperiment" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RetrieveExperimentOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperimentSummary">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetrieveExperimentSummary" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RetrieveExperimentSummaryOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetrieveExperimentRecords">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetrieveExperimentRecords" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RetrieveExperimentRecordsOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RequestExperimentAccess">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RequestExperimentAccess" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RequestExperimentAccessOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="SetAnnotation">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/SetAnnotation" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:SetAnnotationOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetAnnotation">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/GetAnnotation" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:GetAnnotationOperationAuthHeader" part="OperationAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RevokeReservation">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RevokeReservation" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RevokeReservationAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ITicketIssuer1" type="tns:ITicketIssuer">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="AddTicket">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/AddTicket" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:AddTicketAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CreateTicket">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/CreateTicket" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:CreateTicketAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RedeemTicket">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RedeemTicket" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RedeemTicketAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RequestTicketCancellation">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RequestTicketCancellation" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RequestTicketCancellationAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="IProcessAgent1" type="tns:IProcessAgent">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="ModifyDomainCredentials">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/ModifyDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:ModifyDomainCredentialsAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ModifyProcessAgent">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/ModifyProcessAgent" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:ModifyProcessAgentAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RetireProcessAgent">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RetireProcessAgent" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RetireProcessAgentAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="CancelTicket">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/CancelTicket" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:CancelTicketAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetServiceTime">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/GetServiceTime" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetStatus">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/GetStatus" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="StatusNotification">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/StatusNotification" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:StatusNotificationAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="InstallDomainCredentials">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/InstallDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:InstallDomainCredentialsInitAuthHeader" part="InitAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="RemoveDomainCredentials">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/RemoveDomainCredentials" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RemoveDomainCredentialsAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Register">
+            <soap12:operation soapAction="http://ilab.mit.edu/iLabs/Services/Register" style="document" />
+            <wsdl:input>
+                <soap12:body use="literal" />
+                <soap12:header message="tns:RegisterAgentAuthHeader" part="AgentAuthHeader" use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="iLabServiceBroker">
+        <wsdl:port name="IServiceBroker" binding="tns:IServiceBroker">
+            <soap:address location="{{ service_base_url }}{{ path('isa_sbClient_apiRoot') }}" />
+        </wsdl:port>
+        <wsdl:port name="IBatchSB" binding="i0:IBatchSB">
+            <soap:address location="{{ service_base_url }}{{ path('isa_sbClient_apiRoot') }}" />
+        </wsdl:port>
+        <wsdl:port name="ITicketIssuer" binding="tns:ITicketIssuer">
+            <soap:address location="{{ service_base_url }}{{ path('isa_sbClient_apiRoot') }}" />
+        </wsdl:port>
+        <wsdl:port name="IProcessAgent" binding="tns:IProcessAgent">
+            <soap:address location="{{ service_base_url }}{{ path('isa_sbClient_apiRoot') }}" />
+        </wsdl:port>
+        <wsdl:port name="IServiceBroker1" binding="tns:IServiceBroker1">
+            <soap12:address location="{{ service_base_url }}{{ path('isa_sbClient_apiRoot') }}" />
+        </wsdl:port>
+        <wsdl:port name="IBatchSB1" binding="i0:IBatchSB1">
+            <soap12:address location="{{ service_base_url }}{{ path('isa_sbClient_apiRoot') }}" />
+        </wsdl:port>
+        <wsdl:port name="ITicketIssuer1" binding="tns:ITicketIssuer1">
+            <soap12:address location="{{ service_base_url }}{{ path('isa_sbClient_apiRoot') }}" />
+        </wsdl:port>
+        <wsdl:port name="IProcessAgent1" binding="tns:IProcessAgent1">
+            <soap12:address location="{{ service_base_url }}{{ path('isa_sbClient_apiRoot') }}" />
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
