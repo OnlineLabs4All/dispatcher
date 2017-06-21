@@ -144,10 +144,10 @@ class iLabApiController extends Controller
         $service_base_url = $request->getScheme()."://".$request->getHttpHost();
         //returns the wsdl
         $response = $this->render('wsdl/sbWsdl.wsdl.twig', array(
-            'service_url'=> $service_base_url."/apis/isa/soap/sbClient",
+            'service_url'=> $service_base_url."/apis/isa/soap/client",
             'service_base_url'=> $service_base_url));
         //return $response;
-        $response->headers->set('Content-Type', 'application/xml');
+        $response->headers->set('Content-Type', 'text/xml');
         return $response;
     }
 
@@ -161,6 +161,22 @@ class iLabApiController extends Controller
         $response = $this->render('wsdl/schema/'.$schema.'.wsdl');
         //return $response;
         $response->headers->set('Content-Type', 'application/xml');
+        return $response;
+    }
+
+    /**
+     * @Route("/soap/client/wsdl1", name="sbClient_wsdl_schema")
+     * @Method({"GET"})
+     *
+     */
+    public function getBrokerWsdl1Action(Request $request)
+    {
+        $service_base_url = $request->getScheme()."://".$request->getHttpHost();
+
+        $response = $this->render('wsdl/sbWsdl1.wsdl.twig', array(
+            'service_base_url'=> $service_base_url));
+        //return $response;
+        $response->headers->set('Content-Type', 'text/xml');
         return $response;
     }
 
