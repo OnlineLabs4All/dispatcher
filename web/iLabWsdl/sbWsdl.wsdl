@@ -1144,28 +1144,28 @@
     </wsdl:binding>
     <wsdl:service name="iLabServiceBroker">
         <wsdl:port name="IServiceBroker" binding="tns:IServiceBroker">
-            <soap:address location="http://e-dispatcher.net/apis/isa/soap/client" />
+            <soap:address location="{{soap_endpoint}}" />
         </wsdl:port>
         <wsdl:port name="IBatchSB" binding="i0:IBatchSB">
-            <soap:address location="http://e-dispatcher.net/apis/isa/soap/client" />
+            <soap:address location="{{soap_endpoint}}" />
         </wsdl:port>
         <wsdl:port name="ITicketIssuer" binding="tns:ITicketIssuer">
-            <soap:address location="http://e-dispatcher.net/apis/isa/soap/client" />
+            <soap:address location="{{soap_endpoint}}" />
         </wsdl:port>
         <wsdl:port name="IProcessAgent" binding="tns:IProcessAgent">
-            <soap:address location="http://e-dispatcher.net/apis/isa/soap/client" />
+            <soap:address location="{{soap_endpoint}}" />
         </wsdl:port>
         <wsdl:port name="IServiceBroker1" binding="tns:IServiceBroker1">
-            <soap12:address location="http://e-dispatcher.net/apis/isa/soap/client" />
+            <soap12:address location="{{soap_endpoint}}" />
         </wsdl:port>
         <wsdl:port name="IBatchSB1" binding="i0:IBatchSB1">
-            <soap12:address location="http://e-dispatcher.net/apis/isa/soap/client" />
+            <soap12:address location="{{soap_endpoint}}" />
         </wsdl:port>
         <wsdl:port name="ITicketIssuer1" binding="tns:ITicketIssuer1">
-            <soap12:address location="http://e-dispatcher.net/apis/isa/soap/client" />
+            <soap12:address location="{{soap_endpoint}}" />
         </wsdl:port>
         <wsdl:port name="IProcessAgent1" binding="tns:IProcessAgent1">
-            <soap12:address location="http://e-dispatcher.net/apis/isa/soap/client" />
+            <soap12:address location="{{soap_endpoint}}" />
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
