@@ -152,35 +152,6 @@ class iLabApiController extends Controller
         return $response;
     }
 
-    /**
-     * @Route("/soap/client/wsdl/{schema}", name="sbClient_wsdl_schema")
-     * @Method({"GET"})
-     *
-     */
-    public function getBrokerWsdlSchemaAction(Request $request, $schema)
-    {
-        $response = $this->render('wsdl/schema/'.$schema.'.wsdl');
-        //return $response;
-        $response->headers->set('Content-Type', 'application/xml');
-        return $response;
-    }
-
-    /**
-     * @Route("/soap/client/wsdl1", name="sbClient_wsdl_1")
-     * @Method({"GET"})
-     *
-     */
-    public function getBrokerWsdl1Action(Request $request)
-    {
-        $service_base_url = $request->getScheme()."://".$request->getHttpHost();
-
-        $response = $this->render('wsdl/sbWsdl1.wsdl.twig', array(
-            'service_base_url'=> $service_base_url));
-        //return $response;
-        $response->headers->set('Content-Type', 'text/xml');
-        return $response;
-    }
-
 
     // ========== ISA Json API - University of Queensland =====================
 
