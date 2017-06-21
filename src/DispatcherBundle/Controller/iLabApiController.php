@@ -36,8 +36,9 @@ class iLabApiController extends Controller
     public function sbSoapClientApiAction(Request $request)
     {
         ini_set("soap.wsdl_cache_enabled", "0");
-        $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/sbWsdl.wsdl";
+        //$wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/sbWsdl.wsdl";
 
+        $wsdl_url = "http://e-dispatcher.net/iLabWsdl/sbWsdl.wsdl";
         $soapServer = new \SoapServer($wsdl_url, array('soap_version' => SOAP_1_2));
         $iLabSbClient = $this->get('iLabServiceBroker');
         //$iLabSbClient->setLabServerId($labServerId);
