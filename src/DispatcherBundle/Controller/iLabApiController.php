@@ -152,7 +152,7 @@ class iLabApiController extends Controller
     }
 
     /**
-     * @Route("/soap/client/{schema}", name="sbClient_wsdl_schema")
+     * @Route("/soap/client/wsdl/{schema}", name="sbClient_wsdl_schema")
      * @Method({"GET"})
      *
      */
@@ -165,7 +165,7 @@ class iLabApiController extends Controller
     }
 
     /**
-     * @Route("/soap/client/wsdl1", name="sbClient_wsdl_schema")
+     * @Route("/soap/client/wsdl1", name="sbClient_wsdl_1")
      * @Method({"GET"})
      *
      */

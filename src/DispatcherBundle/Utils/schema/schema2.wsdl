@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://ilab.mit.edu/iLabs/type" elementFormDefault="qualified" targetNamespace="http://ilab.mit.edu/iLabs/type" id="schema2" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="OperationAuthHeader" type="tns:OperationAuthHeader" />
+    <xs:complexType name="OperationAuthHeader">
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:AuthenticationHeader" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="AuthenticationHeader">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="coupon" type="tns:Coupon" />
+        </xs:sequence>
+        <xs:anyAttribute />
+    </xs:complexType>
+    <xs:complexType name="Coupon">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="couponId" type="xs:long" />
+            <xs:element minOccurs="0" maxOccurs="1" name="issuerGuid" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="passkey" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="GetUserStatusResult" nillable="true" type="tns:IntTag" />
+    <xs:complexType name="IntTag">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="id" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="tag" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="ModifyUserResult" nillable="true" type="tns:IntTag" />
+    <xs:element name="LaunchLabClientResult" nillable="true" type="tns:IntTag" />
+    <xs:element name="RequestAuthorizationResult" nillable="true" type="tns:Coupon" />
+    <xs:element name="AgentAuthHeader" type="tns:AgentAuthHeader" />
+    <xs:complexType name="AgentAuthHeader">
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:AuthenticationHeader">
+                <xs:sequence>
+                    <xs:element minOccurs="0" maxOccurs="1" name="agentGuid" type="xs:string" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="StorageStatus">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="experimentId" type="xs:long" />
+            <xs:element minOccurs="1" maxOccurs="1" name="status" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="recordCount" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="creationTime" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="closeTime" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="lastModified" type="xs:dateTime" />
+            <xs:element minOccurs="0" maxOccurs="1" name="issuerGuid" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="coupon" nillable="true" type="tns:Coupon" />
+    <xs:complexType name="Criterion">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="attribute" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="predicate" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="value" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Experiment">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="experimentId" type="xs:long" />
+            <xs:element minOccurs="0" maxOccurs="1" name="issuerGuid" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="records" type="tns:ArrayOfExperimentRecord" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ArrayOfExperimentRecord">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" name="ExperimentRecord" nillable="true" type="tns:ExperimentRecord" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ExperimentRecord">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="type" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="submitter" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="sequenceNum" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="timestamp" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="xmlSearchable" type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="1" name="contents" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ExperimentSummary">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="experimentId" type="xs:long" />
+            <xs:element minOccurs="1" maxOccurs="1" name="duration" type="xs:long" />
+            <xs:element minOccurs="1" maxOccurs="1" name="scheduledStart" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="creationTime" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="closeTime" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="status" type="xs:int" />
+            <xs:element minOccurs="1" maxOccurs="1" name="recordCount" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="essGuid" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="serviceBrokerGuid" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="userName" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="groupName" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="labServerGuid" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="labServerName" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="clientName" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="clientVersion" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="annotation" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="RequestExperimentAccessResult" nillable="true" type="tns:Coupon" />
+    <xs:element name="AddTicketResult" nillable="true" type="tns:Ticket" />
+    <xs:complexType name="Ticket">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="ticketId" type="xs:long" />
+            <xs:element minOccurs="0" maxOccurs="1" name="type" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="couponId" type="xs:long" />
+            <xs:element minOccurs="0" maxOccurs="1" name="issuerGuid" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="sponsorGuid" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="redeemerGuid" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="creationTime" type="xs:dateTime" />
+            <xs:element minOccurs="1" maxOccurs="1" name="duration" type="xs:long" />
+            <xs:element minOccurs="1" maxOccurs="1" name="isCancelled" type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="1" name="payload" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="CreateTicketResult" nillable="true" type="tns:Coupon" />
+    <xs:element name="RedeemTicketResult" nillable="true" type="tns:Ticket" />
+    <xs:element name="agent" nillable="true" type="tns:ProcessAgent" />
+    <xs:complexType name="ProcessAgent">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="agentGuid" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="agentName" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="type" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="domainGuid" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="codeBaseUrl" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="webServiceUrl" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="inCoupon" nillable="true" type="tns:Coupon" />
+    <xs:element name="outCoupon" nillable="true" type="tns:Coupon" />
+    <xs:element name="GetStatusResult" nillable="true" type="tns:StatusReport" />
+    <xs:complexType name="StatusReport">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="online" type="xs:boolean" />
+            <xs:element minOccurs="0" maxOccurs="1" name="serviceGuid" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="payload" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="report" nillable="true" type="tns:StatusNotificationReport" />
+    <xs:complexType name="StatusNotificationReport">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="alertCode" type="xs:int" />
+            <xs:element minOccurs="0" maxOccurs="1" name="serviceGuid" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="time" type="xs:dateTime" />
+            <xs:element minOccurs="0" maxOccurs="1" name="payload" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="service" nillable="true" type="tns:ProcessAgent" />
+    <xs:element name="inIdentCoupon" nillable="true" type="tns:Coupon" />
+    <xs:element name="outIdentCoupon" nillable="true" type="tns:Coupon" />
+    <xs:element name="InstallDomainCredentialsResult" nillable="true" type="tns:ProcessAgent" />
+    <xs:element name="InitAuthHeader" type="tns:InitAuthHeader" />
+    <xs:complexType name="InitAuthHeader">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="initPasskey" type="xs:string" />
+        </xs:sequence>
+        <xs:anyAttribute />
+    </xs:complexType>
+    <xs:complexType name="ServiceDescription">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="serviceProviderInfo" type="xs:string" />
+            <xs:element minOccurs="0" maxOccurs="1" name="coupon" type="tns:Coupon" />
+            <xs:element minOccurs="0" maxOccurs="1" name="consumerInfo" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
