@@ -2,111 +2,115 @@
 
 {% block mainPanel %}
 
-    <br/>
-    <h3 class="page-header">{{ viewName }}</h3>
+    <form id="actOnJobRecords" method="post" action="">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Manage your RLMS(s) credentials
+        </div>
+        <div class="panel-body">
 
-    <p class="text-success"> {{ numberOfJobs }} records found</p>
+            <p class="text-success"> {{ numberOfJobs }} records found</p>
 
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=-1&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-default">All</button></a>
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=1&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-primary">Queued</button></a>
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=3&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-success">Completed</button></a>
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=2&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-warning">In Progress</button></a>
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=5&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Cancelled</button></a>
-    <a href="{{ baseUrl }}{{ path('expRecords') }}?status=4&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Completed with errors</button></a>
+            <a href="{{ baseUrl }}{{ path('expRecords') }}?status=-1&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-default">All</button></a>
+            <a href="{{ baseUrl }}{{ path('expRecords') }}?status=1&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-primary">Queued</button></a>
+            <a href="{{ baseUrl }}{{ path('expRecords') }}?status=3&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-success">Completed</button></a>
+            <a href="{{ baseUrl }}{{ path('expRecords') }}?status=2&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-warning">In Progress</button></a>
+            <a href="{{ baseUrl }}{{ path('expRecords') }}?status=5&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Cancelled</button></a>
+            <a href="{{ baseUrl }}{{ path('expRecords') }}?status=4&labServerId={{ labServerId }}"><button type="button" class="btn btn-outline btn-danger">Completed with errors</button></a>
 
-   <form id="actOnJobRecords" method="post" action="">
-
-   <br>
-   <table>
-      <tr>
-       <td> <strong>With selected:</strong></td>
-       <td><label class="btn btn-default" onclick="confirmDelete()">Delete</label></td>
-       <td>
-       <div class="dropdown">
-       <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-           Change status..
-           <span class="caret"></span>
-       </button>
-      <ul class="dropdown-menu" aria-labelledby="changeStatusMenu">
-       <li><a href="#" onclick="confirmChangeStatusToQueued()">Queued</a></li>
-       <li><a href="#" onclick="confirmChangeStatusToCompleted()">Completed</a></li>
-       <li><a href="#" onclick="confirmChangeStatusToInProgress()">In Progress</a></li>
-       <li><a href="#" onclick="confirmChangeStatusToInCancelled()">Cancelled</a></li>
-       <li><a href="#" onclick="confirmChangeStatusToCompletedWithErrors()">Completed with errors</a></li>
-      </ul>
-      </div>
-       </td>
-     </tr>
-   </table>
+                <br><br>
+                <table>
+                    <tr>
+                        <td> <strong>With selected:</strong></td>
+                        <td><label class="btn btn-default" onclick="confirmDelete()">Delete</label></td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    Change status..
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="changeStatusMenu">
+                                    <li><a href="#" onclick="confirmChangeStatusToQueued()">Queued</a></li>
+                                    <li><a href="#" onclick="confirmChangeStatusToCompleted()">Completed</a></li>
+                                    <li><a href="#" onclick="confirmChangeStatusToInProgress()">In Progress</a></li>
+                                    <li><a href="#" onclick="confirmChangeStatusToInCancelled()">Cancelled</a></li>
+                                    <li><a href="#" onclick="confirmChangeStatusToCompletedWithErrors()">Completed with errors</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
 
 
-    <div class="table-responsive">
-        <table class="table table-hover" id="experimentRecord">
-        <thead>
-        <tr>
-            <th></th>
-            <th>ID</th>
-            <th>Status</th>
-            <th>Submit Time</th>
-            <th>RMLS Assigned ID</th>
-            <th>Engine</th>
-            <th>Lab Server</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        {%  for record in records %}
+                <div class="table-responsive">
+                    <table class="table table-hover" id="experimentRecord">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>ID</th>
+                            <th>Status</th>
+                            <th>Submit Time</th>
+                            <th>RMLS Assigned ID</th>
+                            <th>Engine</th>
+                            <th>Lab Server</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%  for record in records %}
 
-        <tr class="odd gradeX">
-            <td><input type="checkbox" name="{{ record.expID }}" value="{{ record.expID }}" /></td>
-            <td>{{ record.expID }}</td>
-            <td>
-                {% if record.jobStatus == 1 %}
-                    <span class="label label-primary">Queued</span>
-                {% elseif record.jobStatus == 2 %}
-                    <span class="label label-warning">In Progress</span>
-                {% elseif record.jobStatus == 3 %}
-                    <span class="label label-success">Completed</span>
-                {% elseif record.jobStatus == 4 %}
-                    <span class="label label-danger">Completed with errors</span>
-                {% elseif record.jobStatus == 5 %}
-                    <span class="label label-danger">Cancelled</span>
-                {% else %}
-                    {{ record.jobStatus }}
-                {% endif %}
+                            <tr class="odd gradeX">
+                                <td><input type="checkbox" name="{{ record.expID }}" value="{{ record.expID }}" /></td>
+                                <td>{{ record.expID }}</td>
+                                <td>
+                                    {% if record.jobStatus == 1 %}
+                                        <span class="label label-primary">Queued</span>
+                                    {% elseif record.jobStatus == 2 %}
+                                        <span class="label label-warning">In Progress</span>
+                                    {% elseif record.jobStatus == 3 %}
+                                        <span class="label label-success">Completed</span>
+                                    {% elseif record.jobStatus == 4 %}
+                                        <span class="label label-danger">Completed with errors</span>
+                                    {% elseif record.jobStatus == 5 %}
+                                        <span class="label label-danger">Cancelled</span>
+                                    {% else %}
+                                        {{ record.jobStatus }}
+                                    {% endif %}
 
-            </td>
-            <td>{{ record.submitTime }}</td>
-            <td>{{ record.rlmsAssignedId }}</td>
-            <td class="center">{{ record.processingEngine }}</td>
-            <td class="center">{{ record.labServerName }}</td>
-            <td>
-                <a href="{{ path('expRecords') }}/{{ record.expID }}">
-                <i class="fa fa-folder-open"> View</i>
-                </a>
-            </td>
-        </tr>
-       {% endfor %}
-        </form>
-        </tbody>
-        </table>
+                                </td>
+                                <td>{{ record.submitTime }}</td>
+                                <td>{{ record.rlmsAssignedId }}</td>
+                                <td class="center">{{ record.processingEngine }}</td>
+                                <td class="center">{{ record.labServerName }}</td>
+                                <td>
+                                    <a href="{{ path('expRecords') }}/{{ record.expID }}">
+                                        <i class="fa fa-folder-open"> View</i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+            </tbody>
+            </table>
 
-        <ul class="pagination">
-            <li><a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ previousPage }}&status={{ status }}&labServerId={{ labServerId }}">Previous</a></li>
-             {% for page in pages %}
+            <ul class="pagination">
+                <li><a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ previousPage }}&status={{ status }}&labServerId={{ labServerId }}">Previous</a></li>
+                {% for page in pages %}
 
-                  {% if (page > (currentPage - 5)) and (page < (currentPage + 5))  %}
-                    {%  if page == currentPage %}
-                       <li class="active"> <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}">{{ page }}</a></li>
-                    {% else %}
-                      <li> <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}">{{ page }}</a></li>
+                    {% if (page > (currentPage - 5)) and (page < (currentPage + 5))  %}
+                        {%  if page == currentPage %}
+                            <li class="active"> <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}">{{ page }}</a></li>
+                        {% else %}
+                            <li> <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}">{{ page }}</a></li>
+                        {% endif %}
                     {% endif %}
-                  {% endif %}
-            {% endfor %}
+                {% endfor %}
 
-            <li><a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ nextPage }}&status={{ status }}&labServerId={{ labServerId }}">Next</a></li>
-        </ul>
+                <li><a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ nextPage }}&status={{ status }}&labServerId={{ labServerId }}">Next</a></li>
+            </ul>
+        </div>
+        </div>
     </div>
+    </form>
 
 <script>
 function confirmDelete() {

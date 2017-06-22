@@ -2,33 +2,38 @@
 
 {% block mainPanel %}
 
-    <div class="col-lg-8">
-        <h3 class="page-header">{{ viewName }}</h3>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            View single experiment record
+        </div>
+        <div class="panel-body">
+
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr class="odd gradeX">
+                    <th width="20%">Column Name</th>
+                    <th width="80%">Value</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for key, value in record %}
+                    <tr class="odd gradeX">
+                        {% if key == "expSpecification" %}
+                            <td>This is it: {{ key }}</td>
+                            <td>{{ value }}</td>
+                        {% else %}
+                            <td>{{ key }}</td>
+                            <td><code>{{ value }}</code></td>
+                        {% endif %}
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
     </div>
-    <br/>
 
-    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
-        <thead>
-        <tr class="odd gradeX">
-            <th width="20%">Column Name</th>
-            <th width="80%">Value</th>
-
-        </tr>
-        </thead>
-        <tbody>
-        {% for key, value in record %}
-            <tr class="odd gradeX">
-            {% if key == "expSpecification" %}
-                <td>This is it: {{ key }}</td>
-                <td>{{ value }}</td>
-            {% else %}
-                <td>{{ key }}</td>
-                <td><code>{{ value }}</code></td>
-            {% endif %}
-
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 
 {% endblock %}
