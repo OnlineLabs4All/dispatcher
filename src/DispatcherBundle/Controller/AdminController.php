@@ -436,13 +436,15 @@ class AdminController extends Controller
             'viewName' => 'Lab Server APIs',
             'labServerName' => $labServer->getName(),
             'apis' => array(
-                            array('name' => 'Register Lab Server with a Service Broker',
+                            array('name' => 'Available APIs',
                                   'wsdl' => $wsdl_url,
                                   'soap_endpoint' => $soap_service_url,
                                   'json_endpoint' => $json_service_url,
                                   'guid' => $labServer->getGuid(),
                                   'passkey' => $labServer->getPassKey(),
                                   'initialPasskey' => $labServer->getInitialPassKey(),
+                                  'client_soap_endpoint' => $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/soap/client",
+                                  'client_wsdl' => $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/iLabWsdl/sbWsdl.wsdl",
                                   'info' => 'Use the service endpoint, GUID and passKey to install the Lab Server process agent in your iLab Service Broker.
                                              For interactive lab server, use the Initial Passkey to install the domain credentials.',
                                   'documentation' => 'Not Available')

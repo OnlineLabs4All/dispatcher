@@ -2,11 +2,6 @@
 
 {% block mainPanel %}
 
-    <div id="header" class="col-lg-12">
-        <h3 id="header3" class="page-header">APIs for "{{ labServerName }}"</h3>
-    </div>
-    <p>The following APIs can be used an RLMS to interact with this Lab Server.</p>
-
     {% for api in apis %}
 
     <div class="row">
@@ -21,13 +16,24 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
 
-                       <p><i class="fa fa-gear fa-fw"></i> SOAP API Endpoint: <code>{{ api.soap_endpoint }}</code></p>
-                       <p><i class="fa fa-book fa-file-o"></i> WSDL: <code><a href="{{ api.wsdl }}" target="_blank" >{{ api.wsdl }}</a></code></p>
-                       <p><i class="fa fa-gear fa-fw"></i> JSON API Endpoint: <code>{{ api.json_endpoint }}</code></p>
-                       <p><i class="fa fa-book fa-eye"></i> GUID: <code>{{ api.guid }}</code></p>
-                       <p><i class="fa fa-book fa-key"></i> PassKey: <code>{{ api.passkey }}</code></p>
-                       <p><i class="fa fa-book fa-key"></i> Initial PassKey: <code>{{ api.initialPasskey }}</code></p>
-                       <p><i class="fa fa-book fa-info-circle"></i> {{ api.info }}</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fa fa-book fa-eye"></i> Lab Server GUID: <code>{{ api.guid }}</code></li>
+
+                        </ul>
+                        <h3>APIs to interact with a RLMS:</h3>
+                        <ul class="list-unstyled">
+                            <li><i class="fa fa-gear fa-fw"></i> SOAP API Endpoint (MIT-ISA compliant): <code>{{ api.soap_endpoint }}</code></li>
+                            <li><i class="fa fa-book fa-file-o"></i> WSDL (MIT-ISA compliant): <code><a href="{{ api.wsdl }}" target="_blank" >{{ api.wsdl }}</a></code></li>
+                            <li><i class="fa fa-gear fa-fw"></i> JSON API Endpoint (UQ-ISA compliant): <code>{{ api.json_endpoint }}</code></li>
+                            <li><i class="fa fa-book fa-key"></i> PassKey (MIT-ISA compliant): <code>{{ api.passkey }}</code></li>
+                            <li><i class="fa fa-book fa-key"></i> Initial PassKey (used to install credentials of an ILS): <code>{{ api.initialPasskey }}</code></li>
+                        </ul>
+                        <h3>APIs to interact with a Lab Client:</h3>
+                        <ul class="list-unstyled">
+                            <li><i class="fa fa-gear fa-fw"></i> Client SOAP API Endpoint (MIT-ISA compliant): <code>{{ api.client_soap_endpoint }}</code></li>
+                            <li><i class="fa fa-book fa-file-o"></i> Client WSDL (MIT-ISA compliant): <code><a href="{{ api.client_wsdl }}" target="_blank" >{{ api.client_wsdl }}</a></code></li>
+                        </ul>
+
                     </div>
                 </div>
                 <!-- /.panel-body -->

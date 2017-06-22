@@ -12,18 +12,25 @@
                     Register New Lab Server
                 </div>
                 <div class="panel-body">
-
-
                     {{ form_errors(form) }}
 
-                    {{ form_row(form.name) }}
-                    {{ form_row(form.type) }}
+                    <div class="row">
+                        <div class="col-xs-6">{{ form_row(form.name) }}</div>
+                        <div class="col-xs-3">{{ form_row(form.type) }}</div>
+                        <div class="col-xs-3">{{ form_row(form.active) }}</div>
+                    </div>
+
                     {{ form_row(form.description) }}
+
+                    <div class="row">
+                        <div class="col-xs-6">{{ form_row(form.contact_name) }}</div>
+                        <div class="col-xs-6">{{ form_row(form.contact_email) }}</div>
+                    </div>
+
                     {{ form_row(form.contact_name) }}
                     {{ form_row(form.contact_email) }}
                     {{ form_row(form.institution) }}
-                    {{ form_row(form.labInfo) }}
-                    {{ form_row(form.active) }}
+
 
                     <div class="alert alert-warning">
                         {{ form_row(form.useDataset) }}
@@ -32,7 +39,9 @@
                         If found, it will return the results from the dataset and a new experiment will not run.
                         Uncheck this option if debugging experiments or if you want that all experiments are executed.
                     </div>
-
+                    <div class="alert alert-warning">
+                        {{ form_row(form.singleEngine) }}
+                    </div>
 
                 </div>
             </div>
@@ -49,10 +58,8 @@
                     {{ form_row(form.Guid) }}
                     {{ form_row(form.passKey) }}
                     {{ form_row(form.initialPassKey) }}
+                    {{ form_row(form.labInfo) }}
                     {{ form_row(form.configuration) }}
-                    <div class="alert alert-warning">
-                        {{ form_row(form.singleEngine) }}
-                    </div>
 
                 </div>
             </div>
@@ -65,9 +72,10 @@
                 </div>
                 <div class="panel-body">
 
-                    {{ form_row(form.exp_category) }}
-                    {{ form_row(form.exp_name) }}
-
+                    <div class="row">
+                        <div class="col-xs-6">{{ form_row(form.exp_category) }}</div>
+                        <div class="col-xs-6">{{ form_row(form.exp_name) }}</div>
+                    </div>
 
                 </div>
             </div>
