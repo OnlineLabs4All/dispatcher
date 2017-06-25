@@ -45,14 +45,25 @@
     <ul class="nav navbar-top-links navbar-left">
 
         <li><a href="{{ path('adminHome') }}"><i class="fa fa-home fa-fw"></i>Home</a></li>
-        <li><a href="{{ path('rlms') }}"><i class="fa fa-wrench fa-fw"></i>Manage RLMS</a></li>
-        <li><a href="{{ path('labservers') }}"><i class="fa fa-wrench fa-fw"></i>Manage Lab Servers</a></li>
-        <li><a href="{{ path('engines') }}"><i class="fa fa-wrench fa-fw"></i>Experiment Engines</a></li>
+
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                <i class="fa fa-wrench fa-fw"></i> Manage  <i class="fa fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+                <li><a href="{{ path('rlms') }}"><i class="fa fa-shield fa-fw"></i>RLMS & LTI credentials </a></li>
+                <li><a href="{{ path('labservers') }}"><i class="fa fa-flask fa-fw"></i>Manage Lab Servers</a></li>
+                <li><a href="{{ path('engines') }}"><i class="fa fa-cog fa-fw"></i>Experiment Engines</a></li>
+                <li><a href="{{ path('engines') }}"><i class="fa fa-laptop fa-fw"></i>Lab Clients</a></li>
+            </ul>
+            <!-- /.dropdown-user -->
+        </li>
+
         <li><a href="{{ path('expRecords') }}"><i class="fa fa-table fa-fw"></i>Experiment Records</a></li>
 
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                Documents  <i class="fa fa-caret-down"></i>
+                <i class="fa fa-book fa-fw"></i> Documents  <i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
                 <li><a href="{{ absolute_url('/apidocs/engine') }}" target="_blank"><i class="fa fa-dashboard fa-fw"></i>Subscriber API docs</a></li>
