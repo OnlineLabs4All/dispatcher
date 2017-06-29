@@ -4,7 +4,7 @@
         <s:schema targetNamespace="http://ilab.mit.edu">
             <s:import schemaLocation="http://e-dispatcher.net/iLabWsdl/schema/schema1.wsdl" namespace="http://ilab.mit.edu/iLabs/Services" />
             <s:import schemaLocation="http://e-dispatcher.net/iLabWsdl/schema/schema2.wsdl" namespace="http://ilab.mit.edu/iLabs/type" />
-            <s:include schemaLocation="http://e-dispatcher.net/iLabWsdl/schema/schema2.wsdl" />
+            <s:include schemaLocation="http://e-dispatcher.net/iLabWsdl/schema/schema3.wsdl" />
         </s:schema>
     </wsdl:types>
     <wsdl:message name="GetLabStatusSoapIn">

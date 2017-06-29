@@ -6,10 +6,10 @@
  * Time: 16:13
  */
 
-$sbWsdl = file_get_contents('sbWsdl.wsdl');
+$sbWsdl1 = file_get_contents('sbWsdl1.wsdl');
 
 $baseUrl = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
-$sbWsdl = str_replace('{{baseUrl}}', $baseUrl, $sbWsdl);
+$sbWsdl1 = str_replace('{{baseUrl}}', $baseUrl , $sbWsdl1);
 
 header('Content-Type: text/xml');
-echo $sbWsdl;
+echo $sbWsdl1;

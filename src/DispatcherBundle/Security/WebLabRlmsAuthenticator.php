@@ -49,14 +49,14 @@ class WebLabRlmsAuthenticator
             $endDate = new \DateTime();
             $endDate->add( new \DateInterval('PT'.$session_duration.'S'));
             $labSession = new LabSession();
-            $session_id = $labSession->createSession($rlms->getId(), $startDate, $endDate);
+            $session = $labSession->createSession($rlms->getId(), $startDate, $endDate);
 
             $this->em->persist($labSession);
             $this->em->flush();
 
             $response = array('is_exception' => false,
                 'exception' => '',
-                'session_id' => $session_id);
+                'session_id' => $session['session_id']);
             return $response;
         }
 

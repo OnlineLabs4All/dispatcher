@@ -9,6 +9,7 @@
 namespace DispatcherBundle\Services;
 
 use Doctrine\ORM\EntityManager;
+use DispatcherBundle\Entity\LabSession;
 use DispatcherBundle\Security\IsaRlmsAuthenticator;
 
 
@@ -21,6 +22,8 @@ class iLabServiceBroker
     private $serviceUrl;
     private $authorityGuid;
     private $lsServices;
+
+
     //private $labServerId;
 
     public function __construct(EntityManager $em, GenericLabServerServices $lsServices)
@@ -73,8 +76,29 @@ class iLabServiceBroker
         $issuerGuid = $header->coupon->issuerGuid;
         $passkey = $header->coupon->passkey;
 
-    }
+        $authority = $this
+            ->em
+            ->getRepository('DispatcherBundle:Rlms')
+            ->findOneBy(array('authPassKey' => $passkey, 'authCouponId' => $couponId));
 
+        if ($authority != null){
+
+            $session_duration = '604800';
+            $startDate = new \DateTime();
+            $endDate = new \DateTime();
+            $endDate->add( new \DateInterval('PT'.$session_duration.'S'));
+            $labSession = new LabSession();
+            $session = $labSession->createSession($authority->getId(), $startDate, $endDate);
+
+            $this->em->persist($labSession);
+            $this->em->flush();
+
+        }
+        else{
+            return new \SoapFault("Server", 'Could not authenticate authority. CouponId or passkey are incorrect' );
+        }
+
+    }
 
     public function GetLabInfo($params)
     {
@@ -211,9 +235,10 @@ class iLabServiceBroker
     {
 
 
+
         $response = array('LaunchLabClientResult' => array(
             'id' => '12',
-            'tag' =>'http://localhost/labclients/elvis/?coupon_id=2954&passkey=230F13E5168B4249BC05926EC1A330D9&issuer_guid=DA02D5E137DE4469B9CECADFCAD8145F'));
+            'tag' => 'http://google.com'));
 
         return $response;
     }

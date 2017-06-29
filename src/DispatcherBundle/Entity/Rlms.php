@@ -78,7 +78,13 @@ class Rlms
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
-    protected $passKeyToRlms;
+    protected $authPassKey;
+
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    protected $authCouponId;
+
 
     /**
      * @ORM\Column(type="string", length=50)
@@ -351,29 +357,6 @@ class Rlms
     }
 
     /**
-     * Set passKeyToRlms
-     *
-     * @param string $passKeyToRlms
-     * @return Rlms
-     */
-    public function setPassKeyToRlms($passKeyToRlms)
-    {
-        $this->passKeyToRlms = $passKeyToRlms;
-
-        return $this;
-    }
-
-    /**
-     * Get passKeyToRlms
-     *
-     * @return string 
-     */
-    public function getPassKeyToRlms()
-    {
-        return $this->passKeyToRlms;
-    }
-
-    /**
      * Set rlmsType
      *
      * @param string $rlmsType
@@ -476,7 +459,8 @@ class Rlms
         $this->owner_id = $ownerId;
         $this->active = $data['active'];
         $this->dateCreated = date('Y-m-d\TH:i:sP');
-        //$this->passKeyToRlms = $data['passkey_to_rlms'];
+        //$this->authCouponId = $data['authCouponId'];
+        //$this->authPassKey = $data['authPassKey'];
         $this->rlmsType = $data['rlms_type'];
         $this->serviceUrl = $data['service_url'];
         $this->serviceDescriptionUrl = $data['service_description_url'];
@@ -547,5 +531,51 @@ class Rlms
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * Set authPassKey
+     *
+     * @param string $authPassKey
+     * @return Rlms
+     */
+    public function setAuthPassKey($authPassKey)
+    {
+        $this->authPassKey = $authPassKey;
+
+        return $this;
+    }
+
+    /**
+     * Get authPassKey
+     *
+     * @return string 
+     */
+    public function getAuthPassKey()
+    {
+        return $this->authPassKey;
+    }
+
+    /**
+     * Set authCouponId
+     *
+     * @param string $authCouponId
+     * @return Rlms
+     */
+    public function setAuthCouponId($authCouponId)
+    {
+        $this->authCouponId = $authCouponId;
+
+        return $this;
+    }
+
+    /**
+     * Get authCouponId
+     *
+     * @return string 
+     */
+    public function getAuthCouponId()
+    {
+        return $this->authCouponId;
     }
 }

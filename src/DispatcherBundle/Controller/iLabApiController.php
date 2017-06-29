@@ -35,10 +35,10 @@ class iLabApiController extends Controller
      */
     public function sbSoapClientApiAction(Request $request)
     {
-        ini_set("soap.wsdl_cache_enabled", "0");
-        //$wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/sbWsdl.wsdl";
+        ini_set("soap.wsdl_cache_enabled", "1");
+        $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/sbWsdl.wsdl";
+        //$wsdl_url = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]/iLabWsdl/sbWsdl.php";
 
-        $wsdl_url = "http://e-dispatcher.net/iLabWsdl/sbWsdl.wsdl";
         $soapServer = new \SoapServer($wsdl_url, array('soap_version' => SOAP_1_2));
         $iLabSbClient = $this->get('iLabServiceBroker');
         //$iLabSbClient->setLabServerId($labServerId);
@@ -59,7 +59,7 @@ class iLabApiController extends Controller
      */
     public function batchedApiAction(Request $request, $labServerId)
     {
-        ini_set("soap.wsdl_cache_enabled", "0");
+        ini_set("soap.wsdl_cache_enabled", "1");
         $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/batchedLabServer.wsdl";
 
         $soapServer = new \SoapServer($wsdl_url, array('soap_version' => SOAP_1_2));

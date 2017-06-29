@@ -25,9 +25,19 @@ class LabSession
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     protected $session_id;
+
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    protected $couponId;
+
+    /**
+     * @ORM\Column(type="string", length=50, nullable=true)
+     */
+    protected $passkey;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -185,7 +195,12 @@ class LabSession
         $this->start_date = $startDate;
         $this->authorityId  = $authorityId;
         $this->session_id = md5(microtime().rand());
-        return $this->session_id;
+        $this->couponId = md5(microtime().rand());
+        $this->passkey = md5(microtime().rand());
+        
+        return array('session_id' => $this->session_id,
+            'couponId' => $this->couponId,
+            'passkey' => $this->passkey);
     }
 
 
@@ -210,5 +225,74 @@ class LabSession
     public function getAuthorityId()
     {
         return $this->authorityId;
+    }
+
+    /**
+     * Set couponId
+     *
+     * @param string $couponId
+     * @return LabSession
+     */
+    public function setCouponId($couponId)
+    {
+        $this->couponId = $couponId;
+
+        return $this;
+    }
+
+    /**
+     * Get couponId
+     *
+     * @return string 
+     */
+    public function getCouponId()
+    {
+        return $this->couponId;
+    }
+
+    /**
+     * Set passkey
+     *
+     * @param string $passkey
+     * @return LabSession
+     */
+    public function setPasskey($passkey)
+    {
+        $this->passkey = $passkey;
+
+        return $this;
+    }
+
+    /**
+     * Get passkey
+     *
+     * @return string 
+     */
+    public function getPasskey()
+    {
+        return $this->passkey;
+    }
+
+    /**
+     * Set rlmsId
+     *
+     * @param string $rlmsId
+     * @return LabSession
+     */
+    public function setRlmsId($rlmsId)
+    {
+        $this->rlmsId = $rlmsId;
+
+        return $this;
+    }
+
+    /**
+     * Get rlmsId
+     *
+     * @return string 
+     */
+    public function getRlmsId()
+    {
+        return $this->rlmsId;
     }
 }
