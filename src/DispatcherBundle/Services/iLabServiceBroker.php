@@ -51,6 +51,7 @@ class iLabServiceBroker
             'message' => 'Lab Server found');
     }
 
+    // Authenticate call to the SB batch API
     public function sbAuthHeader($sbHeader)
     {
         $authResponse['authenticated'] = true;
@@ -63,6 +64,15 @@ class iLabServiceBroker
         
         //$this->couponID = $sbHeader->couponID;
         //$this->couponPassKey = $sbHeader->couponPassKey;
+    }
+
+    // Authenticate requests to LaunchLab service
+    public function OperationAuthHeader($header)
+    {
+        $couponId = $header->coupon->couponId;
+        $issuerGuid = $header->coupon->issuerGuid;
+        $passkey = $header->coupon->passkey;
+
     }
 
 
@@ -181,7 +191,8 @@ class iLabServiceBroker
         return array('CancelResult' => $cancelResult['cancelled']);
     }
 
-    public function Validate($params){
+    public function Validate($params)
+    {
 
         //Create experiment submission report
         $accepted = true;
@@ -193,6 +204,17 @@ class iLabServiceBroker
             'warningMessages' => array('string' => $warningMessage),
             'errorMessage' => $errorMessage,
             'estRuntime' => $estRuntime));
+        return $response;
+    }
+
+    public function LaunchLabClient($params)
+    {
+
+
+        $response = array('LaunchLabClientResult' => array(
+            'id' => '12',
+            'tag' =>'http://localhost/labclients/elvis/?coupon_id=2954&passkey=230F13E5168B4249BC05926EC1A330D9&issuer_guid=DA02D5E137DE4469B9CECADFCAD8145F'));
+
         return $response;
     }
 

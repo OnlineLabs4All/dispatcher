@@ -98,15 +98,15 @@ class WeblabDeustoApiController extends Controller
                 break;
             case 'list_experiments':
                 $session_id = $requestJson->params->session_id->id;
-                $labSession = $webLabAuthenticator->validateSessionById($session_id);
+                $validationResponse = $webLabAuthenticator->validateSessionById($session_id);
 
-                if ($labSession != null) {
-                    $responseJson = $webLabService->listExperiment($labSession);
+                if ($validationResponse['is_exception'] == false) {
+                    $responseJson = $webLabService->listExperiments($validationResponse['labSession']);
+                    //$responseJson = $labSession;
+                    //var_dump($labSession);
                 }
                 else{
-                    $responseJson = array('is_exception' => true,
-                        'message' => 'Session does not exist or has already expired. Please login again.',
-                        'code' => 'Client.SessionNotFound');
+                    $responseJson = $validationResponse;
                 }
                 break;
             case 'reserve_experiment':
@@ -119,7 +119,7 @@ class WeblabDeustoApiController extends Controller
                 }
                 else{
                     $labSession = $validationResponse['labSession'];
-                    $rlmsId = $labSession->getRlmsId();
+                    $rlmsId = $labSession->getAuthorityId();
                     $responseJson = $webLabService->reserveExperiment($params, $rlmsId);
                 }
                 break;
@@ -133,7 +133,7 @@ class WeblabDeustoApiController extends Controller
                 }
                 else{
                     $labSession = $validationResponse['labSession'];
-                    $rlmsId = $labSession->getRlmsId();
+                    $rlmsId = $labSession->getAuthorityId();
                     $responseJson = $webLabService->getReservationStatus($params, $rlmsId);
                 }
                 break;
@@ -160,7 +160,7 @@ class WeblabDeustoApiController extends Controller
                 else{ //session is valid, process request
                     $reservation_id = $requestJson->params->reservation_id->id;
                     $labSession = $validationResponse['labSession'];
-                    $rlmsId = $labSession->getRlmsId();
+                    $rlmsId = $labSession->getAuthorityId();
                     $responseJson = array('is_exception' => false,
                                            'result' => $webLabService->getExperimentUseById($reservation_id, $rlmsId));
                 }
@@ -176,7 +176,7 @@ class WeblabDeustoApiController extends Controller
                 else{ //session is valid, process request
                     $reservation_ids = $requestJson->params->reservation_ids; //array of reservation IDs or experiment ID in iLab parlance
                     $labSession = $validationResponse['labSession'];
-                    $rlmsId = $labSession->getRlmsId();
+                    $rlmsId = $labSession->getAuthorityId();
                     $responseJson = array('is_exception' => false,
                         'result' => $webLabService->getExperimentUsesById($reservation_ids, $rlmsId));
                 }

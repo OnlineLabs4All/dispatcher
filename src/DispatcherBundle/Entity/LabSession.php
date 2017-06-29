@@ -40,12 +40,17 @@ class LabSession
     protected $rlmsId;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $authorityId;
+
+    /**
+     * @ORM\Column(type="datetime")
      */
     protected $start_date;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="datetime")
      */
     protected $end_date;
 
@@ -174,36 +179,36 @@ class LabSession
     }
 
     //additional class methods
-    public function createRlmsSession($rlmsId, $startDate, $endDate)
+    public function createSession($authorityId, $startDate, $endDate)
     {
         $this->end_date = $endDate;
         $this->start_date = $startDate;
-        $this->rlmsId  = $rlmsId;
+        $this->authorityId  = $authorityId;
         $this->session_id = md5(microtime().rand());
         return $this->session_id;
     }
 
 
     /**
-     * Set rlmsId
+     * Set authorityId
      *
-     * @param string $rlmsId
+     * @param string $authorityId
      * @return LabSession
      */
-    public function setRlmsId($rlmsId)
+    public function setAuthorityId($authorityId)
     {
-        $this->rlmsId = $rlmsId;
+        $this->authorityId = $authorityId;
 
         return $this;
     }
 
     /**
-     * Get rlmsId
+     * Get authorityId
      *
      * @return string 
      */
-    public function getRlmsId()
+    public function getAuthorityId()
     {
-        return $this->rlmsId;
+        return $this->authorityId;
     }
 }

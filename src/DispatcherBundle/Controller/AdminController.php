@@ -444,7 +444,7 @@ class AdminController extends Controller
                                   'passkey' => $labServer->getPassKey(),
                                   'initialPasskey' => $labServer->getInitialPassKey(),
                                   'client_soap_endpoint' => $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/apis/isa/soap/client",
-                                  'client_wsdl' => $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/iLabWsdl/sbWsdl.wsdl",
+                                  'client_wsdl' => $request->getScheme()."://".$request->getHttpHost().$request->getBasePath()."/iLabWsdl/sbWsdl.php",
                                   'info' => 'Use the service endpoint, GUID and passKey to install the Lab Server process agent in your iLab Service Broker.
                                              For interactive lab server, use the Initial Passkey to install the domain credentials.',
                                   'documentation' => 'Not Available')

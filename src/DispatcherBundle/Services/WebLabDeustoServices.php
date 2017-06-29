@@ -21,7 +21,7 @@ class WebLabDeustoServices
         $mappings = $this
             ->em
             ->getRepository('DispatcherBundle:LsToRlmsMapping')
-            ->findBy(array('rlmsId' => $session->getRlmsId()));
+            ->findBy(array('rlmsId' => $session->getAuthorityId()));
 
         $result = array();
         foreach ($mappings as $mapping){
@@ -34,8 +34,8 @@ class WebLabDeustoServices
             array_push($result,  array('time_allowed' => '604800',
                 'experiment' => array('category' => array('name' => $lab->getExpCategory()),
                     'name' => $lab->getExpName(),
-                    'start_date' => $session->getStartDate(),
-                    'end_date' => $session->getEnddate())));
+                    'start_date' => $session->getStartDate()->format('Y-m-d H:i:s'),
+                    'end_date' => $session->getEnddate()->format('Y-m-d H:i:s'))));
         }
 
         $responseJson = array('is_exception' => false,
@@ -43,7 +43,7 @@ class WebLabDeustoServices
         return $responseJson;
     }
 
-    public function reserveExperiment($params, $rlmsId)
+    public function reserveExperiment($params, $authorityId)
     {
         $lab = $this
             ->em
@@ -56,7 +56,7 @@ class WebLabDeustoServices
             $consumer_data = $params->consumer_data;//save it to the opaque data field
 
             $this->labServerServices->setLabServerId($lab->getId());
-            $submissionReport = $this->labServerServices->Submit(null, $experimentSpecification, $consumer_data, 0, $rlmsId);
+            $submissionReport = $this->labServerServices->Submit(null, $experimentSpecification, $consumer_data, 0, $authorityId);
 
 
             return array('is_exception' => false,
@@ -70,11 +70,11 @@ class WebLabDeustoServices
                      'message' => "Experiment name and/or category not found");
     }
 
-    public function getReservationStatus($params, $rlmsId)
+    public function getReservationStatus($params, $authorityId)
     {
         $reservation_id = $params->reservation_id->id;
 
-        $jobRecord = $this->labServerServices->getJobRecordById($reservation_id, $rlmsId);
+        $jobRecord = $this->labServerServices->getJobRecordById($reservation_id, $authorityId);
 
         if ($jobRecord == null){
             return array('is_exception' => true,
@@ -87,7 +87,7 @@ class WebLabDeustoServices
             case 1: //experiment has been queued
 
                 $this->labServerServices->setLabServerId($jobRecord->getLabserverId());
-                $expStatus = $this->labServerServices->getExperimentStatus($reservation_id, $rlmsId);
+                $expStatus = $this->labServerServices->getExperimentStatus($reservation_id, $authorityId);
 
                 return array('is_exception' => false,
                     'result' => array('reservation_id' => array('id' => (string)$reservation_id),
@@ -141,9 +141,9 @@ class WebLabDeustoServices
         }
     }
 
-    public function getExperimentUseById($reservation_id, $rlmsId)
+    public function getExperimentUseById($reservation_id, $authorityId)
     {
-        $jobRecord = $this->labServerServices->getJobRecordById($reservation_id, $rlmsId);
+        $jobRecord = $this->labServerServices->getJobRecordById($reservation_id, $authorityId);
 
         if ($jobRecord == null){
             return $result = array('status' => 'forbidden');
@@ -183,11 +183,11 @@ class WebLabDeustoServices
         return $result;
     }
 
-    public function getExperimentUsesById($reservation_ids, $rlmsId)
+    public function getExperimentUsesById($reservation_ids, $authorityId)
     {
         $results = array();
         foreach ($reservation_ids as $reservation_id){
-            $result = $this->getExperimentUseById($reservation_id->id, $rlmsId);
+            $result = $this->getExperimentUseById($reservation_id->id, $authorityId);
             array_push($results, $result);
         }
         return $results;

@@ -8,6 +8,7 @@
 namespace DispatcherBundle\Security;
 use Doctrine\ORM\EntityManager;
 use DispatcherBundle\Entity\LabSession;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 
 class WebLabRlmsAuthenticator
@@ -30,12 +31,12 @@ class WebLabRlmsAuthenticator
             $labSession = $this
                 ->em
                 ->getRepository('DispatcherBundle:LabSession')
-                ->findOneBy(array('rlmsId' => $rlms->getId() ));
+                ->findOneBy(array('authorityId' => $rlms->getId() ));
 
             if ($labSession != null){
 
                 $now = date_create(date('Y-m-d\TH:i:sP'));
-                $end = date_create($labSession->getEndDate());
+                $end = $labSession->getEndDate();
                 if ($now < $end){
                     $response = array('is_exception' => false,
                         'exception' => '',
@@ -44,11 +45,11 @@ class WebLabRlmsAuthenticator
                 }
             }
             $session_duration = '604800';
-            $dateNow = date('Y-m-d\TH:i:sP');
-            $startDate = date_create($dateNow);
-            $endDate = $startDate->add( new \DateInterval('PT'.$session_duration.'S'));
+            $startDate = new \DateTime();
+            $endDate = new \DateTime();
+            $endDate->add( new \DateInterval('PT'.$session_duration.'S'));
             $labSession = new LabSession();
-            $session_id = $labSession->createRlmsSession($rlms->getId(), $dateNow, $endDate->format('Y-m-d\TH:i:sP'));
+            $session_id = $labSession->createSession($rlms->getId(), $startDate, $endDate);
 
             $this->em->persist($labSession);
             $this->em->flush();
@@ -74,8 +75,8 @@ class WebLabRlmsAuthenticator
             ->findOneBy(array('session_id' => $session_id ));
 
         if ($labSession != null){
-            $now = date_create(date('Y-m-d\TH:i:sP'));
-            $end = date_create($labSession->getEndDate());
+            $now = new \DateTime();
+            $end = $labSession->getEndDate();
             if ($now < $end){
                 return array('is_exception' => false,
                              'labSession' => $labSession );
