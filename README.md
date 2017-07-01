@@ -9,10 +9,7 @@ The experiment dispatcher is a service that offers some functionalities to lab o
 ```
 $ git clone https://github.com/OnlineLabs4All/dispatcher.git
 ```
-
-2) Create a SQL database.
-
-3) *cd* into the downloaded project folder and run
+2) *cd* into the downloaded project folder and run
 ```
 $ composer install
 ```
@@ -22,7 +19,11 @@ Values, which are usually not default:
 - database_password: Your SQL password.
 - secret: PHP session token - write something...
 
-4) Update database with
+3) Create a database
+
+$ php bin/console doctrine:database:create
+
+4) generate the database tables
 ```
 $ php app/console doctrine:schema:update --force
 ```

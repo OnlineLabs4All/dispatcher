@@ -20,7 +20,7 @@ class iLabServiceBroker
     private $rlmsGuid;
     private $brokerAuthenticator;
     private $serviceUrl;
-    private $authorityGuid;
+    private $authorityId;
     private $lsServices;
 
 
@@ -42,7 +42,7 @@ class iLabServiceBroker
         $labServer = $this
             ->em
             ->getRepository('DispatcherBundle:LabServer')
-            ->findOneBy(array('Guid' => $guid));
+            ->findOneBy(array('id' => $this->authorityId, 'Guid' => $guid));
 
         if ($labServer == null){
             return array('exception' => true,
@@ -57,14 +57,22 @@ class iLabServiceBroker
     // Authenticate call to the SB batch API
     public function sbAuthHeader($sbHeader)
     {
-        $authResponse['authenticated'] = true;
-        //$authResponse = $this->brokerAuthenticator->authenticateBatchedMethod($Header->identifier, $Header->passKey, $this->labServer->getId());
-        if ($authResponse['authenticated'] == false)
-        {
-            return new \SoapFault("Server", 'non authorized' );
+        $labSession = $this
+            ->em
+            ->getRepository('DispatcherBundle:LabSession')
+            ->findOneBy(array('couponId' => $sbHeader->couponID, 'passkey' => $sbHeader->couponPassKey));
+
+        if ($labSession == null){
+
+            return new \SoapFault("Server", 'Invalid session: Provided credentials are not valid' );
         }
-        $this->authorityGuid = '6';
-        
+
+        $now = new \DateTime();
+        if ($now < $labSession->getStartDate() OR $now > $labSession->getEndDate()){
+            return new \SoapFault("Server", 'Invalid session: Session has expired' );
+        }
+        $this->authorityId = $labSession->getLabServerId();
+
         //$this->couponID = $sbHeader->couponID;
         //$this->couponPassKey = $sbHeader->couponPassKey;
     }
@@ -73,7 +81,6 @@ class iLabServiceBroker
     public function OperationAuthHeader($header)
     {
         $couponId = $header->coupon->couponId;
-        $issuerGuid = $header->coupon->issuerGuid;
         $passkey = $header->coupon->passkey;
 
         $authority = $this
@@ -81,22 +88,12 @@ class iLabServiceBroker
             ->getRepository('DispatcherBundle:Rlms')
             ->findOneBy(array('authPassKey' => $passkey, 'authCouponId' => $couponId));
 
-        if ($authority != null){
 
-            $session_duration = '604800';
-            $startDate = new \DateTime();
-            $endDate = new \DateTime();
-            $endDate->add( new \DateInterval('PT'.$session_duration.'S'));
-            $labSession = new LabSession();
-            $session = $labSession->createSession($authority->getId(), $startDate, $endDate);
-
-            $this->em->persist($labSession);
-            $this->em->flush();
-
-        }
-        else{
+        if ($authority == null){
             return new \SoapFault("Server", 'Could not authenticate authority. CouponId or passkey are incorrect' );
         }
+        //set authority ID
+        $this->authorityId = $authority->getId();
 
     }
 
@@ -145,14 +142,14 @@ class iLabServiceBroker
             return new \SoapFault("Server", $labServerResp['message'] );
         }
 
-        $submitReport = $this->lsServices->submit(null, $params->experimentSpecification, 'Authority name', $params->priorityHint, $this->authorityGuid, $labServerResp['labServer']->getId());
+        $submitReport = $this->lsServices->submit(null, $params->experimentSpecification, 'Authority name', $params->priorityHint, $this->authorityId, $labServerResp['labServer']->getId());
 
         return array('SubmitResult' => $submitReport);
     }
 
     public function GetExperimentStatus($params)
     {
-        $statusReport = $this->lsServices->getExperimentStatus($params->experimentID, $this->authorityGuid);
+        $statusReport = $this->lsServices->getExperimentStatus($params->experimentID, $this->authorityId);
 
         $response = array('GetExperimentStatusResult' => array(
             'statusReport' => array('statusCode' =>  $statusReport['statusCode'],
@@ -166,7 +163,7 @@ class iLabServiceBroker
 
     public function RetrieveResult($params)
     {
-        $statusReport = $this->lsServices->retrieveResult($params->experimentID, $this->authorityGuid);
+        $statusReport = $this->lsServices->retrieveResult($params->experimentID, $this->authorityId);
 
         $response = array('RetrieveResultResult' => array('statusCode' => $statusReport['statusCode'],
             'experimentResults' => $statusReport['experimentResults'],
@@ -234,11 +231,54 @@ class iLabServiceBroker
     public function LaunchLabClient($params)
     {
 
+        //try to find the lab client for the provided GUID
+        $labClient = $this
+            ->em
+            ->getRepository('DispatcherBundle:LabClient')
+            ->findOneBy(array('Guid' => $params->clientGuid));
+
+        if ($labClient == null){
+            return new \SoapFault("Server", 'Lab Client not found' );
+        }
+
+        $labServer = $this
+            ->em
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findOneBy(array('id' => $labClient->getLabServerId()));
+
+        if ($labServer == null){
+            return new \SoapFault("Server", 'The lab server you are trying to access does not exist' );
+        }
+
+        $mapping = $this
+            ->em
+            ->getRepository('DispatcherBundle:LsToRlmsMapping')
+            ->findOneBy(array('rlmsId' => $this->authorityId, 'labServerId' => $labClient->getLabServerId()));
+
+        if ($mapping == null){
+            return new \SoapFault("Server", 'This authority does not have permissions to use this lab server' );
+        }
+
+        if ($params->duration == '-1'){
+            $session_duration = '604800';
+        }
+        else{
+            $session_duration = (int)$params->duration;
+        }
+
+        $startDate = new \DateTime();
+        $endDate = new \DateTime();
+        $endDate->add( new \DateInterval('PT'.$session_duration.'S'));
+        $labSession = new LabSession();
+        $session = $labSession->createSession($labClient->getLabServerId(), $this->authorityId, $startDate, $endDate);
+
+        $this->em->persist($labSession);
+        $this->em->flush();
 
 
         $response = array('LaunchLabClientResult' => array(
-            'id' => '12',
-            'tag' => 'http://google.com'));
+            'id' => $session['couponId'],
+            'tag' => $labClient->getClientUrl().'?coupon_id='.$session['couponId'].'&passkey='.$session['passkey'].'&labServerGuid='.$labServer->getGuid()));
 
         return $response;
     }

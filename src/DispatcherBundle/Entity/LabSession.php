@@ -30,7 +30,7 @@ class LabSession
     protected $session_id;
 
     /**
-     * @ORM\Column(type="string", length=50, nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     protected $couponId;
 
@@ -189,16 +189,18 @@ class LabSession
     }
 
     //additional class methods
-    public function createSession($authorityId, $startDate, $endDate)
+    public function createSession($labServerId, $authorityId, $startDate, $endDate)
     {
         $this->end_date = $endDate;
         $this->start_date = $startDate;
         $this->authorityId  = $authorityId;
+        $this->labServerId = $labServerId;
         $this->session_id = md5(microtime().rand());
-        $this->couponId = md5(microtime().rand());
+        $this->couponId = mt_rand(0, 9999);;
         $this->passkey = md5(microtime().rand());
         
-        return array('session_id' => $this->session_id,
+        return array('id' => $this->id,
+            'session_id' => $this->session_id,
             'couponId' => $this->couponId,
             'passkey' => $this->passkey);
     }

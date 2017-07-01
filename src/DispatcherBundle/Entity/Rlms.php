@@ -81,7 +81,7 @@ class Rlms
     protected $authPassKey;
 
     /**
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      */
     protected $authCouponId;
 
