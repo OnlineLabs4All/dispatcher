@@ -20,8 +20,9 @@ Values, which are usually not default:
 - secret: PHP session token - write something...
 
 3) Create a database
-
+```
 $ php bin/console doctrine:database:create
+```
 
 4) generate the database tables
 ```
