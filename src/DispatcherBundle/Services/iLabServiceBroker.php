@@ -49,11 +49,15 @@ class iLabServiceBroker
                 'message' => 'Provided lab server GUID is incorrect or you do not have permissions to access this lab server');
 
         }
-
         $mapping = $this
             ->em
             ->getRepository('DispatcherBundle:LsToRlmsMapping')
             ->findOneBy(array('rlmsId' => $this->authorityId, 'labServerId' => $labServer->getId()));
+
+        if ($mapping == null){
+            return array('exception' => true,
+                'message' => 'The authority for which this session was issued does not have permissions to access this lab server.');
+        }
 
         return array('exception' => false,
             'labServer' => $labServer,
