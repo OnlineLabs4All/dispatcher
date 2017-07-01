@@ -21,7 +21,7 @@ Values, which are usually not default:
 
 3) Create a database
 ```
-$ php bin/console doctrine:database:create
+$ php app/console doctrine:database:create
 ```
 
 4) generate the database tables
