@@ -16,7 +16,7 @@ use DispatcherBundle\Security\IsaRlmsAuthenticator;
 class iLabServiceBroker
 {
     private $em;
-    private $labServer;//object of class LabServer
+    private $labServerId;//object of class LabServer
     private $rlmsGuid;
     private $brokerAuthenticator;
     private $serviceUrl;
@@ -42,13 +42,19 @@ class iLabServiceBroker
         $labServer = $this
             ->em
             ->getRepository('DispatcherBundle:LabServer')
-            ->findOneBy(array('id' => $this->authorityId, 'Guid' => $guid));
+            ->findOneBy(array('id' => $this->labServerId, 'Guid' => $guid));
 
         if ($labServer == null){
             return array('exception' => true,
                 'message' => 'Provided lab server GUID is incorrect or you do not have permissions to access this lab server');
 
         }
+
+        $mapping = $this
+            ->em
+            ->getRepository('DispatcherBundle:LsToRlmsMapping')
+            ->findOneBy(array('rlmsId' => $this->authorityId, 'labServerId' => $labServer->getId()));
+
         return array('exception' => false,
             'labServer' => $labServer,
             'message' => 'Lab Server found');
@@ -71,8 +77,8 @@ class iLabServiceBroker
         if ($now < $labSession->getStartDate() OR $now > $labSession->getEndDate()){
             return new \SoapFault("Server", 'Invalid session: Session has expired' );
         }
-        $this->authorityId = $labSession->getLabServerId();
-
+        $this->labServerId = $labSession->getLabServerId();
+        $this->authorityId = $labSession->getAuthorityId();
         //$this->couponID = $sbHeader->couponID;
         //$this->couponPassKey = $sbHeader->couponPassKey;
     }
