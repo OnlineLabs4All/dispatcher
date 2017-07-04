@@ -58,11 +58,12 @@ class WebLabDeustoServices
             $this->labServerServices->setLabServerId($lab->getId());
             $submissionReport = $this->labServerServices->Submit(null, $experimentSpecification, $consumer_data, 0, $authorityId);
 
+            $baseUrl = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 
             return array('is_exception' => false,
                 'result' => array('reservation_id' => array('id' => (string)$submissionReport['experimentID']),
                     'status' => 'Reservation::waiting',
-                    'url' => 'http://localhost:8000/apis/weblab/',
+                    'url' => $baseUrl.'/apis/weblab/',
                     'position' => $submissionReport['wait']['effectiveQueueLength']));
         }
 
