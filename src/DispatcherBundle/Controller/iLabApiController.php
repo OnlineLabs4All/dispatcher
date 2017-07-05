@@ -59,7 +59,7 @@ class iLabApiController extends Controller
      */
     public function batchedApiAction(Request $request, $labServerId)
     {
-        ini_set("soap.wsdl_cache_enabled", "1");
+        ini_set("soap.wsdl_cache_enabled", "0");
         $wsdl_url = getcwd()."/../src/DispatcherBundle/Utils/batchedLabServer.wsdl";
 
         $soapServer = new \SoapServer($wsdl_url, array('soap_version' => SOAP_1_2));
