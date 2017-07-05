@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:i0="http://ilab.mit.edu" xmlns:tns="http://ilab.mit.edu/iLabs/Services" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://ilab.mit.edu/iLabs/Services" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
-    <wsdl:import namespace="http://ilab.mit.edu" location="http://e-dispatcher.net/iLabWsdl/sbWsdl1.php" />
+    <wsdl:import namespace="http://ilab.mit.edu" location="{{baseUrl}}/iLabWsdl/sbWsdl1.php" />
     <wsdl:types>
         <s:schema targetNamespace="http://ilab.mit.edu/iLabs/Services">
-            <s:include schemaLocation="http://e-dispatcher.net/iLabWsdl/schema/schema1.wsdl" />
-            <s:import schemaLocation="http://e-dispatcher.net/iLabWsdl/schema/schema2.wsdl" namespace="http://ilab.mit.edu/iLabs/type" />
-            <s:import schemaLocation="http://e-dispatcher.net/iLabWsdl/schema/schema3.wsdl" namespace="http://ilab.mit.edu" />
+            <s:include schemaLocation="{{baseUrl}}/iLabWsdl/schema/schema1.wsdl" />
+            <s:import schemaLocation="{{baseUrl}}/iLabWsdl/schema/schema2.wsdl" namespace="http://ilab.mit.edu/iLabs/type" />
+            <s:import schemaLocation="{{baseUrl}}/iLabWsdl/schema/schema3.wsdl" namespace="http://ilab.mit.edu" />
         </s:schema>
     </wsdl:types>
     <wsdl:message name="SaveClientDataSoapIn">
@@ -1144,28 +1144,28 @@
     </wsdl:binding>
     <wsdl:service name="iLabServiceBroker">
         <wsdl:port name="IServiceBroker" binding="tns:IServiceBroker">
-            <soap:address location="{{baseUrl}}'/apis/isa/soap/client" />
+            <soap:address location="{{baseUrl}}/apis/isa/soap/client" />
         </wsdl:port>
         <wsdl:port name="IBatchSB" binding="i0:IBatchSB">
-            <soap:address location="{{baseUrl}}'/apis/isa/soap/client" />
+            <soap:address location="{{baseUrl}}/apis/isa/soap/client" />
         </wsdl:port>
         <wsdl:port name="ITicketIssuer" binding="tns:ITicketIssuer">
-            <soap:address location="{{baseUrl}}'/apis/isa/soap/client" />
+            <soap:address location="{{baseUrl}}/apis/isa/soap/client" />
         </wsdl:port>
         <wsdl:port name="IProcessAgent" binding="tns:IProcessAgent">
-            <soap:address location="{{baseUrl}}'/apis/isa/soap/client" />
+            <soap:address location="{{baseUrl}}/apis/isa/soap/client" />
         </wsdl:port>
         <wsdl:port name="IServiceBroker1" binding="tns:IServiceBroker1">
-            <soap12:address location="{{baseUrl}}'/apis/isa/soap/client" />
+            <soap12:address location="{{baseUrl}}/apis/isa/soap/client" />
         </wsdl:port>
         <wsdl:port name="IBatchSB1" binding="i0:IBatchSB1">
-            <soap12:address location="{{baseUrl}}'/apis/isa/soap/client" />
+            <soap12:address location="{{baseUrl}}/apis/isa/soap/client" />
         </wsdl:port>
         <wsdl:port name="ITicketIssuer1" binding="tns:ITicketIssuer1">
-            <soap12:address location="{{baseUrl}}'/apis/isa/soap/client" />
+            <soap12:address location="{{baseUrl}}/apis/isa/soap/client" />
         </wsdl:port>
         <wsdl:port name="IProcessAgent1" binding="tns:IProcessAgent1">
-            <soap12:address location="{{baseUrl}}'/apis/isa/soap/client" />
+            <soap12:address location="{{baseUrl}}/apis/isa/soap/client" />
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
