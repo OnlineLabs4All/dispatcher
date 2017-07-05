@@ -56,7 +56,7 @@ class WebLabDeustoServices
             $consumer_data = $params->consumer_data;//save it to the opaque data field
 
             $this->labServerServices->setLabServerId($lab->getId());
-            $submissionReport = $this->labServerServices->Submit(null, $experimentSpecification, $consumer_data, 0, $authorityId);
+            $submissionReport = $this->labServerServices->Submit(null, $experimentSpecification, $consumer_data, 0, $authorityId, $lab->getId());
 
             $baseUrl = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
 
@@ -75,25 +75,34 @@ class WebLabDeustoServices
     {
         $reservation_id = $params->reservation_id->id;
 
-        $jobRecord = $this->labServerServices->getJobRecordById($reservation_id, $authorityId);
+        $expStatus = $this->labServerServices->getExperimentStatus($reservation_id);
 
-        if ($jobRecord == null){
+        if ($expStatus['exception']){
             return array('is_exception' => true,
-                'message' => "Reservation (exp ID) not found",
+                'message' => $expStatus['message'],
                 'code' => 'Client.NoCurrentReservation');
         }
 
-        $statusCode = $jobRecord->getJobStatus();
-        switch($statusCode){
+        $jobRecordResp = $this->labServerServices->getJobRecordById($reservation_id);
+
+        if ($jobRecordResp['exception']){
+            return array('is_exception' => true,
+                'message' => $jobRecordResp['message'],
+                'code' => 'Client.NoCurrentReservation');
+        }
+        
+        $baseUrl = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+        //$statusCode = $jobRecord->getJobStatus();
+
+        switch($expStatus['statusCode']){
             case 1: //experiment has been queued
 
-                $this->labServerServices->setLabServerId($jobRecord->getLabserverId());
-                $expStatus = $this->labServerServices->getExperimentStatus($reservation_id, $authorityId);
+                //$this->labServerServices->setLabServerId($jobRecord->getLabserverId());
 
-                return array('is_exception' => false,
+                return array('is_exception' => $expStatus['exception'],
                     'result' => array('reservation_id' => array('id' => (string)$reservation_id),
                         'status' => 'Reservation::waiting',
-                        'url' => 'http://localhost:8000/apis/weblab/',
+                        'url' => $baseUrl.'/apis/weblab/',
                         'position' => $expStatus['effectiveQueueLength']));
                 break;
             case 2: //Experiment is running
@@ -101,7 +110,7 @@ class WebLabDeustoServices
                 return array('is_exception' => false,
                     'result' => array('reservation_id' => array('id' => (string)$reservation_id),
                         'status' => 'Reservation::waiting_confirmation',
-                        'url' => 'http://localhost:8000/apis/weblab/'));
+                        'url' => $baseUrl.'/apis/weblab/'));
                 break;
             case 3: //Experiment has completed
 
@@ -110,8 +119,8 @@ class WebLabDeustoServices
                 return array('is_exception' => false,
                     'result' => array('reservation_id' => array('id' => (string)$reservation_id),
                                       'status' => 'Reservation::post_reservation',
-                                      'initial_data' => $jobRecord->getExpSpecification(),
-                                      'end_data' => $jobRecord->getExpResults(),
+                                      'initial_data' => $jobRecordResp['jobRecord']->getExpSpecification(),
+                                      'end_data' => $jobRecordResp['jobRecord']->getExpResults(),
                                       'finished' => true));
                 break;
             case 4: //Experiment has completed with errors
@@ -121,8 +130,8 @@ class WebLabDeustoServices
                 return array('is_exception' => false,
                              'result' => array('reservation_id' => array('id' => (string)$reservation_id),
                              'status' => 'Reservation::post_reservation',
-                             'initial_data' => $jobRecord->getExpSpecification(),
-                             'end_data' => $jobRecord->getExpResults(),
+                             'initial_data' => $jobRecordResp['jobRecord']->getExpSpecification(),
+                             'end_data' => $jobRecordResp['jobRecord']->getExpResults(),
                              'finished' => true));
                 break;
             case 5: //Experiment has completed
@@ -132,8 +141,8 @@ class WebLabDeustoServices
                 return array('is_exception' => false,
                              'result' => array('reservation_id' => array('id' => (string)$reservation_id),
                              'status' => 'Reservation::post_reservation',
-                             'initial_data' => $jobRecord->getExpSpecification(),
-                              'end_data' => $jobRecord->getExpResults(),
+                             'initial_data' => $jobRecordResp['jobRecord']->getExpSpecification(),
+                              'end_data' => $jobRecordResp['jobRecord']->getExpResults(),
                               'finished' => true));
                 break;
             default:
@@ -144,17 +153,17 @@ class WebLabDeustoServices
 
     public function getExperimentUseById($reservation_id, $authorityId)
     {
-        $jobRecord = $this->labServerServices->getJobRecordById($reservation_id, $authorityId);
+        $jobRecordResp = $this->labServerServices->getJobRecordById($reservation_id);
 
-        if ($jobRecord == null){
+        if ($jobRecordResp['exception']){
             return $result = array('status' => 'forbidden');
         }
 
-        $statusCode = $jobRecord->getJobStatus();
+        $statusCode = $jobRecordResp['jobRecord']->getJobStatus();
         switch($statusCode){
             case 1: //experiment has been queued
 
-                $this->labServerServices->setLabServerId($jobRecord->getLabserverId());
+                $this->labServerServices->setLabServerId($jobRecordResp['jobRecord']->getLabserverId());
                 $result = array('status' => 'alive',
                                 'running' => false);
                 break;
@@ -165,7 +174,7 @@ class WebLabDeustoServices
                 break;
             case 3: //Experiment has completed
 
-                $experimentUse = $this->assembleExperimentUse($jobRecord);
+                $experimentUse = $this->assembleExperimentUse($jobRecordResp['jobRecord']);
 
                 $result = array('status' => 'finished',
                                 'experiment_use' => $experimentUse);

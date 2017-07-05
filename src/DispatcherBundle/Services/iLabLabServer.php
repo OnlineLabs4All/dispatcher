@@ -25,7 +25,7 @@ class iLabLabServer
     private $serviceUrl;
     //private $labServerId;
 
-    public function __construct(EntityManager $em, IsaRlmsAuthenticator $brokerAuthenticator)
+    public function __construct(EntityManager $em, IsaRlmsAuthenticator $brokerAuthenticator, GenericLabServerServices $labServerServices)
     {
         $this->em = $em;
         $this->brokerAuthenticator = $brokerAuthenticator;

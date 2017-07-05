@@ -24,6 +24,11 @@ class JobRecord
     protected $expId;
 
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $federatedExpId;
+
+    /**
      * @ORM\Column(type="integer")
      */
     protected $labServerId; //New field: specifies the ID of the "virtual" lab server
@@ -626,12 +631,13 @@ class JobRecord
         return $this->expSpecChecksum;
     }
 
-    public function createNew($expId, $expSpec, $opaqueData, $queueLength, LabServer $labServer, $rlmsGuid, $exp_spec_hash, $jobStatus)
+    public function createNew($expId, $expSpec, $opaqueData, $queueLength, LabServer $labServer, $rlmsGuid, $exp_spec_hash, $jobStatus, $federatedExpId = null)
     {
         $this->setLabServerId($labServer->getId());
         $this->setLabServerOwnerId($labServer->getOwnerId());
         $this->setProviderId($rlmsGuid); //ID of the RLMS requesting execution
         $this->setRlmsAssignedId($expId);
+        $this->setFederatedExpId($federatedExpId);
         $this->setPriority(0); //Set priority 0 for the moment;
         $this->setSubmitTime(date('Y-m-d\TH:i:sP'));
         $this->setEstExecTime(20); //replace with real estimation
@@ -665,6 +671,7 @@ class JobRecord
 
         // Set experiment results if identical is found
         $this->setJobStatus($jobStatus); //Status
+        $this->setFederatedExpId($identicalJob->getFederatedExpId());
         $this->setProcessingEngine($identicalJob->getProcessingEngine());
         $this->setExecElapsed($identicalJob->getExecElapsed());
         $this->setJobElapsed($identicalJob->getJobElapsed());
@@ -696,5 +703,28 @@ class JobRecord
     public function getIsFromDataset()
     {
         return $this->isFromDataset;
+    }
+
+    /**
+     * Set federatedExpId
+     *
+     * @param integer $federatedExpId
+     * @return JobRecord
+     */
+    public function setFederatedExpId($federatedExpId)
+    {
+        $this->federatedExpId = $federatedExpId;
+
+        return $this;
+    }
+
+    /**
+     * Get federatedExpId
+     *
+     * @return integer 
+     */
+    public function getFederatedExpId()
+    {
+        return $this->federatedExpId;
     }
 }

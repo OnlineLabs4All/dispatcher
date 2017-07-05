@@ -136,6 +136,28 @@ class LabServer
     protected $useDataset;
 
 
+    // Data used to federate requests to other ISA lab server
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    protected $federate;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $isaWsdlUrl;
+
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    protected $isaIdentifier;
+
+    /**
+     * @ORM\Column(type="string", length=64)
+     */
+    protected $isaPasskeyToLabServer;
+
+
     public function setAll($data, $ownerId)
     {
         $this->Guid = $data['Guid'];
@@ -693,5 +715,97 @@ class LabServer
     public function getUseDataset()
     {
         return $this->useDataset;
+    }
+
+    /**
+     * Set federate
+     *
+     * @param boolean $federate
+     * @return LabServer
+     */
+    public function setFederate($federate)
+    {
+        $this->federate = $federate;
+
+        return $this;
+    }
+
+    /**
+     * Get federate
+     *
+     * @return boolean 
+     */
+    public function getFederate()
+    {
+        return $this->federate;
+    }
+
+    /**
+     * Set isaWsdlUrl
+     *
+     * @param string $isaWsdlUrl
+     * @return LabServer
+     */
+    public function setIsaWsdlUrl($isaWsdlUrl)
+    {
+        $this->isaWsdlUrl = $isaWsdlUrl;
+
+        return $this;
+    }
+
+    /**
+     * Get isaWsdlUrl
+     *
+     * @return string 
+     */
+    public function getIsaWsdlUrl()
+    {
+        return $this->isaWsdlUrl;
+    }
+
+    /**
+     * Set isaIdentifier
+     *
+     * @param string $isaIdentifier
+     * @return LabServer
+     */
+    public function setIsaIdentifier($isaIdentifier)
+    {
+        $this->isaIdentifier = $isaIdentifier;
+
+        return $this;
+    }
+
+    /**
+     * Get isaIdentifier
+     *
+     * @return string 
+     */
+    public function getIsaIdentifier()
+    {
+        return $this->isaIdentifier;
+    }
+
+    /**
+     * Set isaPasskeyToLabServer
+     *
+     * @param string $isaPasskeyToLabServer
+     * @return LabServer
+     */
+    public function setIsaPasskeyToLabServer($isaPasskeyToLabServer)
+    {
+        $this->isaPasskeyToLabServer = $isaPasskeyToLabServer;
+
+        return $this;
+    }
+
+    /**
+     * Get isaPasskeyToLabServer
+     *
+     * @return string 
+     */
+    public function getIsaPasskeyToLabServer()
+    {
+        return $this->isaPasskeyToLabServer;
     }
 }

@@ -37,12 +37,12 @@ class iLabServiceBroker
         $this->serviceUrl = $url;
     }
 
-    public function getLabServerByGuid($guid)
+    public function getLabServerByGuid($labServerId)
     {
         $labServer = $this
             ->em
             ->getRepository('DispatcherBundle:LabServer')
-            ->findOneBy(array('id' => $this->labServerId, 'Guid' => $guid));
+            ->findOneBy(array('Guid' => $labServerId));
 
         if ($labServer == null){
             return array('exception' => true,
@@ -114,8 +114,14 @@ class iLabServiceBroker
         if ($labServerResp['exception']){
             return new \SoapFault("Server", $labServerResp['message'] );
         }
-        $response = array('GetLabInfoResult' => $labServerResp['labServer']->getLabInfo());
-        return $response;
+
+        $labInfoRes = $this->lsServices->getLabInfo($labServerResp['labServer']->getId());
+
+        if ($labInfoRes['exception']){
+            return new \SoapFault("Server", $labInfoRes['message'] );
+        }
+
+        return array('GetLabInfoResult' => $labInfoRes['result']);
     }
 
     public function GetLabStatus($params){
@@ -140,7 +146,15 @@ class iLabServiceBroker
             return new \SoapFault("Server", $labServerResp['message'] );
         }
 
-        $response = array('GetLabConfigurationResult' => $labServerResp['labServer']->getConfiguration());
+        //$response = array('GetLabConfigurationResult' => $labServerResp['labServer']->getConfiguration());
+        $labConfigResp = $this->lsServices->getLabConfiguration($labServerResp['labServer']->getId());
+        
+        if ($labConfigResp['exception']){
+            return new \SoapFault("Server", $labConfigResp['message'] );
+        }
+
+        $response = array('GetLabConfigurationResult' => $labConfigResp['labConfiguration']['labConfiguration']);
+
         return $response;
     }
     
@@ -159,30 +173,37 @@ class iLabServiceBroker
 
     public function GetExperimentStatus($params)
     {
-        $statusReport = $this->lsServices->getExperimentStatus($params->experimentID, $this->authorityId);
+        $statusReport = $this->lsServices->getExperimentStatus($params->experimentID);
+
+        if ($statusReport['exception']){
+            return new \SoapFault("Server", $statusReport['message'] );
+        }
 
         $response = array('GetExperimentStatusResult' => array(
             'statusReport' => array('statusCode' =>  $statusReport['statusCode'],
                 'wait' => array('effectiveQueueLength' => $statusReport['effectiveQueueLength'],
-                    'estWait' => 20*$statusReport['effectiveQueueLength']),
-                'estRuntime' => 20,
-                'estRemainingRuntime' => 20),
-            'minTimetoLive' => 7200));
+                    'estWait' => $statusReport['estWait']),
+                'estRuntime' => $statusReport['estRuntime'],
+                'estRemainingRuntime' => $statusReport['estRemainingRuntime']),
+            'minTimetoLive' => $statusReport['minTimetoLive']));
         return $response;
     }
 
     public function RetrieveResult($params)
     {
-        $statusReport = $this->lsServices->retrieveResult($params->experimentID, $this->authorityId);
+        $resultsReport = $this->lsServices->retrieveResult($params->experimentID);
 
-        $response = array('RetrieveResultResult' => array('statusCode' => $statusReport['statusCode'],
-            'experimentResults' => $statusReport['experimentResults'],
-            'xmlResultExtension' => $statusReport['xmlResultExtension'],
-            'xmlBlobExtension' => $statusReport['xmlBlobExtension'],
-            'warningMessages' => $statusReport['warningMessages'],
-            'errorMessage' => $statusReport['errorMessage'])
+        if ($resultsReport['exception']){
+            return new \SoapFault("Server", $resultsReport['message'] );
+        }
+
+        return array('RetrieveResultResult' => array('statusCode' => $resultsReport['statusCode'],
+            'experimentResults' => $resultsReport['experimentResults'],
+            'xmlResultExtension' => $resultsReport['xmlResultExtension'],
+            'xmlBlobExtension' => $resultsReport['xmlBlobExtension'],
+            'warningMessages' => $resultsReport['warningMessages'],
+            'errorMessage' => $resultsReport['errorMessage'])
         );
-        return $response;
     }
 
     public function GetEffectiveQueueLength($params)

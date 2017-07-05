@@ -178,17 +178,17 @@ class iLabApiController extends Controller
 
             switch ($action){
                 case 'getLabConfiguration':
-                    $jsonResponse = $iLabBatched->getLabConfiguration();
+                    $jsonResponse = $iLabBatched->getLabConfiguration($labServerId);
                     break;
                 case 'getLabStatus':
-                    $jsonResponse = $iLabBatched->getLabStatus();
+                    $jsonResponse = $iLabBatched->getLabStatus($labServerId);
                     break;
                 case 'getLabInfo':
-                    $jsonResponse = $iLabBatched->getLabInfo();
+                    $jsonResponse = $iLabBatched->getLabInfo($labServerId);
                     break;
                 case 'getEffectiveQueueLength':
                     $priorityHint = $jsonRequest->params->priorityHint;
-                    $jsonResponse = $iLabBatched->getEffectiveQueueLength($priorityHint);
+                    $jsonResponse = $iLabBatched->getEffectiveQueueLength($priorityHint, $labServerId);
                     break;
                 case 'submit':
                     $rlmsExpId = $jsonRequest->params->experimentID;
@@ -196,25 +196,27 @@ class iLabApiController extends Controller
                     $opaqueData = $jsonRequest->params->userGroup; //stored in the opaque data field
                     $priorityHint = $jsonRequest->params->priorityHint;
                     $rlmsGuid = $jsonRequest->guid;
-                    $jsonResponse = $iLabBatched->submit($rlmsExpId, $experimentSpecification, $opaqueData, $priorityHint, $rlmsGuid);
+                    $jsonResponse = $iLabBatched->submit($rlmsExpId, $experimentSpecification, $opaqueData, $priorityHint, $rlmsGuid, $labServerId);
                     break;
                 case 'registerBroker': //TODO: Actually register new RLMS on Dispatcher
-                    $jsonResponse = array('labGUID' => $iLabBatched->getLabServerGuid());
+
+                    $guidResp = $iLabBatched->getLabServerGuid($labServerId);
+                    $jsonResponse = array('labGUID' => $guidResp['guid']);
                     break;
                 case 'getExperimentStatus':
                     $experimentId = $jsonRequest->params->experimentID;
                     $rlmsGuid = $jsonRequest->guid;
-                    $jsonResponse = $iLabBatched->getExperimentStatus($experimentId, $rlmsGuid);
+                    $jsonResponse = $iLabBatched->getExperimentStatus($labServerId, $experimentId);
                     break;
                 case 'retrieveResult':
                     $experimentId = $jsonRequest->params->experimentID;
                     $rlmsGuid = $jsonRequest->guid;
-                    $jsonResponse = $iLabBatched->retrieveResult($experimentId, $rlmsGuid);
+                    $jsonResponse = $iLabBatched->retrieveResult($labServerId, $experimentId);
                     break;
                 case 'cancel':
                     $experimentId = $jsonRequest->params->experimentID;
                     //$rlmsGuid = $jsonRequest->guid;
-                    $jsonResponse = $iLabBatched->cancelExperiment($experimentId);
+                    $jsonResponse = $iLabBatched->cancelExperiment($labServerId, $experimentId);
                     break;
                 default:
                     $jsonResponse = array();
