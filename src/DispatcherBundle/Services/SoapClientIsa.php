@@ -28,6 +28,8 @@ class SoapClientIsa
             'identifier' => $labServer->getIsaIdentifier(), //Original Broker GUID authorized to make this request
             'passKey' => $labServer->getIsaPasskeyToLabServer());
 
+        //Cache the WSDL so that it is not loaded again and again
+        ini_set("soap.wsdl_cache_enabled", "1");
         //Create SOAP Client
         $client = new SoapClient($labServer->getIsaWsdlUrl(), array('soap_version' => SOAP_1_2,
             'trace' => 1,
