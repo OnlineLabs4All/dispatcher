@@ -33,6 +33,7 @@ class SoapClientIsa
         //Create SOAP Client
         $client = new SoapClient($labServer->getIsaWsdlUrl(), array('soap_version' => SOAP_1_2,
             'trace' => 1,
+            'cache_wsdl' => WSDL_CACHE_MEMORY,
             'encoding' => 'UTF-8'));
 
         $header = new SOAPHeader('http://ilab.mit.edu', 'AuthHeader', $headerParams);
