@@ -33,6 +33,34 @@
                             <li><i class="fa fa-book fa-file-o"></i> Client WSDL (MIT-ISA compliant): <code><a href="{{ api.client_wsdl }}" target="_blank" >{{ api.client_wsdl }}</a></code></li>
                         </ul>
 
+                        <p class="text-primary">To call the LaunchLabClient SOAP action:</p>
+
+                        <pre lang="xml">
+<strong>POST</strong> /iLabServiceBroker/iLabServiceBroker.asmx HTTP/1.1
+<strong>Content-Type</strong>: text/xml; charset=utf-8
+<strong>Content-Length</strong>: length
+<strong>SOAPAction</strong>: "http://ilab.mit.edu/iLabs/Type/LaunchLabClient"
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;soap:Envelope&quot;&gt;
+ &lt;soap:Header&gt;
+    &lt;OperationAuthHeader xmlns=&quot;http://ilab.mit.edu/iLabs/type&quot; /&gt;
+ &lt;/soap:Header&gt;
+ &lt;soap:Body&gt;
+    &lt;LaunchLabClient xmlns=&quot;http://ilab.mit.edu/iLabs/Services&quot;&gt;
+         &lt;clientGuid&gt;<strong>string</strong>&lt;/clientGuid&gt;
+         &lt;groupName&gt;<strong>string</strong>&lt;/groupName&gt;
+         &lt;userName&gt;<strong>string</strong>&lt;/userName&gt;
+         &lt;authorityKey&gt;<strong>string</strong>&lt;/authorityKey&gt;
+         &lt;start&gt;<strong>dateTime</strong>&lt;/start&gt;
+         &lt;duration&gt;<strong>long</strong>&lt;/duration&gt;
+    &lt;/LaunchLabClient&gt;
+  &lt;/soap:Body&gt;
+&lt;/soap:Envelope&gt;
+                        </pre>
+
+
+
                     </div>
                 </div>
                 <!-- /.panel-body -->

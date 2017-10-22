@@ -196,7 +196,7 @@ class LabSession
         $this->authorityId  = $authorityId;
         $this->labServerId = $labServerId;
         $this->session_id = md5(microtime().rand());
-        $this->couponId = mt_rand(0, 9999);;
+        $this->couponId = mt_rand(0, 9999);
         $this->passkey = md5(microtime().rand());
         
         return array('id' => $this->id,

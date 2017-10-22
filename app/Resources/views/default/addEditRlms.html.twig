@@ -15,23 +15,28 @@
 
                     {{ form_errors(form) }}
 
-                    {{ form_row(form.active) }}
-                    {{ form_row(form.name) }}
-                    {{ form_row(form.description) }}
-                    {{ form_row(form.contact_name) }}
-                    {{ form_row(form.contact_email) }}
-                    {{ form_row(form.institution) }}
-                    {{ form_row(form.service_description_url) }}
+                    <div class="col-xs-12">{{ form_row(form.active) }}</div>
+                    <div class="col-xs-12">{{ form_row(form.active) }}</div>
+                    <div class="col-xs-12">{{ form_row(form.name) }}</div>
+                    <div class="col-xs-12">{{ form_row(form.description) }}</div>
+
+                    <div class="col-xs-6">{{ form_row(form.contact_name) }}</div>
+                    <div class="col-xs-6">{{ form_row(form.contact_email) }}</div>
+                    <div class="col-xs-12">{{ form_row(form.institution) }}</div>
+                    <div class="col-xs-12">{{ form_row(form.service_description_url) }}</div>
 
                     <p class="text-primary"> For ISA RLMS: </p>
 
-                    {{ form_row(form.guid) }}
-                    {{ form_row(form.service_url) }}
+                    <div class="col-xs-6">{{ form_row(form.guid) }}</div>
+                    <div class="col-xs-6">{{ form_row(form.service_url) }}</div>
+
+                    <div class="col-xs-6">{{ form_row(form.couponId) }}</div>
+                    <div class="col-xs-6">{{ form_row(form.passkey) }}</div>
 
                     <p class="text-primary"> For Weblab Deusto RLMS: </p>
 
-                    {{ form_row(form.rlms_username) }}
-                    {{ form_row(form.rlms_password) }}
+                    <div class="col-xs-6">{{ form_row(form.rlms_username) }}</div>
+                    <div class="col-xs-6">{{ form_row(form.rlms_password) }}</div>
 
                 </div>
             </div>

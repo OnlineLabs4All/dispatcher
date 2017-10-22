@@ -704,6 +704,8 @@ class AdminController extends Controller
             ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('value'=>$rlms->getContactEmail(), 'readonly' => false)))
             ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('value'=>$rlms->getInstitution(), 'readonly' => false)))
             ->add('guid', 'text', array('label' => 'GUID', 'required' => true, 'attr' => array('value'=>$rlms->getGuid(), 'readonly' => true)))
+            ->add('couponId', 'text', array('label' => 'couponId', 'required' => true, 'attr' => array('value'=>$rlms->getGuid(), 'readonly' => false)))
+            ->add('passkey', 'text', array('label' => 'passkey', 'required' => true, 'attr' => array('value'=>$rlms->getGuid(), 'readonly' => false)))
             //->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value'=>$rlms->getPassKeyToRlms(), 'readonly' => true)))
             ->add('service_url', 'text', array('label' => 'Service URL', 'required' => false, 'attr' => array('value'=>$rlms->getServiceUrl(), 'readonly' => true)))
             ->add('service_description_url', 'text', array('label' => 'URL of a parsable description of Authority API (Ex.: RLMS WSDL, Swagger, etc)', 'required' => false, 'attr' => array('value'=>$rlms->getServiceDescriptionUrl(), 'readonly' => false)))
@@ -726,6 +728,8 @@ class AdminController extends Controller
     //generate form to CREATE a RLMS Credentials
     private function createAddRlmsForm($username)
     {
+        $gen_passkey = md5(microtime().rand());
+        $gen_couponId = $this->couponId = mt_rand(0, 9999);
         //$passkey = md5(microtime().rand());
         //$rlms_username = md5(microtime().rand());
         $form = $this->createFormBuilder()
@@ -736,6 +740,8 @@ class AdminController extends Controller
             ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('readonly' => false)))
             ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('readonly' => false)))
             ->add('guid', 'text', array('label' => 'GUID', 'required' => false, 'attr' => array('readonly' => false)))
+            ->add('couponId', 'text', array('label' => 'couponId', 'required' => true, 'attr' => array('value'=>$gen_couponId, 'readonly' => false)))
+            ->add('passkey', 'text', array('label' => 'passkey', 'required' => true, 'attr' => array('value'=>$gen_passkey, 'readonly' => false)))
        //     ->add('rlms_type', 'choice',
        //         array('label' => 'Authority Type',
        //               'required' => true,

@@ -459,8 +459,8 @@ class Rlms
         $this->owner_id = $ownerId;
         $this->active = $data['active'];
         $this->dateCreated = date('Y-m-d\TH:i:sP');
-        //$this->authCouponId = $data['authCouponId'];
-        //$this->authPassKey = $data['authPassKey'];
+        $this->authCouponId = $data['authCouponId'];
+        $this->authPassKey = $data['authPassKey'];
         $this->rlmsType = $data['rlms_type'];
         $this->serviceUrl = $data['service_url'];
         $this->serviceDescriptionUrl = $data['service_description_url'];
