@@ -18,9 +18,8 @@
 
                         <ul class="list-unstyled">
                             <li><i class="fa fa-book fa-eye"></i> Lab Server GUID: <code>{{ api.guid }}</code></li>
-
                         </ul>
-                        <h3>APIs to interact with a RLMS:</h3>
+                        <p class="text-primary"> RLMS APIs: </p>
                         <ul class="list-unstyled">
                             <li><i class="fa fa-gear fa-fw"></i> SOAP API Endpoint (MIT-ISA compliant): <code>{{ api.soap_endpoint }}</code></li>
                             <li><i class="fa fa-book fa-file-o"></i> WSDL (MIT-ISA compliant): <code><a href="{{ api.wsdl }}" target="_blank" >{{ api.wsdl }}</a></code></li>
@@ -28,7 +27,7 @@
                             <li><i class="fa fa-book fa-key"></i> PassKey (MIT-ISA compliant): <code>{{ api.passkey }}</code></li>
                             <li><i class="fa fa-book fa-key"></i> Initial PassKey (used to install credentials of an ILS): <code>{{ api.initialPasskey }}</code></li>
                         </ul>
-                        <h3>APIs to interact with a Lab Client:</h3>
+                        <p class="text-primary"> Lab Client APIs: </p>
                         <ul class="list-unstyled">
                             <li><i class="fa fa-gear fa-fw"></i> Client SOAP API Endpoint (MIT-ISA compliant): <code>{{ api.client_soap_endpoint }}</code></li>
                             <li><i class="fa fa-book fa-file-o"></i> Client WSDL (MIT-ISA compliant): <code><a href="{{ api.client_wsdl }}" target="_blank" >{{ api.client_wsdl }}</a></code></li>

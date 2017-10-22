@@ -57,7 +57,7 @@ class AdminController extends Controller
         $rlms_list = $dashboadServices->appendUserInfoToResourceArray($rlms_list);
 
         return $this->render('default/rlmsRecordsTableView.html.twig',
-            array( 'viewName'=> 'Remote Laboratory Management Systems',
+            array( 'viewName'=> 'Registered Authorities',
                 'records' => (array)$rlms_list));
     }
 
@@ -93,7 +93,7 @@ class AdminController extends Controller
         }
 
         return $this->render('default/addEditRlms.html.twig', array(
-            'viewName'=>'View/Edit RLMS',
+            'viewName'=>'View/Edit Authority',
             'form' => $form->createView(),
         ));
     }
@@ -121,7 +121,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('rlms');
         }
         return $this->render('default/addEditRlms.html.twig', array(
-            'viewName'=>'Register a new RLMS',
+            'viewName'=>'Register a new Authority',
             'form' => $form->createView()
         ));
     }
@@ -661,11 +661,11 @@ class AdminController extends Controller
         if ($client != null){
             $form = $this->createFormBuilder()
                 ->add('labserverId','text', array('label' => 'Lab Server (ID)', 'attr' => array('value'=>$client->getLabServerId(), 'readonly' => true)))
-                ->add('id', 'text', array('label' => 'Client ID', 'attr' => array('value'=>$client->getId(), 'readonly' => true)))
+                //->add('id', 'text', array('label' => 'Client ID', 'attr' => array('value'=>$client->getId(), 'readonly' => true)))
                 ->add('dateCreated', 'text', array('label' => 'Created', 'attr' => array('value'=>$client->getDateCreated()->format('d/m/Y H:i:s'), 'readonly' => true)))
                 ->add('name', 'text', array('label' => 'Client Name', 'attr' => array('value'=>$client->getName(), 'readonly' => false)))
-                ->add('Guid', 'text', array('label' => 'Guid', 'attr' => array('value'=>$client->getGuid(), 'readonly' => true)))
-                ->add('url', 'text', array('label' => 'Client URL', 'attr' => array('value'=>$client->getClientUrl(), 'readonly' => false)))
+                ->add('Guid', 'text', array('label' => 'Guid', 'attr' => array('value'=>$client->getGuid(), 'readonly' => false)))
+                ->add('url', 'text', array('label' => 'ISA compliant client URL (coupon_id, passkey and labServerGuid will be added to this URL)', 'attr' => array('value'=>$client->getClientUrl(), 'readonly' => false)))
                 ->add('description', 'textarea', array('label' => 'Description','data'=>$client->getDescription()))
                 ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
                 ->getForm();
@@ -684,7 +684,7 @@ class AdminController extends Controller
                 //->add('dateCreated', 'text', array('label' => 'Created', 'attr' => array('value'=>$client->getDateCreated()->format('d/m/Y H:i:s'), 'readonly' => true)))
                 ->add('name', 'text', array('label' => 'Client Name', 'attr' => array('value'=>'', 'readonly' => false)))
                 ->add('Guid', 'text', array('label' => 'Guid', 'data'=> $gen_guid, 'required' => true))
-                ->add('url', 'text', array('label' => 'Client URL', 'attr' => array('required' => true, 'readonly' => false)))
+                ->add('url', 'text', array('label' => 'ISA compliant client URL (coupon_id, passkey and labServerGuid will be added to this URL)', 'attr' => array('required' => true, 'readonly' => false)))
                 ->add('description', 'textarea', array('label' => 'Description','data'=>''))
                 ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
                 ->getForm();
@@ -697,17 +697,17 @@ class AdminController extends Controller
     private function buildEditRlmsForm(Rlms $rlms)
     {
         $form = $this->createFormBuilder()
+          //  ->add('rlms_type', 'text', array('label' => 'Authority Type', 'attr' => array('value'=> $rlms->getRlmsType(), 'readonly' => true)))
             ->add('name', 'text', array('label' => 'Name', 'attr' => array('value'=>$rlms->getName(), 'readonly' => false)))
             ->add('description', 'textarea', array('label' => 'Description','data'=>$rlms->getDescription()))
             ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'attr' => array('value'=>$rlms->getContactName(), 'readonly' => false)))
             ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('value'=>$rlms->getContactEmail(), 'readonly' => false)))
             ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('value'=>$rlms->getInstitution(), 'readonly' => false)))
             ->add('guid', 'text', array('label' => 'GUID', 'required' => true, 'attr' => array('value'=>$rlms->getGuid(), 'readonly' => true)))
-            ->add('rlms_type', 'text', array('label' => 'RLMS Type', 'attr' => array('value'=> $rlms->getRlmsType(), 'readonly' => true)))
             //->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value'=>$rlms->getPassKeyToRlms(), 'readonly' => true)))
             ->add('service_url', 'text', array('label' => 'Service URL', 'required' => false, 'attr' => array('value'=>$rlms->getServiceUrl(), 'readonly' => true)))
-            ->add('service_description_url', 'text', array('label' => 'URL of a parsable description of RLMS API (WSDL, Swagger, etc)', 'required' => false, 'attr' => array('value'=>$rlms->getServiceDescriptionUrl(), 'readonly' => true)))
-            ->add('rlms_username', 'text', array('label' => 'Username',  'required' => false, 'attr' => array('value'=>$rlms->getUsername(), 'readonly' => true)))
+            ->add('service_description_url', 'text', array('label' => 'URL of a parsable description of Authority API (Ex.: RLMS WSDL, Swagger, etc)', 'required' => false, 'attr' => array('value'=>$rlms->getServiceDescriptionUrl(), 'readonly' => false)))
+            ->add('rlms_username', 'text', array('label' => 'Username',  'required' => false, 'attr' => array('value'=>$rlms->getUsername(), 'readonly' => false)))
             ->add('rlms_password', 'repeated', array(
                 'type' => 'password',
                 'invalid_message' => 'The password fields must match.',
@@ -736,15 +736,15 @@ class AdminController extends Controller
             ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('readonly' => false)))
             ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('readonly' => false)))
             ->add('guid', 'text', array('label' => 'GUID', 'required' => false, 'attr' => array('readonly' => false)))
-            ->add('rlms_type', 'choice',
-                array('label' => 'Choose a supported RLMS',
-                      'required' => true,
-                      'choices' => array('ISA_SOAP'=>'ISA Service Broker (SOAP)',
-                                         'ISA_JSON'=>'ISA Service Broker (JSON)',
-                                         'WEBLAB_DEUSTO' => 'WebLab Deusto')))
+       //     ->add('rlms_type', 'choice',
+       //         array('label' => 'Authority Type',
+       //               'required' => true,
+       //               'choices' => array('ISA_SOAP'=>'ISA Service Broker (SOAP)',
+       //                                  'ISA_JSON'=>'ISA Service Broker (JSON)',
+       //                                  'WEBLAB_DEUSTO' => 'WebLab Deusto')))
             //->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value' => $passkey,'readonly' => false)))
             ->add('service_url', 'text', array('label' => 'Service URL', 'required' => false, 'attr' => array('readonly' => false)))
-            ->add('service_description_url', 'text', array('label' => 'URL of a parsable description of RLMS API (WSDL, Swagger, etc)', 'required' => false, 'attr' => array('readonly' => false)))
+            ->add('service_description_url', 'text', array('label' => 'URL of a parsable description of Authority API (Ex.: RLMS WSDL, Swagger, etc)', 'required' => false, 'attr' => array('value'=>'', 'readonly' => false)))
             ->add('rlms_username', 'text', array('label' => 'Username',  'required' => false, 'attr' => array('value' => '','readonly' => false)))
             ->add('rlms_password', 'repeated', array(
                 'type' => 'password',

@@ -15,38 +15,20 @@
 
                     {{ form_errors(form) }}
 
-                    {{ form_row(form.rlms_type) }}
+                    {{ form_row(form.active) }}
                     {{ form_row(form.name) }}
                     {{ form_row(form.description) }}
                     {{ form_row(form.contact_name) }}
                     {{ form_row(form.contact_email) }}
                     {{ form_row(form.institution) }}
                     {{ form_row(form.service_description_url) }}
-                    {{ form_row(form.active) }}
 
+                    <p class="text-primary"> For ISA RLMS: </p>
 
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-12">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <p class="text-primary"> ISA-RLMS Specific Information </p>
-                </div>
-                <div class="panel-body">
                     {{ form_row(form.guid) }}
                     {{ form_row(form.service_url) }}
-                </div>
-            </div>
-        </div>
 
-        <div class="col-lg-12">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <p class="text-primary">WebLab Deusto-RLMS Specific Information</p>
-                </div>
-                <div class="panel-body">
+                    <p class="text-primary"> For Weblab Deusto RLMS: </p>
 
                     {{ form_row(form.rlms_username) }}
                     {{ form_row(form.rlms_password) }}
