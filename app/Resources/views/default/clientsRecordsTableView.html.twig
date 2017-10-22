@@ -1,0 +1,51 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block mainPanel %}
+
+    <div class="panel panel-primary">
+    <div class="panel-heading">
+        <p class="fa fa-cog"> Registered Lab Clients</p>
+    </div>
+    <div class="panel-body">
+        <a href="{{ path('addClient') }}" class="btn btn-success">Create new Client</a>
+
+    <table class="table table-hover" id="dataTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Client</th>
+            <th>Lab Server</th>
+            <th>URL</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {%  for record in records %}
+
+            <tr class="odd gradeX">
+                <td>{{ record.id }}</td>
+                <td>{{ record.name }}</td>
+                <td>{{ record.labServerName }}</td>
+                <td><a href="{{ record.clientUrl }}" target="_blank">{{ record.clientUrl }}</a></td>
+                <td>
+                    <a href="{{ path('addEditClient') }}/{{ record.id }}">
+                        <i class="fa fa-edit"> view/edit</i>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+    </div>
+    </div>
+
+
+    <script>
+
+
+    </script>
+
+
+
+{% endblock %}

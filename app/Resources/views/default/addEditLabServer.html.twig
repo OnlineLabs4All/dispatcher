@@ -9,7 +9,7 @@
         <div class="col-lg-12">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    Register New Lab Server
+                    Lab Server General Information
                 </div>
                 <div class="panel-body">
                     {{ form_errors(form) }}
@@ -31,7 +31,6 @@
                     {{ form_row(form.contact_email) }}
                     {{ form_row(form.institution) }}
 
-
                     <div class="alert alert-warning">
                         {{ form_row(form.useDataset) }}
                         <p class="fa fa-warning"></p>
@@ -39,8 +38,27 @@
                         If found, it will return the results from the dataset and a new experiment will not run.
                         Uncheck this option if debugging experiments or if you want that all experiments are executed.
                     </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Federate request to other ISA Lab Server?</div>
+                <div class="panel-body">
                     <div class="alert alert-warning">
-                        {{ form_row(form.singleEngine) }}
+                        <p class="fa fa-warning"> </p>
+                        Selection this option will cause all requests to the forward to the lab server specified here and no experiment engine can be attached to this lab server.
+                        Use this option if you want the Dispatcher to act as a Service Broker.
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-2">{{ form_row(form.federate) }}</div>
+                        <div class="col-xs-4">{{ form_row(form.isaIdentifier) }}</div>
+                        <div class="col-xs-6">{{ form_row(form.isaPasskeyToLabServer) }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">{{ form_row(form.isaWsdlUrl) }}</div>
                     </div>
 
                 </div>
@@ -50,33 +68,28 @@
         <div class="col-lg-12">
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    <p class="text-primary"> ISA-RLMS Specific Information </p>
+                    <p class="text-primary"> Share Lab Server with other systems </p>
                 </div>
                 <div class="panel-body">
 
+                    <div class="alert alert-warning">
+                        {{ form_row(form.singleEngine) }}
+                        <p class="fa fa-warning"></p>
+                        If checked, the experiment engine can also update the lab configuration via the Engine REST API.
+                    </div>
+                    {{ form_row(form.configuration) }}
+                    {{ form_row(form.labInfo) }}
+
+                    <p class="text-primary"> ISA RLMS: </p>
 
                     {{ form_row(form.Guid) }}
                     {{ form_row(form.passKey) }}
                     {{ form_row(form.initialPassKey) }}
-                    {{ form_row(form.labInfo) }}
-                    {{ form_row(form.configuration) }}
 
-                </div>
-            </div>
-        </div>
+                    <p class="text-primary"> Weblab Deusto RLMS: </p>
 
-        <div class="col-lg-12">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <p class="text-primary">WebLab Deusto-RLMS Specific Information</p>
-                </div>
-                <div class="panel-body">
-
-                    <div class="row">
-                        <div class="col-xs-6">{{ form_row(form.exp_category) }}</div>
-                        <div class="col-xs-6">{{ form_row(form.exp_name) }}</div>
-                    </div>
-
+                    <div class="col-xs-6">{{ form_row(form.exp_category) }}</div>
+                    <div class="col-xs-6">{{ form_row(form.exp_name) }}</div>
                 </div>
             </div>
         </div>

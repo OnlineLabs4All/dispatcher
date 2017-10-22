@@ -166,6 +166,28 @@ class DashboardUiServices
 
     }
 
+    public function getClients(User $user)
+    {
+        $labServersNames = $this->getLabServerNamesAndIdsForUser($user);
+        if ($user->getRole() != 'ROLE_ADMIN'){
+            $clients = $this->em
+                ->getRepository('DispatcherBundle:LabClient')
+                ->findBy(array('owner_id' => $user->getId()));
+        }
+        else{
+            $clients = $this->em
+                ->getRepository('DispatcherBundle:LabClient')
+                ->findAll();
+        }
+        $i = 0;
+        foreach ($clients as $client){
+            $clients[$i]->labServerName =  $labServersNames[$client->getLabserverId()];
+            $i++;
+        }
+
+        return $clients;
+    }
+
     public function getEnginesList(User $user)
     {
         $labServersNames = $this->getLabServerNamesAndIdsForUser($user);
@@ -212,14 +234,14 @@ class DashboardUiServices
             $labServerIdsAndNames = $repository->createQueryBuilder('LabServer')
                 ->where('LabServer.owner_id = :owner_id')
                 ->setParameter('owner_id', $user->getId())
-                ->select('LabServer.id, LabServer.name')
+                ->select('LabServer.id, LabServer.name, LabServer.ownerId')
                 ->getQuery()
                 ->getArrayResult();
         }
         else{
             $repository = $this->em->getRepository('DispatcherBundle:LabServer');
             $labServerIdsAndNames = $repository->createQueryBuilder('LabServer')
-                ->select('LabServer.id, LabServer.name')
+                ->select('LabServer.id, LabServer.name, LabServer.owner_id')
                 ->getQuery()
                 ->getArrayResult();
         }
@@ -244,6 +266,17 @@ class DashboardUiServices
             ->getQuery()
             ->getSingleResult();
         return $userName;
+    }
+
+    public function getUserById($userId)
+    {
+        $repository = $this->em->getRepository('DispatcherBundle:User');
+        $user = $repository->createQueryBuilder('User')
+            ->where('User.id = :id')
+            ->setParameter('id', $userId)
+            ->getQuery()
+            ->getSingleResult();
+        return $user;
     }
 
     public function appendUserInfoToResourceArray($resourceArray)

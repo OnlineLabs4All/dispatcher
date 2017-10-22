@@ -231,4 +231,18 @@ class LabClient
     {
         return $this->clientUrl;
     }
+
+    public function setUpdateAll($data, $ownerId = null)
+    {
+        $this->labServerId = $data['labserverId'];
+        $this->name = $data['name'];
+        $this->Guid = $data['Guid'];
+        $this->description = $data['description'];
+        $this->dateCreated = new \DateTime();
+        $this->clientUrl = $data['url'];
+
+        if ($ownerId != null){
+            $this->owner_id = $ownerId;
+        }
+    }
 }

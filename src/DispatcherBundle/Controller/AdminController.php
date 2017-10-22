@@ -9,6 +9,7 @@
 namespace DispatcherBundle\Controller;
 
 use DispatcherBundle\Entity\ExperimentEngine;
+use DispatcherBundle\Entity\LabClient;
 use DispatcherBundle\Entity\LabServer;
 use DispatcherBundle\Entity\Rlms;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -215,6 +216,119 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/clients", name="clients")
+     */
+    public function ClientsAction()
+    {
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $dashboadServices = $this->get('dashboardUiServices');
+
+        $clients = $dashboadServices->getClients($user);
+
+        return $this->render('default/clientsRecordsTableView.html.twig',
+            array( 'viewName'=> 'Lab Clients',
+                'records' => $clients));
+    }
+
+    /**
+     * @Route("/addClient", name="addClient")
+     */
+    public function addClientAction(Request $request)
+    {
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $dashboadServices = $this->get('dashboardUiServices');
+
+        //Instantiate client object
+        $client = new LabClient();
+        $form = $this->buildEditClientForm(null);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $data =$form->getData();
+
+            $labServerId = $data['labserverId'];
+            $labServer = $this->getDoctrine()
+                ->getRepository('DispatcherBundle:LabServer')
+                ->findOneBy(array('id' => $labServerId));
+
+            $client->setUpdateAll($data, $labServer->getOwnerId());
+            $em->flush();
+            return $this->redirectToRoute('addEditClient');
+        }
+
+        return $this->render('default/addEditResource.html.twig', array(
+            'viewName'=>'View/Edit Lab Client',
+            'form' => $form->createView(),
+            'exception' => false
+        ));
+    }
+
+    /**
+     * @Route("/clients/{clientId}", name="addEditClient", defaults={"clientId" = null})
+     */
+    public function clientAction($clientId, Request $request)
+    {
+        //retrieve user data
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $dashboadServices = $this->get('dashboardUiServices');
+
+        if ($clientId == -1){
+
+            //Instantiate client object
+            $client = new LabClient();
+            $form = $this->buildEditClientForm(null);
+           // $ownerId = $user->getId();
+        }
+        else{
+            //retrieve client from database
+            $repository = $this->getDoctrine()
+                ->getRepository('DispatcherBundle:LabClient');
+            $client = $repository->findOneBy(array('id' => $clientId));
+
+            //Verify user's permissions to access resource
+            $permissions = $dashboadServices->checkUserPermissionOnResource($user, $client);
+            if ($permissions['granted'] == false){
+                return $this->render('default/warning.html.twig', array(
+                    'warning' => $permissions['warning'],
+                    'viewName' => 'Something went wrong'));
+            }
+            $form = $this->buildEditClientForm($client);
+        }
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $data =$form->getData();
+
+            $labServerId = $data['labserverId'];
+            $labServer = $this->getDoctrine()
+                ->getRepository('DispatcherBundle:LabServer')
+                ->findOneBy(array('id' => $labServerId));
+
+            if ($clientId == -1){
+                $ownerId = $user->getId();
+            }
+            else{
+                $ownerId = $labServer->getOwnerId();
+            }
+
+            $client->setUpdateAll($data, $ownerId);
+
+            $em->flush();
+            return $this->redirectToRoute('addEditClient');
+        }
+
+        return $this->render('default/addEditResource.html.twig', array(
+            'viewName'=>'View/Edit Lab Client',
+            'form' => $form->createView(),
+            'exception' => false
+        ));
+    }
+
+    /**
      * @Route("/engines", name="engines")
      */
     public function EnginesAction()
@@ -303,7 +417,7 @@ class AdminController extends Controller
 
             //else: add engine and redirect
             $engine = new ExperimentEngine();
-            $engine->setAll($data, $user->getId());
+            $engine->setAll($data, $labserver->getOwnerId());
 
             $em = $this->getDoctrine()->getManager();
             $em->persist($engine);
@@ -541,6 +655,44 @@ class AdminController extends Controller
         return $form;
     }
 
+    //generate form to EDIT a subscriber Engine
+    private function buildEditClientForm($client){
+
+        if ($client != null){
+            $form = $this->createFormBuilder()
+                ->add('labserverId','text', array('label' => 'Lab Server (ID)', 'attr' => array('value'=>$client->getLabServerId(), 'readonly' => true)))
+                ->add('id', 'text', array('label' => 'Client ID', 'attr' => array('value'=>$client->getId(), 'readonly' => true)))
+                ->add('dateCreated', 'text', array('label' => 'Created', 'attr' => array('value'=>$client->getDateCreated()->format('d/m/Y H:i:s'), 'readonly' => true)))
+                ->add('name', 'text', array('label' => 'Client Name', 'attr' => array('value'=>$client->getName(), 'readonly' => false)))
+                ->add('Guid', 'text', array('label' => 'Guid', 'attr' => array('value'=>$client->getGuid(), 'readonly' => true)))
+                ->add('url', 'text', array('label' => 'Client URL', 'attr' => array('value'=>$client->getClientUrl(), 'readonly' => false)))
+                ->add('description', 'textarea', array('label' => 'Description','data'=>$client->getDescription()))
+                ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+                ->getForm();
+        }
+        else{
+            $gen_guid = md5(microtime().rand());
+            $dashboadServices = $this->get('dashboardUiServices');
+            //$user = $dashboadServices->getUserById($labServers->getOwnerId());
+            $user = $this->get('security.token_storage')->getToken()->getUser();
+            $labServers = $this->getLabServers($user);
+
+            $form = $this->createFormBuilder()
+                ->add('labserverId','choice', array('label' => 'Subscribe for Lab Server',
+                    'choices' => $labServers))
+                //->add('id', 'text', array('label' => 'Client ID', 'attr' => array('value'=>'', 'readonly' => true)))
+                //->add('dateCreated', 'text', array('label' => 'Created', 'attr' => array('value'=>$client->getDateCreated()->format('d/m/Y H:i:s'), 'readonly' => true)))
+                ->add('name', 'text', array('label' => 'Client Name', 'attr' => array('value'=>'', 'readonly' => false)))
+                ->add('Guid', 'text', array('label' => 'Guid', 'data'=> $gen_guid, 'required' => true))
+                ->add('url', 'text', array('label' => 'Client URL', 'attr' => array('required' => true, 'readonly' => false)))
+                ->add('description', 'textarea', array('label' => 'Description','data'=>''))
+                ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+                ->getForm();
+        }
+
+        return $form;
+    }
+
     //generate form to EDIT a RLMS Credentials
     private function buildEditRlmsForm(Rlms $rlms)
     {
@@ -637,6 +789,12 @@ class AdminController extends Controller
             ->add('configuration', 'textarea', array('label' => 'Lab Configuration', 'required' => false))
             ->add('singleEngine', 'checkbox', array('label' => 'Allow only one experiment engine to connect to the lab server', 'required' => false))
             ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true))
+
+            ->add('federate', 'checkbox', array('label' => 'Federated lab server', 'required' => false))
+            ->add('isaWsdlUrl', 'text', array('label' => 'WSDL of federated ISA lab server', 'required' => false))
+            ->add('isaIdentifier', 'text', array('label' => 'Identifier (GUID of the Broker contacting LS)', 'required' => false))
+            ->add('isaPasskeyToLabServer', 'text', array('label' => 'ISA Passkey to lab server', 'required' => false))
+
             ->add('submit','submit', array('label' => 'Add New Lab Server','attr' => array('class'=>'btn btn-success')))
             ->getForm();
 
@@ -667,6 +825,12 @@ class AdminController extends Controller
             ->add('active', 'checkbox', array('label' => 'Active',
                 'required' => false,
                 'data'=> $labServer->getActive() ))
+
+            ->add('federate', 'checkbox', array('label' => 'Federated lab server', 'required' => false, 'data' => $labServer->getFederate()))
+            ->add('isaWsdlUrl', 'text', array('label' => 'WSDL of federated ISA lab server', 'required' => false, 'attr' => array('value'=>$labServer->getIsaWsdlUrl(), 'readonly' => false)))
+            ->add('isaIdentifier', 'text', array('label' => 'Identifier (GUID of the Broker contacting LS)', 'required' => false, 'attr' => array('value'=>$labServer->getIsaIdentifier(), 'readonly' => false)))
+            ->add('isaPasskeyToLabServer', 'text', array('label' => 'ISA Passkey to lab server', 'required' => false, 'attr' => array('value'=>$labServer->getIsaPasskeyToLabServer(), 'readonly' => false)))
+
             ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
             ->getForm();
 

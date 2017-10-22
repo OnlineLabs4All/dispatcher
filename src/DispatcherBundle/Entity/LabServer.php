@@ -143,17 +143,17 @@ class LabServer
     protected $federate;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $isaWsdlUrl;
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $isaIdentifier;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=64, nullable=true)
      */
     protected $isaPasskeyToLabServer;
 
@@ -180,6 +180,11 @@ class LabServer
         $this->exp_category = $data['exp_category'];
         $this->exp_name = $data['exp_name'];
         $this->useDataset = $data['useDataset'];
+        $this->federate = $data['federate'];
+        $this->isaWsdlUrl = $data['isaWsdlUrl'];
+        $this->isaIdentifier = $data['isaIdentifier'];
+        $this->isaPasskeyToLabServer = $data['isaPasskeyToLabServer'];
+
     }
 
     public function updateAll($data)
@@ -198,7 +203,10 @@ class LabServer
         $this->exp_category = $data['exp_category'];
         $this->exp_name = $data['exp_name'];
         $this->useDataset = $data['useDataset'];
-
+        $this->federate = $data['federate'];
+        $this->isaWsdlUrl = $data['isaWsdlUrl'];
+        $this->isaIdentifier = $data['isaIdentifier'];
+        $this->isaPasskeyToLabServer = $data['isaPasskeyToLabServer'];
     }
 
     /**
