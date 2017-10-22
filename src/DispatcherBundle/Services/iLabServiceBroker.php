@@ -11,6 +11,7 @@ namespace DispatcherBundle\Services;
 use Doctrine\ORM\EntityManager;
 use DispatcherBundle\Entity\LabSession;
 use DispatcherBundle\Security\IsaRlmsAuthenticator;
+use Symfony\Component\Security\Acl\Exception\Exception;
 
 
 class iLabServiceBroker
@@ -303,9 +304,13 @@ class iLabServiceBroker
         $labSession = new LabSession();
         $session = $labSession->createSession($labClient->getLabServerId(), $this->authorityId, $startDate, $endDate);
 
-        $this->em->persist($labSession);
-        $this->em->flush();
-
+        try{
+            $this->em->persist($labSession);
+            $this->em->flush();
+        }
+        catch (Exception $e){
+            return new \SoapFault("Server", $e->getMessage() );
+        }
 
         $response = array('LaunchLabClientResult' => array(
             'id' => $session['couponId'],
