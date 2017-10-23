@@ -459,8 +459,8 @@ class Rlms
         $this->owner_id = $ownerId;
         $this->active = $data['active'];
         $this->dateCreated = date('Y-m-d\TH:i:sP');
-        $this->authCouponId = $data['authCouponId'];
-        $this->authPassKey = $data['authPassKey'];
+        $this->authCouponId = $data['couponId'];
+        $this->authPassKey = $data['passkey'];
         $this->rlmsType = $data['rlms_type'];
         $this->serviceUrl = $data['service_url'];
         $this->serviceDescriptionUrl = $data['service_description_url'];
@@ -477,6 +477,8 @@ class Rlms
         $this->contact_email = $data['contact_email'];
         $this->description = $data['description'];
         $this->active = $data['active'];
+        $this->authCouponId = $data['couponId'];
+        $this->authPassKey = $data['passkey'];
         $this->serviceUrl = $data['service_url'];
         $this->serviceDescriptionUrl = $data['service_description_url'];
         if ($data['rlms_password'] != null)
