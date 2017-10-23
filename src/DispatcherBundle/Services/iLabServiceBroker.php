@@ -55,9 +55,11 @@ class iLabServiceBroker
             ->getRepository('DispatcherBundle:LsToRlmsMapping')
             ->findOneBy(array('rlmsId' => $this->authorityId, 'labServerId' => $labServer->getId()));
 
-        if ($mapping == null){
-            return array('exception' => true,
-                'message' => 'The authority for which this session was issued does not have permissions to access this lab server.');
+        if ($this->authorityId != null){
+            if ($mapping == null){
+                return array('exception' => true,
+                    'message' => 'The authority for which this session was issued does not have permissions to access this lab server.');
+            }
         }
 
         return array('exception' => false,
