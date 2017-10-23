@@ -536,7 +536,7 @@ class AdminController extends Controller
         $endDate = new \DateTime();
         $endDate->add( new \DateInterval('PT'.$session_duration.'S'));
         $labSession = new LabSession();
-        $session = $labSession->createSession($labserverId,'1', $startDate, $endDate);
+        $session = $labSession->createSession($labserverId,null, $startDate, $endDate);
 
         try{
             $em = $this->getDoctrine()->getManager();
