@@ -39,7 +39,7 @@ class JobRecord
     protected $labServerOwnerId; //New field: specifies the ID of the user owner of the LS the request was submitted to
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=100, nullable=true)
      */
     protected $providerId; //ID of the provider RLMS
 
