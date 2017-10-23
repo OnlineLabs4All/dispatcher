@@ -256,6 +256,7 @@ class AdminController extends Controller
                 ->findOneBy(array('id' => $labServerId));
 
             $client->setUpdateAll($data, $labServer->getOwnerId());
+            $em->persist($client);
             $em->flush();
             return $this->redirectToRoute('addEditClient');
         }
@@ -318,6 +319,7 @@ class AdminController extends Controller
 
             $client->setUpdateAll($data, $ownerId);
 
+            $em->persist($client);
             $em->flush();
             return $this->redirectToRoute('addEditClient');
         }
