@@ -234,7 +234,7 @@ class DashboardUiServices
             $labServerIdsAndNames = $repository->createQueryBuilder('LabServer')
                 ->where('LabServer.owner_id = :owner_id')
                 ->setParameter('owner_id', $user->getId())
-                ->select('LabServer.id, LabServer.name, LabServer.ownerId')
+                ->select('LabServer.id, LabServer.name, LabServer.owner_id')
                 ->getQuery()
                 ->getArrayResult();
         }
