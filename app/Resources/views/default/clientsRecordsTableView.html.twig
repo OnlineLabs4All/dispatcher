@@ -16,6 +16,7 @@
             <th>Client</th>
             <th>Lab Server</th>
             <th>URL</th>
+            <th>Launch</th>
             <th></th>
         </tr>
         </thead>
@@ -26,6 +27,8 @@
                 <td>{{ record.id }}</td>
                 <td>{{ record.name }}</td>
                 <td>{{ record.labServerName }}</td>
+                <td><a href="{{ path('launchLabClient', {'labserverId': record.labServerId, 'clientId': record.id}) }}" target="_blank"> <i class="fa fa-rocket"> Launch!</i> </a></td>
+
                 <td><a href="{{ record.clientUrl }}" target="_blank">{{ record.clientUrl }}</a></td>
                 <td>
                     <a href="{{ path('addEditClient') }}/{{ record.id }}">

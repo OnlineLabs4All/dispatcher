@@ -12,6 +12,7 @@ use DispatcherBundle\Entity\ExperimentEngine;
 use DispatcherBundle\Entity\LabClient;
 use DispatcherBundle\Entity\LabServer;
 use DispatcherBundle\Entity\Rlms;
+use DispatcherBundle\Entity\LabSession;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -523,6 +524,43 @@ class AdminController extends Controller
         var_dump($this->getUser());
 
         return new Response($user->getUserName());
+    }
+
+    /**
+     * @Route("/launchLabClient/{labserverId}/{clientId}", name="launchLabClient")
+     */
+    public function launchLabClientAction(Request $request, $labserverId, $clientId)
+    {
+        $session_duration = '604800';
+        $startDate = new \DateTime();
+        $endDate = new \DateTime();
+        $endDate->add( new \DateInterval('PT'.$session_duration.'S'));
+        $labSession = new LabSession();
+        $session = $labSession->createSession($labserverId,'0', $startDate, $endDate);
+
+        try{
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($labSession);
+            $em->flush();
+        }
+        catch (Exception $e){
+            return $this->render('default/warning.html.twig', array(
+                'warning' => $e->getMessage(),
+                'viewName' => 'Something went wrong'));
+        }
+
+        $labServer = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:LabServer')
+            ->findOneBy(array('id' => $labserverId));
+
+        $labClient= $this->getDoctrine()
+            ->getRepository('DispatcherBundle:LabClient')
+            ->findOneBy(array('id' => $clientId));
+
+
+        $url = $labClient->getClientUrl().'?coupon_id='.$session['couponId'].'&passkey='.$session['passkey'].'&labServerGuid='.$labServer->getGuid();
+
+        return $this->redirect($url);
     }
 
     /**
