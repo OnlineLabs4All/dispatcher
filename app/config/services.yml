@@ -15,54 +15,54 @@ services:
 
     isaRlmsAuthenticator:
       class: DispatcherBundle\Security\IsaRlmsAuthenticator
-      arguments: [@doctrine.orm.entity_manager]
+      arguments: ["@doctrine.orm.entity_manager"]
 
     webLabRlmsAuthenticator:
           class: DispatcherBundle\Security\WebLabRlmsAuthenticator
-          arguments: [@doctrine.orm.entity_manager]
+          arguments: ["@doctrine.orm.entity_manager"]
 
     webLabDeustoServices:
               class: DispatcherBundle\Services\WebLabDeustoServices
-              arguments: [@doctrine.orm.entity_manager, @genericLabServerServices]
+              arguments: ["@doctrine.orm.entity_manager", "@genericLabServerServices"]
 
     iLabLabServer:
       class:  DispatcherBundle\Services\iLabLabServer
-      arguments: [@doctrine.orm.entity_manager, @isaRlmsAuthenticator, @genericLabServerServices]
+      arguments: ["@doctrine.orm.entity_manager", "@isaRlmsAuthenticator", "@genericLabServerServices"]
 
     iLabServiceBroker:
       class:  DispatcherBundle\Services\iLabServiceBroker
-      arguments: [@doctrine.orm.entity_manager, @genericLabServerServices]
+      arguments: ["@doctrine.orm.entity_manager", "@genericLabServerServices"]
 
     engineServices:
           class:  DispatcherBundle\Services\EngineServices
-          arguments: [@doctrine.orm.entity_manager, @soapClientIsa]
+          arguments: ["@doctrine.orm.entity_manager", "@soapClientIsa"]
 
     wsdlGenerator:
       class: DispatcherBundle\Services\WsdlGenerator
 
     siteUserProvider:
       class: DispatcherBundle\Security\SiteUserProvider
-      arguments: [@doctrine.orm.entity_manager]
+      arguments: ["@doctrine.orm.entity_manager"]
 
     soapClientIsa:
       class: DispatcherBundle\Services\SoapClientIsa
-      arguments: [@doctrine.orm.entity_manager]
+      arguments: ["@doctrine.orm.entity_manager"]
 
     dashboardUiServices:
       class: DispatcherBundle\Services\DashboardUiServices
-      arguments: [@doctrine.orm.entity_manager]
+      arguments: ["@doctrine.orm.entity_manager"]
 
     genericLabServerServices:
               class:  DispatcherBundle\Services\GenericLabServerServices
-              arguments: [@doctrine.orm.entity_manager, @soapClientIsa]
+              arguments: ["@doctrine.orm.entity_manager", "@soapClientIsa"]
 
     engineAuthenticator:
               class: DispatcherBundle\Security\EngineAuthenticator
-              arguments: [@doctrine.orm.entity_manager]
+              arguments: ["@doctrine.orm.entity_manager"]
 
     api_key_user_provider:
               class: DispatcherBundle\Security\ApiKeyUserProvider
-              arguments: [@doctrine.orm.entity_manager]
+              arguments: ["@doctrine.orm.entity_manager"]
 
     engineApikey_authenticator:
               class:     DispatcherBundle\Security\EngineApiAuthenticator
