@@ -723,17 +723,6 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/createUser", name="dummy_createUser")
-     */
-    public function dummy_createUserAction()
-    {
-        $user = $this->getUser();
-        var_dump($this->getUser());
-
-        return new Response($user->getUserName());
-    }
-
-    /**
      * @Route("/launchLabClient/{labserverId}/{clientId}", name="launchLabClient")
      */
     public function launchLabClientAction(Request $request, $labserverId, $clientId)
