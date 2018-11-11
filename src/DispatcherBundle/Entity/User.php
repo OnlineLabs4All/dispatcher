@@ -69,6 +69,31 @@ class User implements UserInterface
         return $this->username;
     }
 
+	public function setAll($data)
+	{
+		$this->username  = $data['username'];
+		$this->password  = password_hash($data['password'], PASSWORD_BCRYPT);
+		$this->firstName = $data['firstName'];
+		$this->lastName  = $data['lastName'];
+		$this->email     = $data['email'];
+		$this->role      = $data['role'];
+		$this->isActive  = $data['isActive'];
+	}
+	
+	public function updateAll($data)
+	{
+		if($data['password'] !== NULL)
+		{
+			$this->password = password_hash($data['password'], PASSWORD_BCRYPT);
+		}
+		
+		$this->firstName = $data['firstName'];
+		$this->lastName  = $data['lastName'];
+		$this->email     = $data['email'];
+		$this->role      = $data['role'];
+		$this->isActive  = $data['isActive'];
+	}
+	
     /**
      * @inheritDoc
      */

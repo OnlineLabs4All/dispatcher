@@ -13,13 +13,17 @@ use DispatcherBundle\Entity\LabClient;
 use DispatcherBundle\Entity\LabServer;
 use DispatcherBundle\Entity\Rlms;
 use DispatcherBundle\Entity\LabSession;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
+//use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+//use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Routing\Annotation\Route;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use DispatcherBundle\Entity\User;
 use DispatcherBundle\Form\EngineForm;
+use Symfony\Component\Form\Extension\Core\Type;
 
 /**
  * @Route("/secured")
@@ -331,6 +335,211 @@ class AdminController extends Controller
         ));
     }
 
+//-----------------------------------------------------------------------------------
+
+	/**
+	 * @Route("/users/", name="users")
+	 */
+	public function UsersAction()
+	{
+		//retrieve user data
+		$user = $this->get('security.token_storage')->getToken()->getUser();
+		$dashboadServices = $this->get('dashboardUiServices');
+		
+		//Verify user's permissions to access resource
+		$permissions = $dashboadServices->checkUserPermissionOnResource($user);
+		if ( $permissions['granted'] == false) {
+			return $this->render('default/warning.html.twig', array(
+					'warning' => $permissions['warning'],
+					'viewName' => 'Something went wrong'));
+		}
+		
+		$response = $dashboadServices->getUsersList($user);
+		
+		return $this->render('default/siteUsersTableView.html.twig',
+			array(	'viewName'  => 'User List',
+					'userCount' => $response['userCount'],
+					'users'     => $response['users']));
+	}
+
+	/**
+	 * @Route("/users/add/", name="addUser", methods={"GET", "POST"})
+	 */
+	public function addUserAction(Request $request)
+	{
+		//retrieve user data
+		$user = $this->get('security.token_storage')->getToken()->getUser();
+		$dashboadServices = $this->get('dashboardUiServices');
+		
+		//Verify user's permissions to access resource
+		$permissions = $dashboadServices->checkUserPermissionOnResource($user);
+		if ($permissions['granted'] == false) {
+			return $this->render('default/warning.html.twig', array(
+					'warning' => $permissions['warning'],
+					'viewName' => 'Something went wrong'));
+		}
+		
+		$form = $this->buildAddUserForm();
+        $form->handleRequest($request);
+		
+		//POST
+		if ($form->isValid()) {
+			
+			//get form data
+			$data = $form->getData();
+			
+			//check if username already exists
+			$user_count = count($this->getDoctrine()
+					->getRepository('DispatcherBundle:User')
+					->findOneBy(array('username' => $data['username'])));
+			
+			if ( $user_count > 0 )
+			{
+				return $this->render('default/addEditUser.html.twig', array(
+						'viewName'=>'Add a new User',
+						'form' => $form->createView(),
+						'exception' => true,
+						'message' => 'Username already exists!'
+				));
+			}
+			
+			//Create new user (if username doesn't exist)
+			$user = new User();
+			$user->setAll($data);
+
+			$em = $this->getDoctrine()->getManager();
+			$em->persist($user);
+			$em->flush();
+			return $this->redirectToRoute('users');
+		}
+		
+		//GET
+		return $this->render('default/addEditUser.html.twig', array(
+				'viewName'=>'Add a new User',
+				'form' => $form->createView()));
+	}
+	
+	private function buildAddUserForm()
+	{
+		$form = $this->createFormBuilder()
+			->add('username', Type\TextType::class, array('label' => 'Username', 'required' => true, 'attr'=>array('help'=>'text help')))
+			->add('email', Type\EmailType::class, array('label' => 'Email', 'required' => true))
+			->add('password', Type\RepeatedType::class, array(
+					'type' => Type\PasswordType::class,
+					'invalid_message' => 'The password fields must match.',
+					'options' => array('attr' => array('class' => 'password-field')),
+					'required' => true,
+					'first_options'  => array('label' => 'Password'),
+					'second_options' => array('label' => 'Repeat Password')))
+			
+			->add('firstName', Type\TextType::class, array('label' => 'First Name', 'required' => true, 'attr'=>array('help'=>'text help')))
+			->add('lastName', Type\TextType::class, array('label' => 'Last Name', 'required' => true, 'attr'=>array('help'=>'text help')))
+			->add('role', Type\ChoiceType::class,
+					array('label' => 'User Role',
+							'required' => true,
+							'choices_as_values' => true,
+							'choices' => array('User' => 'ROLE_USER', 'Admin' => 'ROLE_ADMIN')))
+			->add('isActive', Type\ChoiceType::class,
+					array('label' => 'User Account Status',
+							'required' => true,
+							'choices_as_values' => true,
+							'choices' => array('User is active' => '1', 'User is NOT active' => '0')))
+			->add('submit', Type\SubmitType::class, array('label' => 'Add User','attr' => array('class'=>'btn btn-success')))
+			->getForm();
+		return $form;
+	}
+	
+	/**
+     * @Route("/users/{userId}", name="user", methods={"GET", "POST"})
+     */
+	public function userAction(Request $request, $userId)
+	{
+		//retrieve user data
+		$user = $this->get('security.token_storage')->getToken()->getUser();
+		$dashboadServices = $this->get('dashboardUiServices');
+		
+		//Verify user's permissions to access resource
+		$permissions = $dashboadServices->checkUserPermissionOnResource($user);
+		if ($permissions['granted'] == false) {
+			return $this->render('default/warning.html.twig', array(
+					'warning' => $permissions['warning'],
+					'viewName' => 'Something went wrong'));
+		}
+		
+		$userData = $this->getDoctrine()
+            ->getRepository('DispatcherBundle:User')
+            ->findOneBy(array('id' => $userId));
+		
+		$form = $this->buildEditUserForm($userData); //buildEditLabServerForm
+        $form->handleRequest($request);
+		
+		//POST
+		if ($form->isValid()) {
+			//get form data
+			$data = $form->getData();
+			$userData->updateAll($data);
+
+			$em = $this->getDoctrine()->getManager();
+			$em->persist($userData);
+			$em->flush();
+			return $this->redirectToRoute('users');
+		}
+		
+		//GET
+		return $this->render('default/addEditUser.html.twig', array(
+				'viewName'=>'View/Edit "'.$user->getUsername().'"',
+				'form' => $form->createView()));
+	}
+	
+	private function buildEditUserForm(User $userData)
+	{
+		$form = $this->createFormBuilder()
+			->add('username', Type\TextType::class, array('label' => 'Username', 'required' => true, 'attr'=>array(
+					'help'     => 'text help',
+					'value'    => $userData->getUsername(),
+					'readonly' => true
+					)))
+			->add('email', Type\EmailType::class, array('label' => 'Email', 'required' => true, 'attr'=>array(
+					'help'     => 'text help',
+					'value'    => $userData->getEmail(),
+					'readonly' => false
+					)))
+			->add('password', Type\RepeatedType::class, array(
+					'type' => Type\PasswordType::class,
+					'invalid_message' => 'The password fields must match.',
+					'options' => array('attr' => array('class' => 'password-field')),
+					'required' => false,
+					'first_options'  => array('label' => 'Password'),
+					'second_options' => array('label' => 'Repeat Password')))
+			
+			->add('firstName', Type\TextType::class, array('label' => 'First Name', 'required' => true, 'attr'=>array(
+					'help'     => 'text help',
+					'value'    => $userData->getFirstName(),
+					'readonly' => false
+					)))
+			->add('lastName', Type\TextType::class, array('label' => 'Last Name', 'required' => true, 'attr'=>array(
+					'help'     => 'text help',
+					'value'    => $userData->getLastName(),
+					'readonly' => false
+					)))
+			->add('role', Type\ChoiceType::class,
+					array(	'label'				=> 'User Role',
+							'required'			=> true,
+							'choices_as_values'	=> true,
+							'choices'			=> array('User' => 'ROLE_USER', 'Admin' => 'ROLE_ADMIN'),
+							'data'				=> $userData->getRole()))
+			->add('isActive', Type\ChoiceType::class,
+					array(	'label'				=> 'User Account Status',
+							'required'			=> true,
+							'choices_as_values'	=> true,
+							'choices'			=> array('User is active' => '1', 'User is NOT active' => '0'),
+							'data'				=> $userData->getIsActive()))
+			->add('submit', Type\SubmitType::class, array('label' => 'Save changes','attr' => array('class'=>'btn btn-success')))
+			->getForm();
+		return $form;
+	}
+//-----------------------------------------------------------------------------------
+
     /**
      * @Route("/engines", name="engines")
      */
@@ -386,8 +595,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/newEngine", name="add_engine")
-     * @Method({"GET", "POST"})
+     * @Route("/newEngine", name="add_engine", methods={"GET", "POST"})
      */
     public function NewEngineAction(Request $request)
     {
@@ -437,8 +645,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/labservers/{labserverId}", name="labserver")
-     * @Method({"GET", "POST"})
+     * @Route("/labservers/{labserverId}", name="labserver", methods={"GET", "POST"})
      */
     public function LabServerAction(Request $request, $labserverId)
     {
@@ -474,8 +681,7 @@ class AdminController extends Controller
             'form' => $form->createView()));
     }
     /**
-     * @Route("/labservers", name="labservers")
-     * @Method({"GET"})
+     * @Route("/labservers", name="labservers", methods={"GET"})
      */
     public function LabServersAction()
     {
@@ -491,8 +697,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/labserver", name="add_edit_labserver")
-     * @Method({"GET", "POST"})
+     * @Route("/labserver", name="add_edit_labserver", methods={"GET", "POST"})
      */
     public function saveLabServerAction(Request $request)
     {
@@ -518,9 +723,9 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/createUser", name="createUser")
+     * @Route("/createUser", name="dummy_createUser")
      */
-    public function createUserAction()
+    public function dummy_createUserAction()
     {
         $user = $this->getUser();
         var_dump($this->getUser());

@@ -256,6 +256,32 @@ class DashboardUiServices
         //var_dump($labServers);
     }
 
+	public function getUsersList(User $user)
+	{
+		if ($user->getRole() == 'ROLE_ADMIN') {
+			$repository = $this->em->getRepository('DispatcherBundle:User');
+			//$siteUsers = $repository->findAll(); //this one includes password
+			$siteUsers = $repository
+					->createQueryBuilder('u')
+					->select('u.id, u.username, u.firstName, u.lastName, u.email, u.role, u.isActive')
+					->getQuery()
+					->getArrayResult();
+			/*
+			$siteUsersCountTotal = $repository
+					->createQueryBuilder('users')
+					->select('count(users.id)')
+					->getQuery()
+					->getSingleScalarResult();
+			*/
+			$siteUsersCountTotal = sizeof($siteUsers);
+			return array(
+					'userCount' => $siteUsersCountTotal,
+					'users' => $siteUsers);
+
+		}
+		return NULL; //if not admin
+	}
+	
     private function getUserNameById($userId)
     {
         $repository = $this->em->getRepository('DispatcherBundle:User');
@@ -363,21 +389,21 @@ class DashboardUiServices
         }
     }
 
-    public function checkUserPermissionOnResource(User $user, $resource)
-    {
-        if ($resource != null){
-            if ($user->getRole() == 'ROLE_ADMIN'){
-                return array('granted' => true);
-            }
-            if ($user->getId() == $resource->getOwnerId()){
-                return array('granted' => true);
-            }
-            return array('granted' => false,
-                         'warning' =>'You do not have permissions to view/modify this resource');
-        }
-        return array('granted' => false,
-                     'warning' =>'The resource does not exit');
-    }
+	public function checkUserPermissionOnResource(User $user, $resource = null)
+	{
+		if ($user->getRole() == 'ROLE_ADMIN'){
+			return array('granted' => true);
+		}
+		if ($resource != null){
+			if ($user->getId() == $resource->getOwnerId()){
+				return array('granted' => true);
+			}
+			return array('granted' => false,
+						 'warning' =>'You do not have permissions to view/modify this resource');
+		}
+		return array('granted' => false,
+					 'warning' =>'The resource does not exit');
+	}
 
     public function deleteJobRecord($expId, User $user)
     {

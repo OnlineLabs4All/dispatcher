@@ -1,0 +1,99 @@
+{% extends 'adminBase.html.twig' %}
+
+{% block mainPanel %}
+
+    <form id="actOnJobRecords" method="post" action="">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Manage your Users
+        </div>
+        <div class="panel-body">
+			
+            <p class="text-success"> {{ userCount }} users found</p>
+			
+				<a href="{{ path('addUser') }}" class="btn btn-success"><i class="fa fa-user"></i> Add new User</a>
+				
+				<br>
+				
+                <div class="table-responsive">
+                    <table class="table table-hover" id="experimentRecord">
+                        <thead>
+                        <tr>
+                            {#<th></th>#}
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>E-Mail</th>
+                            <th>Role</th>
+							<th>Active?</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {%  for user in users %}
+
+                            <tr class="odd gradeX">
+								{# Selection of multiple users not used
+                                <td><input type="checkbox" name="{{ user.id }}" value="{{ user.id }}" /></td>
+								#}
+                                <td>{{ user.id }}</td>
+								<td>{{ user.username }}</td>
+                                <td>{{ user.firstName }}</td>
+								<td>{{ user.lastName }}</td>
+								<td>{{ user.email }}</td>
+								<td>
+									{% if user.role == "ROLE_ADMIN" %}
+									<span class="label label-success">ADMIN</span>
+									{% elseif user.role == "ROLE_USER" %}
+									<span class="label label-primary">USER</span>
+									{% else %}
+									<span class="label label-danger">{{ user.role }}</span>
+									{% endif %}
+								</td>
+                                <td class="center">
+                                    {% if user.isActive == 1 %}
+									<span class="label label-success">Active</span>
+                                    {% elseif user.isActive == 0 %}
+									<span class="label label-danger">Inactive</span>
+                                    {% else %}
+									<span class="label label-danger">{{ user.isActive }}</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <a href="{{ path('users') }}{{ user.id }}"> <!--href="{{ path('expRecords') }}/{{ user.id }}">-->
+                                        <i class="fa fa-user"> View/Edit</i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+            </tbody>
+            </table>
+			{# pagination not used
+            <ul class="pagination">
+                <li><a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ previousPage }}&status={{ status }}&labServerId={{ labServerId }}">Previous</a></li>
+                {% for page in pages %}
+
+                    {% if (page > (currentPage - 5)) and (page < (currentPage + 5))  %}
+                        {%  if page == currentPage %}
+                            <li class="active"> <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}">{{ page }}</a></li>
+                        {% else %}
+                            <li> <a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ page }}&status={{ status }}&labServerId={{ labServerId }}">{{ page }}</a></li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                <li><a href="{{ baseUrl }}{{ path('expRecords') }}?page={{ nextPage }}&status={{ status }}&labServerId={{ labServerId }}">Next</a></li>
+            </ul>
+			#}
+        </div>
+        </div>
+    </div>
+    </form>
+
+<script>
+
+</script>
+
+{% endblock %}
