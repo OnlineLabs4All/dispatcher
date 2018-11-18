@@ -266,7 +266,7 @@ class AdminController extends Controller
         }
 
         return $this->render('default/addEditResource.html.twig', array(
-            'viewName'=>'View/Edit Lab Client',
+            'viewName' => 'View/Edit Lab Client',
             'form' => $form->createView(),
             'exception' => false
         ));
@@ -334,8 +334,6 @@ class AdminController extends Controller
             'exception' => false
         ));
     }
-
-//-----------------------------------------------------------------------------------
 
 	/**
 	 * @Route("/users/", name="users")
@@ -538,7 +536,6 @@ class AdminController extends Controller
 			->getForm();
 		return $form;
 	}
-//-----------------------------------------------------------------------------------
 
     /**
      * @Route("/engines", name="engines")
@@ -828,34 +825,40 @@ class AdminController extends Controller
 
         $key = md5(microtime().rand());
         $labServers = $this->getLabServers($user);
+		
         $form = $this->createFormBuilder()
             ->setAction($this->generateUrl('add_engine'))
-            ->add('labserverId','choice', array('label' => 'Subscribe for Lab Server',
-                'choices' => $labServers))
-            ->add('name', 'text', array('label' => 'Engine Name'))
-            ->add('description', 'textarea', array('label' => 'Description'))
-            ->add('contact_name', 'text', array('label' => 'Contact\'s name'))
-            ->add('contact_email', 'email', array('label' => 'Contact\'s Email'))
-            ->add('institution', 'text', array('label' => 'Institution'))
-            ->add('address', 'text', array('label' => 'Street address'))
-            ->add('city', 'text', array('label' => 'City'))
-            ->add('country', 'country', array('label' => 'Country'))
-            ->add('username', 'text', array('label' => 'Username'))
-            ->add('password', 'repeated', array(
-                                             'type' => 'password',
+            ->add('labserverId', Type\ChoiceType::class, array(
+					'label' => 'Subscribe for Lab Server',
+					'choices_as_values' => true,
+					'choices' => array_flip($labServers)))
+            ->add('name', Type\TextType::class, array('label' => 'Engine Name'))
+            ->add('description', Type\TextareaType::class, array('label' => 'Description'))
+            ->add('contact_name', Type\TextType::class, array('label' => 'Contact\'s name'))
+            ->add('contact_email', Type\EmailType::class, array('label' => 'Contact\'s Email'))
+            ->add('institution', Type\TextType::class, array('label' => 'Institution'))
+            ->add('address', Type\TextType::class, array('label' => 'Street address'))
+            ->add('city', Type\TextType::class, array('label' => 'City'))
+            ->add('country', Type\CountryType::class, array('label' => 'Country'))
+            ->add('username', Type\TextType::class, array('label' => 'Username'))
+            ->add('password', Type\RepeatedType::class, array(
+                                             'type' => Type\PasswordType::class,
                                              'invalid_message' => 'The password fields must match.',
                                              'options' => array('attr' => array('class' => 'password-field')),
                                              'required' => true,
                                              'first_options'  => array('label' => 'Password'),
                                              'second_options' => array('label' => 'Repeat Password')))
-            ->add('api_key', 'text', array('label' => 'API Key', 'data'=> $key))
-            ->add('active', 'checkbox', array('label' => 'Active',
-                'required' => false,
-                'data'=> false ))
-            ->add('visible_in_catalogue', 'checkbox', array('label' => 'Visible in the Catalogue',
-                'required' => false, 'data'=> false))
+            ->add('api_key', Type\TextType::class, array('label' => 'API Key', 'data'=> $key))
+            ->add('active', Type\CheckboxType::class, array(
+					'label' => 'Active',
+					'required' => false,
+					'data'=> false ))
+            ->add('visible_in_catalogue', Type\CheckboxType::class, array(
+					'label' => 'Visible in the Catalogue',
+					'required' => false,
+					'data'=> false))
             //->add('date', 'date', array('label' => 'Date'))
-            ->add('submit','submit', array('label' => 'Add Experiment Engine', 'attr' => array('class'=>'btn btn-success')))
+            ->add('submit', Type\SubmitType::class, array('label' => 'Add Experiment Engine', 'attr' => array('class'=>'btn btn-success')))
             ->getForm();
 
         return $form;
@@ -866,25 +869,28 @@ class AdminController extends Controller
 
             $form = $this->createFormBuilder()
 
-                ->add('labserverId','text', array('label' => 'Subscribe for Lab Server (ID)', 'attr' => array('value'=>$engine->getLabServerId(), 'readonly' => true)))
-                ->add('id', 'text', array('label' => 'Engine ID', 'attr' => array('value'=>$engine->getId(), 'readonly' => true)))
-                ->add('dateCreated', 'text', array('label' => 'Created', 'attr' => array('value'=>$engine->getDateCreated(), 'readonly' => true)))
-                ->add('name', 'text', array('label' => 'Engine Name', 'attr' => array('value'=>$engine->getName(), 'readonly' => false)))
-                ->add('description', 'textarea', array('label' => 'Description','data'=>$engine->getDescription()))
-                ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'attr' => array('value'=>$engine->getContactName(), 'readonly' => false)))
-                ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('value'=>$engine->getContactEmail(), 'readonly' => false)))
-                ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('value'=>$engine->getInstitution(), 'readonly' => false)))
-                ->add('address', 'text', array('label' => 'Street address', 'attr' => array('value'=>$engine->getAddress(), 'readonly' => false)))
-                ->add('city', 'text', array('label' => 'City', 'attr' => array('value'=>$engine->getCity(), 'readonly' => false)))
-                ->add('country', 'country', array('label' => 'Country', 'data'=> $engine->getCountry()))
-                ->add('basic_auth', 'text', array('label' => 'Basic Http Authentication', 'attr' => array('value'=>$engine->getHttpAuthentication(), 'readonly' => true)))
-                ->add('api_key', 'text', array('label' => 'API Key', 'attr' => array('value'=>$engine->getApiKey(), 'readonly' => true)))
-                ->add('active', 'checkbox', array('label' => 'Active',
-                    'required' => false,
-                    'data'=> $engine->getActive() ))
-                ->add('visible_in_catalogue', 'checkbox', array('label' => 'Visible in the Catalogue',
-                    'required' => false, 'data'=> $engine->getVisibleInCatalogue()))
-                ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+                ->add('labserverId', Type\TextType::class, array('label' => 'Subscribe for Lab Server (ID)', 'attr' => array('value'=>$engine->getLabServerId(), 'readonly' => true)))
+                ->add('id', Type\TextType::class, array('label' => 'Engine ID', 'attr' => array('value'=>$engine->getId(), 'readonly' => true)))
+                ->add('dateCreated', Type\TextType::class, array('label' => 'Created', 'attr' => array('value'=>$engine->getDateCreated(), 'readonly' => true)))
+                ->add('name', Type\TextType::class, array('label' => 'Engine Name', 'attr' => array('value'=>$engine->getName(), 'readonly' => false)))
+                ->add('description', Type\TextareaType::class, array('label' => 'Description','data'=>$engine->getDescription()))
+                ->add('contact_name', Type\TextType::class, array('label' => 'Contact\'s name', 'attr' => array('value'=>$engine->getContactName(), 'readonly' => false)))
+                ->add('contact_email', Type\EmailType::class, array('label' => 'Contact\'s Email', 'attr' => array('value'=>$engine->getContactEmail(), 'readonly' => false)))
+                ->add('institution', Type\TextType::class, array('label' => 'Institution', 'attr' => array('value'=>$engine->getInstitution(), 'readonly' => false)))
+                ->add('address', Type\TextType::class, array('label' => 'Street address', 'attr' => array('value'=>$engine->getAddress(), 'readonly' => false)))
+                ->add('city', Type\TextType::class, array('label' => 'City', 'attr' => array('value'=>$engine->getCity(), 'readonly' => false)))
+                ->add('country', Type\CountryType::class, array('label' => 'Country', 'data'=> $engine->getCountry()))
+                ->add('basic_auth', Type\TextType::class, array('label' => 'Basic Http Authentication', 'attr' => array('value'=>$engine->getHttpAuthentication(), 'readonly' => true)))
+                ->add('api_key', Type\TextType::class, array('label' => 'API Key', 'attr' => array('value'=>$engine->getApiKey(), 'readonly' => true)))
+                ->add('active', Type\CheckboxType::class, array(
+						'label' => 'Active',
+						'required' => false,
+						'data'=> $engine->getActive() ))
+                ->add('visible_in_catalogue', Type\CheckboxType::class, array(
+						'label' => 'Visible in the Catalogue',
+						'required' => false,
+						'data' => $engine->getVisibleInCatalogue()))
+                ->add('submit', Type\SubmitType::class, array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
                 ->getForm();
         return $form;
     }
@@ -894,14 +900,14 @@ class AdminController extends Controller
 
         if ($client != null){
             $form = $this->createFormBuilder()
-                ->add('labserverId','text', array('label' => 'Lab Server (ID)', 'attr' => array('value'=>$client->getLabServerId(), 'readonly' => true)))
-                //->add('id', 'text', array('label' => 'Client ID', 'attr' => array('value'=>$client->getId(), 'readonly' => true)))
-                ->add('dateCreated', 'text', array('label' => 'Created', 'attr' => array('value'=>$client->getDateCreated()->format('d/m/Y H:i:s'), 'readonly' => true)))
-                ->add('name', 'text', array('label' => 'Client Name', 'attr' => array('value'=>$client->getName(), 'readonly' => false)))
-                ->add('Guid', 'text', array('label' => 'Guid', 'attr' => array('value'=>$client->getGuid(), 'readonly' => false)))
-                ->add('url', 'text', array('label' => 'ISA compliant client URL (coupon_id, passkey and labServerGuid will be added to this URL)', 'attr' => array('value'=>$client->getClientUrl(), 'readonly' => false)))
-                ->add('description', 'textarea', array('label' => 'Description','data'=>$client->getDescription()))
-                ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+                ->add('labserverId', Type\TextType::class, array('label' => 'Lab Server (ID)', 'attr' => array('value'=>$client->getLabServerId(), 'readonly' => true)))
+                //->add('id', Type\TextType::class, array('label' => 'Client ID', 'attr' => array('value'=>$client->getId(), 'readonly' => true)))
+                ->add('dateCreated', Type\TextType::class, array('label' => 'Created', 'attr' => array('value'=>$client->getDateCreated()->format('d/m/Y H:i:s'), 'readonly' => true)))
+                ->add('name', Type\TextType::class, array('label' => 'Client Name', 'attr' => array('value'=>$client->getName(), 'readonly' => false)))
+                ->add('Guid', Type\TextType::class, array('label' => 'Guid', 'attr' => array('value'=>$client->getGuid(), 'readonly' => false)))
+                ->add('url', Type\TextType::class, array('label' => 'ISA compliant client URL (coupon_id, passkey and labServerGuid will be added to this URL)', 'attr' => array('value'=>$client->getClientUrl(), 'readonly' => false)))
+                ->add('description', Type\TextareaType::class, array('label' => 'Description','data'=>$client->getDescription()))
+                ->add('submit', Type\SubmitType::class, array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
                 ->getForm();
         }
         else{
@@ -912,15 +918,17 @@ class AdminController extends Controller
             $labServers = $this->getLabServers($user);
 
             $form = $this->createFormBuilder()
-                ->add('labserverId','choice', array('label' => 'Subscribe for Lab Server',
-                    'choices' => $labServers))
-                //->add('id', 'text', array('label' => 'Client ID', 'attr' => array('value'=>'', 'readonly' => true)))
-                //->add('dateCreated', 'text', array('label' => 'Created', 'attr' => array('value'=>$client->getDateCreated()->format('d/m/Y H:i:s'), 'readonly' => true)))
-                ->add('name', 'text', array('label' => 'Client Name', 'attr' => array('value'=>'', 'readonly' => false)))
-                ->add('Guid', 'text', array('label' => 'Guid', 'data'=> $gen_guid, 'required' => true))
-                ->add('url', 'text', array('label' => 'ISA compliant client URL (coupon_id, passkey and labServerGuid will be added to this URL)', 'attr' => array('required' => true, 'readonly' => false)))
-                ->add('description', 'textarea', array('label' => 'Description','data'=>''))
-                ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+                ->add('labserverId', Type\ChoiceType::class, array(
+						'label' => 'Subscribe for Lab Server',
+						'choices_as_values' => true,
+						'choices' => array_flip($labServers)))
+                //->add('id', Type\TextType::class, array('label' => 'Client ID', 'attr' => array('value'=>'', 'readonly' => true)))
+                //->add('dateCreated', Type\TextType::class, array('label' => 'Created', 'attr' => array('value'=>$client->getDateCreated()->format('d/m/Y H:i:s'), 'readonly' => true)))
+                ->add('name', Type\TextType::class, array('label' => 'Client Name', 'attr' => array('value'=>'', 'readonly' => false)))
+                ->add('Guid', Type\TextType::class, array('label' => 'Guid', 'data'=> $gen_guid, 'required' => true))
+                ->add('url', Type\TextType::class, array('label' => 'ISA compliant client URL (coupon_id, passkey and labServerGuid will be added to this URL)', 'attr' => array('required' => true, 'readonly' => false)))
+                ->add('description', Type\TextareaType::class, array('label' => 'Description','data'=>''))
+                ->add('submit', Type\SubmitType::class, array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
                 ->getForm();
         }
 
@@ -931,30 +939,30 @@ class AdminController extends Controller
     private function buildEditRlmsForm(Rlms $rlms)
     {
         $form = $this->createFormBuilder()
-          //  ->add('rlms_type', 'text', array('label' => 'Authority Type', 'attr' => array('value'=> $rlms->getRlmsType(), 'readonly' => true)))
-            ->add('name', 'text', array('label' => 'Name', 'attr' => array('value'=>$rlms->getName(), 'readonly' => false)))
-            ->add('description', 'textarea', array('label' => 'Description','data'=>$rlms->getDescription()))
-            ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'attr' => array('value'=>$rlms->getContactName(), 'readonly' => false)))
-            ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('value'=>$rlms->getContactEmail(), 'readonly' => false)))
-            ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('value'=>$rlms->getInstitution(), 'readonly' => false)))
-            ->add('guid', 'text', array('label' => 'GUID', 'required' => true, 'attr' => array('value'=>$rlms->getGuid(), 'readonly' => true)))
-            ->add('couponId', 'text', array('label' => 'couponId', 'required' => true, 'attr' => array('value'=>$rlms->getAuthCouponId(), 'readonly' => false)))
-            ->add('passkey', 'text', array('label' => 'passkey', 'required' => true, 'attr' => array('value'=>$rlms->getAuthPassKey(), 'readonly' => false)))
-            //->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value'=>$rlms->getPassKeyToRlms(), 'readonly' => true)))
-            ->add('service_url', 'text', array('label' => 'Service URL', 'required' => false, 'attr' => array('value'=>$rlms->getServiceUrl(), 'readonly' => true)))
-            ->add('service_description_url', 'text', array('label' => 'URL of a parsable description of Authority API (Ex.: RLMS WSDL, Swagger, etc)', 'required' => false, 'attr' => array('value'=>$rlms->getServiceDescriptionUrl(), 'readonly' => false)))
-            ->add('rlms_username', 'text', array('label' => 'Username',  'required' => false, 'attr' => array('value'=>$rlms->getUsername(), 'readonly' => false)))
-            ->add('rlms_password', 'repeated', array(
-                'type' => 'password',
+          //  ->add('rlms_type', Type\TextType::class, array('label' => 'Authority Type', 'attr' => array('value'=> $rlms->getRlmsType(), 'readonly' => true)))
+            ->add('name', Type\TextType::class, array('label' => 'Name', 'attr' => array('value'=>$rlms->getName(), 'readonly' => false)))
+            ->add('description', Type\TextareaType::class, array('label' => 'Description','data'=>$rlms->getDescription()))
+            ->add('contact_name', Type\TextType::class, array('label' => 'Contact\'s name', 'attr' => array('value'=>$rlms->getContactName(), 'readonly' => false)))
+            ->add('contact_email', Type\EmailType::class, array('label' => 'Contact\'s Email', 'attr' => array('value'=>$rlms->getContactEmail(), 'readonly' => false)))
+            ->add('institution', Type\TextType::class, array('label' => 'Institution', 'attr' => array('value'=>$rlms->getInstitution(), 'readonly' => false)))
+            ->add('guid', Type\TextType::class, array('label' => 'GUID', 'required' => true, 'attr' => array('value'=>$rlms->getGuid(), 'readonly' => true)))
+            ->add('couponId', Type\TextType::class, array('label' => 'couponId', 'required' => true, 'attr' => array('value'=>$rlms->getAuthCouponId(), 'readonly' => false)))
+            ->add('passkey', Type\TextType::class, array('label' => 'passkey', 'required' => true, 'attr' => array('value'=>$rlms->getAuthPassKey(), 'readonly' => false)))
+            //->add('passkey_to_rlms', Type\TextType::class, array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value'=>$rlms->getPassKeyToRlms(), 'readonly' => true)))
+            ->add('service_url', Type\TextType::class, array('label' => 'Service URL', 'required' => false, 'attr' => array('value'=>$rlms->getServiceUrl(), 'readonly' => true)))
+            ->add('service_description_url', Type\TextType::class, array('label' => 'URL of a parsable description of Authority API (Ex.: RLMS WSDL, Swagger, etc)', 'required' => false, 'attr' => array('value'=>$rlms->getServiceDescriptionUrl(), 'readonly' => false)))
+            ->add('rlms_username', Type\TextType::class, array('label' => 'Username',  'required' => false, 'attr' => array('value'=>$rlms->getUsername(), 'readonly' => false)))
+            ->add('rlms_password', Type\RepeatedType::class, array(
+                'type' => Type\PasswordType::class,
                 'invalid_message' => 'The password fields must match.',
                 'options' => array('attr' => array('class' => 'password-field')),
                 'required' => false,
                 'first_options'  => array('label' => 'Password'),
                 'second_options' => array('label' => 'Repeat Password'),))
-            ->add('active', 'checkbox', array('label' => 'Active',
+            ->add('active', Type\CheckboxType::class, array('label' => 'Active',
                 'required' => false,
                 'data'=> $rlms->getActive() ))
-            ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+            ->add('submit', Type\SubmitType::class, array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
             ->getForm();
         return $form;
     }
@@ -968,34 +976,34 @@ class AdminController extends Controller
         //$rlms_username = md5(microtime().rand());
         $form = $this->createFormBuilder()
 
-            ->add('name', 'text', array('label' => 'Name', 'attr' => array('readonly' => false)))
-            ->add('description', 'textarea', array('label' => 'Description'))
-            ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'attr' => array('readonly' => false)))
-            ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'attr' => array('readonly' => false)))
-            ->add('institution', 'text', array('label' => 'Institution', 'attr' => array('readonly' => false)))
-            ->add('guid', 'text', array('label' => 'GUID', 'required' => false, 'attr' => array('readonly' => false)))
-            ->add('couponId', 'text', array('label' => 'couponId', 'required' => true, 'attr' => array('value'=>$gen_couponId, 'readonly' => false)))
-            ->add('passkey', 'text', array('label' => 'passkey', 'required' => true, 'attr' => array('value'=>$gen_passkey, 'readonly' => false)))
-       //     ->add('rlms_type', 'choice',
+            ->add('name', Type\TextType::class, array('label' => 'Name', 'attr' => array('readonly' => false)))
+            ->add('description', Type\TextareaType::class, array('label' => 'Description'))
+            ->add('contact_name', Type\TextType::class, array('label' => 'Contact\'s name', 'attr' => array('readonly' => false)))
+            ->add('contact_email', Type\EmailType::class, array('label' => 'Contact\'s Email', 'attr' => array('readonly' => false)))
+            ->add('institution', Type\TextType::class, array('label' => 'Institution', 'attr' => array('readonly' => false)))
+            ->add('guid', Type\TextType::class, array('label' => 'GUID', 'required' => false, 'attr' => array('readonly' => false)))
+            ->add('couponId', Type\TextType::class, array('label' => 'couponId', 'required' => true, 'attr' => array('value'=>$gen_couponId, 'readonly' => false)))
+            ->add('passkey', Type\TextType::class, array('label' => 'passkey', 'required' => true, 'attr' => array('value'=>$gen_passkey, 'readonly' => false)))
+       //     ->add('rlms_type', Type\ChoiceType::class,
        //         array('label' => 'Authority Type',
        //               'required' => true,
        //               'choices' => array('ISA_SOAP'=>'ISA Service Broker (SOAP)',
        //                                  'ISA_JSON'=>'ISA Service Broker (JSON)',
        //                                  'WEBLAB_DEUSTO' => 'WebLab Deusto')))
-            //->add('passkey_to_rlms', 'text', array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value' => $passkey,'readonly' => false)))
-            ->add('service_url', 'text', array('label' => 'Service URL', 'required' => false, 'attr' => array('readonly' => false)))
-            ->add('service_description_url', 'text', array('label' => 'URL of a parsable description of Authority API (Ex.: RLMS WSDL, Swagger, etc)', 'required' => false, 'attr' => array('value'=>'', 'readonly' => false)))
-            ->add('rlms_username', 'text', array('label' => 'Username',  'required' => false, 'attr' => array('value' => '','readonly' => false)))
-            ->add('rlms_password', 'repeated', array(
-                'type' => 'password',
+            //->add('passkey_to_rlms', Type\TextType::class, array('label' => 'Passkey to RLMS', 'required' => false, 'attr' => array('value' => $passkey,'readonly' => false)))
+            ->add('service_url', Type\TextType::class, array('label' => 'Service URL', 'required' => false, 'attr' => array('readonly' => false)))
+            ->add('service_description_url', Type\TextType::class, array('label' => 'URL of a parsable description of Authority API (Ex.: RLMS WSDL, Swagger, etc)', 'required' => false, 'attr' => array('value'=>'', 'readonly' => false)))
+            ->add('rlms_username', Type\TextType::class, array('label' => 'Username',  'required' => false, 'attr' => array('value' => '','readonly' => false)))
+            ->add('rlms_password', Type\RepeatedType::class, array(
+                'type' => Type\PasswordType::class,
                 'invalid_message' => 'The password fields must match.',
                 'options' => array('attr' => array('class' => 'password-field')),
                 'required' => false,
                 'first_options'  => array('label' => 'Password'),
                 'second_options' => array('label' => 'Repeat Password'),))
-            ->add('active', 'checkbox', array('label' => 'Active',
+            ->add('active', Type\CheckboxType::class, array('label' => 'Active',
                 'required' => false))
-            ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+            ->add('submit', Type\SubmitType::class, array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
             ->getForm();
         return $form;
     }
@@ -1006,36 +1014,38 @@ class AdminController extends Controller
         $gen_passKey = md5(microtime().rand());
         $gen_initPassKey = md5(microtime().rand());
         $form = $this->createFormBuilder()
-            ->add('name', 'text', array('label' => 'Lab Server name', 'required' => true, 'attr'=>array('help'=>'text help')))
-            ->add('exp_category', 'text', array('label' => 'Experiment category', 'required' => true, 'attr'=>array('help'=>'text help')))
-            ->add('exp_name', 'text', array('label' => 'Experiment name', 'required' => true, 'attr'=>array('help'=>'text help')))
-            ->add('description', 'textarea', array('label' => 'Description', 'required' => false))
-            ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'required' => true))
-            ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'required' => true))
-            ->add('institution', 'text', array('label' => 'Institution', 'required' => true))
-            ->add('Guid', 'text', array('label' => 'Guid', 'data'=> $gen_guid, 'required' => true))
-            ->add('passKey', 'text', array('label' => 'Authentication PassKey ', 'data'=> $gen_passKey, 'required' => true))
-            ->add('type', 'choice',
+            ->add('name', Type\TextType::class, array('label' => 'Lab Server name', 'required' => true, 'attr'=>array('help'=>'text help')))
+            ->add('exp_category', Type\TextType::class, array('label' => 'Experiment category', 'required' => true, 'attr'=>array('help'=>'text help')))
+            ->add('exp_name', Type\TextType::class, array('label' => 'Experiment name', 'required' => true, 'attr'=>array('help'=>'text help')))
+            ->add('description', Type\TextareaType::class, array('label' => 'Description', 'required' => false))
+            ->add('contact_name', Type\TextType::class, array('label' => 'Contact\'s name', 'required' => true))
+            ->add('contact_email', Type\EmailType::class, array('label' => 'Contact\'s Email', 'required' => true))
+            ->add('institution', Type\TextType::class, array('label' => 'Institution', 'required' => true))
+            ->add('Guid', Type\TextType::class, array('label' => 'Guid', 'data'=> $gen_guid, 'required' => true))
+            ->add('passKey', Type\TextType::class, array('label' => 'Authentication PassKey ', 'data'=> $gen_passKey, 'required' => true))
+            ->add('type', Type\ChoiceType::class,
                 array('label' => 'Type',
                     'required' => true,
-                    'choices' => array('BLS'=>'Batched Lab Server', 'ILS'=>'Interactive Lab Server')))
-            ->add('initialPassKey', 'text', array('label' => 'Initial PassKey (used once to install domain credentials in a SB)', 'data'=> $gen_initPassKey, 'required' => true))
-            ->add('active', 'choice',
+					'choices_as_values' => true,
+                    'choices' => array('Batched Lab Server' => 'BLS', 'Interactive Lab Server' => 'ILS')))
+            ->add('initialPassKey', Type\TextType::class, array('label' => 'Initial PassKey (used once to install domain credentials in a SB)', 'data'=> $gen_initPassKey, 'required' => true))
+            ->add('active', Type\ChoiceType::class,
                 array('label' => 'Active',
                     'required' => true,
-                    'choices' => array('1'=>'Lab Server is active', '0'=>'Lab Server is NOT active')))
-            ->add('useDataset', 'checkbox', array('label' => 'Retrieve results from dataset when available',
+					'choices_as_values' => true,
+                    'choices' => array('Lab Server is active' => '1', 'Lab Server is NOT active' => '0')))
+            ->add('useDataset', Type\CheckboxType::class, array('label' => 'Retrieve results from dataset when available',
                 'required' => false))
-            ->add('configuration', 'textarea', array('label' => 'Lab Configuration', 'required' => false))
-            ->add('singleEngine', 'checkbox', array('label' => 'Allow only one experiment engine to connect to the lab server', 'required' => false))
-            ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true))
+            ->add('configuration', Type\TextareaType::class, array('label' => 'Lab Configuration', 'required' => false))
+            ->add('singleEngine', Type\CheckboxType::class, array('label' => 'Allow only one experiment engine to connect to the lab server', 'required' => false))
+            ->add('labInfo', Type\TextType::class, array('label' => 'Lab Info', 'required' => true))
 
-            ->add('federate', 'checkbox', array('label' => 'Federated lab server', 'required' => false))
-            ->add('isaWsdlUrl', 'text', array('label' => 'WSDL of federated ISA lab server', 'required' => false))
-            ->add('isaIdentifier', 'text', array('label' => 'Identifier (GUID of the Broker contacting LS)', 'required' => false))
-            ->add('isaPasskeyToLabServer', 'text', array('label' => 'ISA Passkey to lab server', 'required' => false))
+            ->add('federate', Type\CheckboxType::class, array('label' => 'Federated lab server', 'required' => false))
+            ->add('isaWsdlUrl', Type\TextType::class, array('label' => 'WSDL of federated ISA lab server', 'required' => false))
+            ->add('isaIdentifier', Type\TextType::class, array('label' => 'Identifier (GUID of the Broker contacting LS)', 'required' => false))
+            ->add('isaPasskeyToLabServer', Type\TextType::class, array('label' => 'ISA Passkey to lab server', 'required' => false))
 
-            ->add('submit','submit', array('label' => 'Add New Lab Server','attr' => array('class'=>'btn btn-success')))
+            ->add('submit', Type\SubmitType::class, array('label' => 'Add New Lab Server','attr' => array('class'=>'btn btn-success')))
             ->getForm();
 
        return $form;
@@ -1045,33 +1055,33 @@ class AdminController extends Controller
     {
         $form = $this->createFormBuilder()
 
-            ->add('name', 'text', array('label' => 'Lab Server name', 'required' => true, 'attr' => array('value'=>$labServer->getName(), 'readonly' => false)))
-            ->add('exp_category', 'text', array('label' => 'Experiment category', 'required' => true, 'attr'=>array('value' => $labServer->getExpCategory(), 'help'=>'text help')))
-            ->add('exp_name', 'text', array('label' => 'Experiment name', 'required' => true, 'attr'=>array('value' => $labServer->getExpName(), 'help'=>'text help')))
-            ->add('description', 'textarea', array('label' => 'Description', 'required' => false, 'data'=> $labServer->getDescription(), 'attr' => array('readonly'=> false)))
-            ->add('contact_name', 'text', array('label' => 'Contact\'s name', 'required' => true, 'attr' => array('value'=>$labServer->getContactName(), 'readonly' => false)))
-            ->add('contact_email', 'email', array('label' => 'Contact\'s Email', 'required' => true, 'attr' => array('value'=>$labServer->getContactEmail(), 'readonly' => false)))
-            ->add('institution', 'text', array('label' => 'Institution', 'required' => true,  'attr' => array('value'=>$labServer->getInstitution(), 'readonly' => false)))
-            ->add('Guid', 'text', array('label' => 'Guid', 'required' => true,  'attr' => array('value'=>$labServer->getGuid(), 'readonly' => true)))
-            ->add('passKey', 'text', array('label' => 'Authentication PassKey ', 'required' => true, 'attr' => array('value'=>$labServer->getPasskey(), 'readonly' => true)))
-            ->add('type', 'text', array('label' => 'Type ', 'required' => true, 'attr' => array('value'=>$labServer->getType(), 'readonly' => true)))
-            ->add('initialPassKey', 'text', array('label' => 'Initial PassKey ', 'required' => true, 'attr' => array('value'=>$labServer->getInitialPasskey(), 'readonly' => true)))
-            ->add('configuration', 'textarea', array('label' => 'Lab Configuration', 'required' => false, 'data'=>$labServer->getConfiguration()))
-            ->add('singleEngine', 'checkbox', array('label' => 'Allow only one experiment engine to connect to the lab server', 'required' => false, 'data' => $labServer->getSingleEngine()))
-            ->add('labInfo', 'text', array('label' => 'Lab Info', 'required' => true,  'attr' => array('value'=>$labServer->getLabInfo(), 'readonly' => false)))
-            ->add('useDataset', 'checkbox', array('label' => 'Retrieve results from dataset when available',
+            ->add('name', Type\TextType::class, array('label' => 'Lab Server name', 'required' => true, 'attr' => array('value'=>$labServer->getName(), 'readonly' => false)))
+            ->add('exp_category', Type\TextType::class, array('label' => 'Experiment category', 'required' => true, 'attr'=>array('value' => $labServer->getExpCategory(), 'help'=>'text help')))
+            ->add('exp_name', Type\TextType::class, array('label' => 'Experiment name', 'required' => true, 'attr'=>array('value' => $labServer->getExpName(), 'help'=>'text help')))
+            ->add('description', Type\TextareaType::class, array('label' => 'Description', 'required' => false, 'data'=> $labServer->getDescription(), 'attr' => array('readonly'=> false)))
+            ->add('contact_name', Type\TextType::class, array('label' => 'Contact\'s name', 'required' => true, 'attr' => array('value'=>$labServer->getContactName(), 'readonly' => false)))
+            ->add('contact_email', Type\EmailType::class, array('label' => 'Contact\'s Email', 'required' => true, 'attr' => array('value'=>$labServer->getContactEmail(), 'readonly' => false)))
+            ->add('institution', Type\TextType::class, array('label' => 'Institution', 'required' => true,  'attr' => array('value'=>$labServer->getInstitution(), 'readonly' => false)))
+            ->add('Guid', Type\TextType::class, array('label' => 'Guid', 'required' => true,  'attr' => array('value'=>$labServer->getGuid(), 'readonly' => true)))
+            ->add('passKey', Type\TextType::class, array('label' => 'Authentication PassKey ', 'required' => true, 'attr' => array('value'=>$labServer->getPasskey(), 'readonly' => true)))
+            ->add('type', Type\TextType::class, array('label' => 'Type ', 'required' => true, 'attr' => array('value'=>$labServer->getType(), 'readonly' => true)))
+            ->add('initialPassKey', Type\TextType::class, array('label' => 'Initial PassKey ', 'required' => true, 'attr' => array('value'=>$labServer->getInitialPasskey(), 'readonly' => true)))
+            ->add('configuration', Type\TextareaType::class, array('label' => 'Lab Configuration', 'required' => false, 'data'=>$labServer->getConfiguration()))
+            ->add('singleEngine', Type\CheckboxType::class, array('label' => 'Allow only one experiment engine to connect to the lab server', 'required' => false, 'data' => $labServer->getSingleEngine()))
+            ->add('labInfo', Type\TextType::class, array('label' => 'Lab Info', 'required' => true,  'attr' => array('value'=>$labServer->getLabInfo(), 'readonly' => false)))
+            ->add('useDataset', Type\CheckboxType::class, array('label' => 'Retrieve results from dataset when available',
                 'required' => false,
                 'data' => $labServer->getUseDataset()))
-            ->add('active', 'checkbox', array('label' => 'Active',
+            ->add('active', Type\CheckboxType::class, array('label' => 'Active',
                 'required' => false,
                 'data'=> $labServer->getActive() ))
 
-            ->add('federate', 'checkbox', array('label' => 'Federated lab server', 'required' => false, 'data' => $labServer->getFederate()))
-            ->add('isaWsdlUrl', 'text', array('label' => 'WSDL of federated ISA lab server', 'required' => false, 'attr' => array('value'=>$labServer->getIsaWsdlUrl(), 'readonly' => false)))
-            ->add('isaIdentifier', 'text', array('label' => 'Identifier (GUID of the Broker contacting LS)', 'required' => false, 'attr' => array('value'=>$labServer->getIsaIdentifier(), 'readonly' => false)))
-            ->add('isaPasskeyToLabServer', 'text', array('label' => 'ISA Passkey to lab server', 'required' => false, 'attr' => array('value'=>$labServer->getIsaPasskeyToLabServer(), 'readonly' => false)))
+            ->add('federate', Type\CheckboxType::class, array('label' => 'Federated lab server', 'required' => false, 'data' => $labServer->getFederate()))
+            ->add('isaWsdlUrl', Type\TextType::class, array('label' => 'WSDL of federated ISA lab server', 'required' => false, 'attr' => array('value'=>$labServer->getIsaWsdlUrl(), 'readonly' => false)))
+            ->add('isaIdentifier', Type\TextType::class, array('label' => 'Identifier (GUID of the Broker contacting LS)', 'required' => false, 'attr' => array('value'=>$labServer->getIsaIdentifier(), 'readonly' => false)))
+            ->add('isaPasskeyToLabServer', Type\TextType::class, array('label' => 'ISA Passkey to lab server', 'required' => false, 'attr' => array('value'=>$labServer->getIsaPasskeyToLabServer(), 'readonly' => false)))
 
-            ->add('submit','submit', array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
+            ->add('submit', Type\SubmitType::class, array('label' => 'Save changes', 'attr' => array('class'=>'btn btn-success')))
             ->getForm();
 
         return $form;
