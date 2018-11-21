@@ -407,6 +407,7 @@ class EngineServices
         $broker = null;
         $labServer = null;
         $mappedSb = null;
+		$standalone = null;
 
         $labServer = $this
             ->em
@@ -419,19 +420,62 @@ class EngineServices
                 ->em
                 ->getRepository('DispatcherBundle:LsToRlmsMapping')
                 ->findOneBy(array('labServerId' => $engine->getLabServerId()));
-            if ($mappedSb != null)
-            {
-                $broker = $this
-                    ->em
-                    ->getRepository('DispatcherBundle:Rlms')
-                    ->findOneBy(array('id' => $mappedSb->getRlmsId()));
 
-                if ($broker != null)
-                {
-                    $ticketResponse = $this->soapClientIsa->redeemTicket($couponId, $passkey, $labServer, $broker, 'EXECUTE EXPERIMENT');
-                }
-            }
+			if ($mappedSb == null) //labServer is stand-alone and not mapped to a Service Broker
+			{
+				$standalone = $this
+					->em
+					->getRepository('DispatcherBundle:LabSession')
+					->findOneBy(array('couponId' => $couponId, 'passkey' => $passkey));
+				
+				if ($standalone != null)
+				{
+					//check if session is still valid
+					$endDate = $standalone->getEndDate();
+					$nowDate = date_create(date('Y-m-d\TH:i:sP'));
+					
+					//Add time to $nowDate to simulate expired session
+					//date_add($nowDate, date_interval_create_from_date_string('6 days 22 hours'));
+					
+					$sessionValid = ($nowDate < $endDate) ? true : false;
+					
+					if($sessionValid)
+					{
+						$response = array(
+							'success' => true,
+							'errorMessage' => 'Session valid',
+							'sessionId' => $standalone->getSessionId()); //probably needed for Weblab Deusto
+					}
+					else
+					{
+						$response = array(
+							'success' => false,
+							'errorMessage' => 'Session expired');
+					}
+				}
+				else
+				{
+					$response = array(
+						'success' => false,
+						'errorMessage' => 'Coupon-ID and/or Passkey invalid');
+				}
+				
+				return $response;
+			}
+			else
+			{
+				$broker = $this
+					->em
+					->getRepository('DispatcherBundle:Rlms')
+					->findOneBy(array('id' => $mappedSb->getRlmsId()));
+
+				if ($broker != null)
+				{
+					$ticketResponse = $this->soapClientIsa->redeemTicket($couponId, $passkey, $labServer, $broker, 'EXECUTE EXPERIMENT');
+				}
+			}
         }
+		
         if ($ticketResponse != null)
         {
             $xmlPayload = simplexml_load_string($ticketResponse->payload, "SimpleXMLElement", LIBXML_NOCDATA);
