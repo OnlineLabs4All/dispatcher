@@ -751,7 +751,9 @@ class AdminController extends Controller
             ->findOneBy(array('id' => $clientId));
 
 
-        $url = $labClient->getClientUrl().'?coupon_id='.$session['couponId'].'&passkey='.$session['passkey'].'&labServerGuid='.$labServer->getGuid();
+        $clientUrl = $labClient->getClientUrl();
+        $delimiter = (strpos($clientUrl,'?') > -1) ? '&' : '?';
+        $url = $clientUrl.$delimiter.'coupon_id='.$session['couponId'].'&passkey='.$session['passkey'].'&labServerGuid='.$labServer->getGuid();
 
         return $this->redirect($url);
     }
