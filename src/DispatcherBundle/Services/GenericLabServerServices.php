@@ -267,7 +267,7 @@ class GenericLabServerServices
             $estWait = $queueLength * $jobRecord->getEstExecTime();
 
             //is it a federated lab server?
-            if ($labServer->getFederate() == true) {
+            if ($labServer->getFederate() == true && $jobRecord->getIsFromDataset() == false) {
 
                 $submissionReport = $this->soapClientIsa->submit($labServer, $experimentID, $jobRecord->getExpSpecification(), 0, 'Experiment_Group');
 
@@ -329,7 +329,7 @@ class GenericLabServerServices
         }
 
         //is it a federated lab server?
-        if ($labServer->getFederate() == true) {
+        if ($labServer->getFederate() == true && $jobRecord->getIsFromDataset() == false) {
 
             $status = $this->soapClientIsa->getExperimentStatus($labServer, $experimentId);
 
@@ -411,7 +411,7 @@ class GenericLabServerServices
             }
 
             //is it a federated lab server?
-            if ($labServer->getFederate() == true) {
+            if ($labServer->getFederate() == true && $jobRecord->getIsFromDataset() == false) {
 
                 $status = $this->soapClientIsa->retrieveResult($labServer, $experimentId);
 
